@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.common;
 
+import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.exception.BusinessException;
 
 import java.lang.reflect.Field;
@@ -11,6 +12,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
+@Slf4j
 public class BaseController {
 
     /**
@@ -45,6 +47,7 @@ public class BaseController {
                         }
                         dtos.add(dto);
                     } catch (Exception e) {
+                        log.error(e.getMessage());
                         throw new BusinessException("vo2po转换错误");
                     }
                 }
