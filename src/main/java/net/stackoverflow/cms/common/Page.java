@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Page {
 
     private Integer page;
@@ -21,6 +23,7 @@ public class Page {
     private Integer offset;
     private String order;
     private String sort;
+    private String key;
     private Map<String, Object> searchParam;
 
     public Page(Integer page, Integer limit) {
@@ -35,6 +38,22 @@ public class Page {
         this.offset = (page - 1) * limit;
         this.order = order;
         this.sort = sort;
+    }
+
+    public Page(Integer page, Integer limit, String order, String sort, String key) {
+        this.page = page;
+        this.limit = limit;
+        this.offset = (page - 1) * limit;
+        this.order = order;
+        this.sort = sort;
+        this.key = key;
+    }
+
+    public Page(Integer page, Integer limit, String key) {
+        this.page = page;
+        this.limit = limit;
+        this.offset = (page - 1) * limit;
+        this.key = key;
     }
 
     public Page(Integer page, Integer limit, Map<String, Object> searchParam) {
