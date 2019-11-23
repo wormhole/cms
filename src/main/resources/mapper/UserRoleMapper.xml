@@ -5,13 +5,13 @@
 
 <mapper namespace="net.stackoverflow.hr.dao.UserRoleDAO">
 
-    <resultMap id="userRoleMap" type="userRole">
+    <resultMap id="baseMap" type="userRole">
         <id property="id" column="id"></id>
         <result property="userId" column="user_id"></result>
         <result property="roleId" column="role_id"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="userRoleMap" resultType="userRole">
+    <select id="selectByPage" resultMap="baseMap" resultType="userRole">
         select * from user_role
         <where>
             <if test="searchMap != null">
@@ -26,7 +26,7 @@
         order by #{order} #{sort} limit #{offset},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="userRoleMap" resultType="userRole">
+    <select id="selectByCondition" resultMap="baseMap" resultType="userRole">
         select * from user_role
         <where>
             <if test="userId != null">
@@ -38,7 +38,7 @@
         </where>
     </select>
 
-    <select id="select" resultMap="userRoleMap" resultType="userRole">
+    <select id="select" resultMap="baseMap" resultType="userRole">
         select * from user_role where id = #{id}
     </select>
 
@@ -69,11 +69,11 @@
     <update id="update" parameterType="userRole">
         update user_role
         <set>
-            <if test="userId!=null">
-                user_id=#{userId},
+            <if test="userId != null">
+                user_id = #{userId},
             </if>
-            <if test="roleId!=null">
-                role_id=#{roleId}
+            <if test="roleId != null">
+                role_id = #{roleId}
             </if>
         </set>
         where id=#{id}
@@ -83,11 +83,11 @@
         <foreach collection="list" item="item" open="" close="" separator=";">
             update user_role
             <set>
-                <if test="item.userId!=null">
-                    user_id=#{item.userId},
+                <if test="item.userId != null">
+                    user_id = #{item.userId},
                 </if>
-                <if test="item.roleId!=null">
-                    role_id=#{item.roleId}
+                <if test="item.roleId != null">
+                    role_id = #{item.roleId}
                 </if>
             </set>
             where id = #{item.id}

@@ -5,13 +5,13 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.RolePermissionDao">
 
-    <resultMap id="rolePermissionMap" type="rolePermission">
+    <resultMap id="baseMap" type="rolePermission">
         <id property="id" column="id"></id>
         <result property="roleId" column="role_id"></result>
         <result property="permissionId" column="permission_id"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="rolePermissionMap" resultType="rolePermission">
+    <select id="selectByPage" resultMap="baseMap" resultType="rolePermission">
         select * from role_permission
         <where>
             <if test="searchMap != null">
@@ -26,7 +26,7 @@
         order by #{order} #{sort} limit #{offset},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="rolePermissionMap" resultType="rolePermission">
+    <select id="selectByCondition" resultMap="baseMap" resultType="rolePermission">
         select * from role_permission
         <where>
             <if test="roleId != null">
@@ -38,7 +38,7 @@
         </where>
     </select>
 
-    <select id="select" resultMap="rolePermissionMap" resultType="rolePermission">
+    <select id="select" resultMap="baseMap" resultType="rolePermission">
         select * from role_permission where id = #{id}
     </select>
 
