@@ -18,5 +18,5 @@ public class Role {
 
     private String id;
     private String name;
-    private String desc;
+    private String description;
 }

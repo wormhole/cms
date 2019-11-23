@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.cms.dao.RoleDAO">
+
+    <resultMap id="baseMap" type="role">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="baseMap" resultType="role">
+        select * from role
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.name != null">
+                    name = #{searchMap.name}
+                </if>
+                <if test="searchMap.description != null">
+                    and description = #{searchMap.description}
+                </if>
+            </if>
+        </where>
+        order by #{order} #{sort} limit #{offset},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="baseMap" resultType="role">
+        select * from role
+        <where>
+            <if test="name != null">
+                name = #{name}
+            </if>
+            <if test="description != null">
+                and description = #{description}
+            </if>
+        </where>
+    </select>
+
+    <select id="select" resultMap="baseMap" resultType="role">
+        select * from role where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="role">
+        insert into role (id,name,description) values (#{id},#{name},#{description})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into role (id,name,description)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{item.name},#{item.description})
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="string">
+        delete from role where id = #{id}
+    </delete>
+
+    <delete id="batchDelete" parameterType="list">
+        delete from role where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="role">
+        update role
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update role
+            <set>
+                <if test="item.name != null">
+                    name = #{item.name},
+                </if>
+                <if test="item.description != null">
+                    description = #{item.description}
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

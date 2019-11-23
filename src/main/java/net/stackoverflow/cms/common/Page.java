@@ -24,7 +24,7 @@ public class Page {
     private String order;
     private String sort;
     private String key;
-    private Map<String, Object> searchParam;
+    private Map<String, Object> searchMap;
 
     public Page(Integer page, Integer limit) {
         this.page = page;
@@ -56,10 +56,10 @@ public class Page {
         this.key = key;
     }
 
-    public Page(Integer page, Integer limit, Map<String, Object> searchParam) {
+    public Page(Integer page, Integer limit, Map<String, Object> searchMap) {
         this.page = page;
         this.limit = limit;
         this.offset = (page - 1) * limit;
-        this.searchParam = searchParam;
+        this.searchMap = searchMap;
     }
 }

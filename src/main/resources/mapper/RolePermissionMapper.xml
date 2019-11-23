@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.RolePermissionDao">
+
+    <resultMap id="rolePermissionMap" type="rolePermission">
+        <id property="id" column="id"></id>
+        <result property="roleId" column="role_id"></result>
+        <result property="permissionId" column="permission_id"></result>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="rolePermissionMap" resultType="rolePermission">
+        select * from role_permission
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.roleId != null">
+                    role_id = #{searchMap.roleId}
+                </if>
+                <if test="searchMap.permissionId != null">
+                    and permission_id = #{searchMap.permissionId}
+                </if>
+            </if>
+        </where>
+        order by #{order} #{sort} limit #{offset},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="rolePermissionMap" resultType="rolePermission">
+        select * from role_permission
+        <where>
+            <if test="roleId != null">
+                role_id = #{roleId}
+            </if>
+            <if test="permissionId != null">
+                and permission_id = #{permissionId}
+            </if>
+        </where>
+    </select>
+
+    <select id="select" resultMap="rolePermissionMap" resultType="rolePermission">
+        select * from role_permission where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="rolePermission">
+        insert into role_permission (id,role_id,permission_id)
+        values (#{id},#{roleId},#{permissionId})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into role_permission (id,role_id,permission_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{item.roleId},#{item.permissionId})
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="string">
+        delete from role_permission where id = #{id}
+    </delete>
+
+    <delete id="batchDelete" parameterType="list">
+        delete from role_permission where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="rolePermission">
+        update role_permission
+        <set>
+            <if test="roleId != null">
+                role_id = #{roleId},
+            </if>
+            <if test="permissionId != null">
+                permission_id = #{permissionId}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update role_permission
+            <set>
+                <if test="item.roleId != null">
+                    role_id = #{item.roleId},
+                </if>
+                <if test="item.permissionId != null">
+                    permission_id = #{item.permissionId}
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>
