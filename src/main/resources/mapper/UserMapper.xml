@@ -10,7 +10,7 @@
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="salt" column="salt"/>
-        <result property="enable" column="enable"/>
+        <result property="enabled" column="enabled"/>
         <result property="email" column="email"/>
         <result property="telephone" column="telephone"/>
     </resultMap>
@@ -22,8 +22,8 @@
                 <if test="searchMap.username != null">
                     username = #{searchMap.username}
                 </if>
-                <if test="searchMap.enable != null">
-                    and enable = #{searchMap.enable}
+                <if test="searchMap.enabled != null">
+                    and enabled = #{searchMap.enabled}
                 </if>
                 <if test="searchMap.email != null">
                     and email = #{searchMap.email}
@@ -42,8 +42,8 @@
             <if test="username != null">
                 username = #{username}
             </if>
-            <if test="enable != null">
-                and enable = #{enable}
+            <if test="enabled != null">
+                and enabled = #{enabled}
             </if>
             <if test="email != null">
                 and email = #{email}
@@ -59,14 +59,14 @@
     </select>
 
     <insert id="insert" parameterType="user">
-        insert into user (id,username,password,salt,email,telephone) values (#{id},#{name},#{password},#{salt},#{email},#{telephone})
+        insert into user (id,username,password,salt,email,telephone,enabled) values (#{id},#{name},#{password},#{salt},#{email},#{telephone},#{enabled})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user (id,username,password,salt,email,telephone)
+        insert into user (id,username,password,salt,email,telephone,enabled)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.username},#{item.password},#{item.salt},#{item.email},#{item.telephone})
+            (#{item.id},#{item.username},#{item.password},#{item.salt},#{item.email},#{item.telephone},#{item.enabled})
         </foreach>
     </insert>
 
@@ -97,7 +97,10 @@
                 email = #{email},
             </if>
             <if test="telephone != null">
-                telephone = #{telephone}
+                telephone = #{telephone},
+            </if>
+            <if test="enabled != null">
+                enabled = #{enabled}
             </if>
         </set>
         where id = #{id}
@@ -120,7 +123,10 @@
                     email = #{item.email},
                 </if>
                 <if test="item.telephone != null">
-                    telephone = #{item.telephone}
+                    telephone = #{item.telephone},
+                </if>
+                <if test="item.enabled != null">
+                    enabled = #{item.enabled}
                 </if>
             </set>
             where id = #{item.id}

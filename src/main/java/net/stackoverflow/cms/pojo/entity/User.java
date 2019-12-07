@@ -20,7 +20,7 @@ public class User {
     private String username;
     private String password;
     private String salt;
-    private Integer enable;
+    private Integer enabled;
     private String email;
     private String telephone;
 
