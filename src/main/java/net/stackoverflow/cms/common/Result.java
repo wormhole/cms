@@ -5,18 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * 公共返回结果
- *
- * @author 凉衫薄
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Result {
 
-    private Integer code;
+    private Integer status;
+
+    public static class Status {
+        public static final Integer SUCCESS = 0;
+        public static final Integer FAILURE = 1;
+    }
     private String message;
     private Object data;
 }

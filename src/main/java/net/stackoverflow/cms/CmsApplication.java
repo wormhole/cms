@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@MapperScan(basePackages = {"net.stackoverflow.cms.dao.*"}, sqlSessionFactoryRef = "sqlSessionFactory")
+@MapperScan(basePackages = {"net.stackoverflow.cms.dao"}, sqlSessionFactoryRef = "sqlSessionFactory")
 @EnableCaching
 @EnableTransactionManagement
 @EnableScheduling

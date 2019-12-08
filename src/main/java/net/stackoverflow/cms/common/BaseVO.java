@@ -7,11 +7,6 @@ import lombok.Setter;
 
 import java.util.Map;
 
-/**
- * 公共VO类
- *
- * @author 凉衫薄
- */
 @Getter
 @Setter
 @NoArgsConstructor

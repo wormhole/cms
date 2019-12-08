@@ -7,11 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-/**
- * 公共Controller
- *
- * @author 凉衫薄
- */
 @Slf4j
 public class BaseController {
 

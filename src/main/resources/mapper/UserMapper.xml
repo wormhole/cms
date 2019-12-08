@@ -9,7 +9,6 @@
         <id property="id" column="id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
-        <result property="salt" column="salt"/>
         <result property="enabled" column="enabled"/>
         <result property="email" column="email"/>
         <result property="telephone" column="telephone"/>
@@ -59,14 +58,14 @@
     </select>
 
     <insert id="insert" parameterType="user">
-        insert into user (id,username,password,salt,email,telephone,enabled) values (#{id},#{name},#{password},#{salt},#{email},#{telephone},#{enabled})
+        insert into user (id,username,password,email,telephone,enabled) values (#{id},#{username},#{password},#{email},#{telephone},#{enabled})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user (id,username,password,salt,email,telephone,enabled)
+        insert into user (id,username,password,email,telephone,enabled)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.username},#{item.password},#{item.salt},#{item.email},#{item.telephone},#{item.enabled})
+            (#{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled})
         </foreach>
     </insert>
 
@@ -90,9 +89,6 @@
             <if test="password != null">
                 password = #{password},
             </if>
-            <if test="salt != null">
-                salt = #{salt},
-            </if>
             <if test="email != null">
                 email = #{email},
             </if>
@@ -115,9 +111,6 @@
                 </if>
                 <if test="item.password != null">
                     password = #{item.password},
-                </if>
-                <if test="item.salt != null">
-                    salt = #{item.salt},
                 </if>
                 <if test="item.email != null">
                     email = #{item.email},
