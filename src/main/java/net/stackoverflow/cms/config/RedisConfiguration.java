@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
  * @author 凉衫薄
  */
 @Configuration
-public class RedisConfig {
+public class RedisConfiguration {
 
     @Autowired
     private RedisTemplate redisTemplate;

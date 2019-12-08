@@ -12,7 +12,7 @@ import java.util.concurrent.Executor;
  * @author 凉衫薄
  */
 @Configuration
-public class ThreadPoolConfig implements AsyncConfigurer {
+public class ThreadPoolConfiguration implements AsyncConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {
