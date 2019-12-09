@@ -14,16 +14,12 @@ import java.util.List;
  */
 public class CmsUserDetails implements UserDetails {
 
-    private String username;
-    private String password;
-    private Integer enabled;
-    private String email;
-    private String telephone;
-    private List<GrantedAuthority> authorities;
-
-    public CmsUserDetails() {
-
-    }
+    private final String username;
+    private final String password;
+    private final Integer enabled;
+    private final String email;
+    private final String telephone;
+    private final List<GrantedAuthority> authorities;
 
     public CmsUserDetails(String username, String password, Integer enabled, String email, String telephone, List<GrantedAuthority> authorities) {
         this.username = username;

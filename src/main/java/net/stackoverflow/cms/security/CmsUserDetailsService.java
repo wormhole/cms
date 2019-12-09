@@ -45,7 +45,7 @@ public class CmsUserDetailsService implements UserDetailsService {
             }
             return new CmsUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), authorities);
         } else {
-            return new CmsUserDetails();
+            throw new UsernameNotFoundException(username);
         }
     }
 }
