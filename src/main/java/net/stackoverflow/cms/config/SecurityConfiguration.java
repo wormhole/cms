@@ -25,21 +25,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/login.do")
-                .failureUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .and()
-                .authorizeRequests()
-                .antMatchers("/login", "/login.do", "/register", "/vcode", "/favicon.icon", "/static/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .logout()
-                .logoutSuccessUrl("/admin")
-                .and()
-                .csrf().disable();
+        http.csrf().disable();
+        http.headers().frameOptions().sameOrigin();
+        http.formLogin().loginPage("/login").loginProcessingUrl("/login.do").failureUrl("/login").usernameParameter("username").passwordParameter("password");
+        http.authorizeRequests().antMatchers("/login", "/login.do", "/register", "/vcode", "/favicon.icon", "/static/**").permitAll().anyRequest().authenticated();
+        http.logout().logoutSuccessUrl("/");
+        http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
     }
 
     @Override

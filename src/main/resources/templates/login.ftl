@@ -12,9 +12,6 @@
 <div class="login">
     <h3>用户登录</h3>
     <div class="login-wrap">
-        <#if error??>
-            <blockquote class="layui-elem-quote">${error}</blockquote>
-        </#if>
         <form class="layui-form" id="login-form" action="/login.do" method="post">
             <div class="layui-form-item">
                 <input type="text" name="username" id="username" required placeholder="用户名" class="layui-input">
@@ -31,7 +28,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <input name="rememberMe" lay-skin="primary" title="记住我" type="checkbox" value="true">
+                <input name="remember-me" lay-skin="primary" title="记住我" type="checkbox" value="true">
             </div>
             <div class="layui-form-item">
                 <input type="submit" class="layui-btn layui-btn-normal" id="login-btn" value="登陆">
