@@ -20,7 +20,7 @@
             <li class="layui-nav-item">
                 <a href="javascript:">
                     <img src="/static/image/background.png" class="layui-nav-img layui-circle">
-                    用户名
+                    ${Session.user.username}
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:" data-url="/user/info" data-title="个人信息"

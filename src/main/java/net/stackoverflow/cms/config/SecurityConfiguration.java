@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.config;
 
+import net.stackoverflow.cms.security.LoginSuccessHandler;
 import net.stackoverflow.cms.security.Md5PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * Spring Security配置类
@@ -27,8 +29,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.headers().frameOptions().sameOrigin();
-        http.formLogin().loginPage("/login").loginProcessingUrl("/login.do").failureUrl("/login").usernameParameter("username").passwordParameter("password");
-        http.authorizeRequests().antMatchers("/login", "/login.do", "/register", "/vcode", "/favicon.icon", "/static/**").permitAll().anyRequest().authenticated();
+        http.formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/login.do")
+                .failureUrl("/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .successHandler(loginSuccessHandler());
+        http.authorizeRequests()
+                .antMatchers("/login", "/login.do", "/register", "/vcode", "/favicon.icon", "/static/**").permitAll()
+                .anyRequest().authenticated();
         http.logout().logoutSuccessUrl("/");
         http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
     }
@@ -41,5 +51,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new Md5PasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler loginSuccessHandler() {
+        return new LoginSuccessHandler();
     }
 }
