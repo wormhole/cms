@@ -46,13 +46,13 @@
                 <li class="layui-nav-item">
                     <a href="javascript:"><i class="layui-icon layui-icon-set-fill"></i>&nbsp;&nbsp;系统</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:" data-url="/admin/system/setting_management" data-title="常规设置"
-                               data-id="setting_management">常规设置</a></dd>
-                        <dd><a href="javascript:" data-url="/admin/system/menu_management" data-title="菜单管理"
-                               data-id="menu_management">菜单管理</a>
+                        <dd><a href="javascript:" data-url="/system/configuration" data-title="常规设置"
+                               data-id="configuration">常规设置</a></dd>
+                        <dd><a href="javascript:" data-url="/system/menu" data-title="菜单管理"
+                               data-id="menu">菜单管理</a>
                         </dd>
-                        <dd><a href="javascript:" data-url="/admin/system/backup_management" data-title="数据备份"
-                               data-id="backup_management">数据备份</a></dd>
+                        <dd><a href="javascript:" data-url="/system/backup" data-title="数据备份"
+                               data-id="backup">数据备份</a></dd>
                     </dl>
                 </li>
             </ul>
