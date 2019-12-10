@@ -1,9 +1,6 @@
 package net.stackoverflow.cms.config;
 
-import net.stackoverflow.cms.security.CmsAccessDeniedHandler;
-import net.stackoverflow.cms.security.CmsLoginFailureHandler;
-import net.stackoverflow.cms.security.CmsLoginSuccessHandler;
-import net.stackoverflow.cms.security.Md5PasswordEncoder;
+import net.stackoverflow.cms.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Spring Security配置类
@@ -35,19 +30,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().sameOrigin();
         http.logout().logoutSuccessUrl("/");
         http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
-        http.formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/login.do")
-                .failureUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .successHandler(loginSuccessHandler())
-                .failureHandler(loginFailureHandler());
+        http.formLogin().loginPage("/login");
         http.authorizeRequests()
                 .antMatchers("/login", "/login.do", "/register", "/vcode", "/favicon.icon", "/static/**").permitAll()
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler());
+        http.addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
@@ -61,17 +50,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationSuccessHandler loginSuccessHandler() {
-        return new CmsLoginSuccessHandler();
+    public CmsAuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CmsAuthenticationSuccessHandler();
     }
 
     @Bean
-    public AuthenticationFailureHandler loginFailureHandler() {
-        return new CmsLoginFailureHandler();
+    public CmsAuthenticationFailureHandler authenticationFailureHandler() {
+        return new CmsAuthenticationFailureHandler();
     }
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
+    public CmsAccessDeniedHandler accessDeniedHandler() {
         return new CmsAccessDeniedHandler();
+    }
+
+    @Bean
+    public CmsAuthenticationFilter authenticationFilter() throws Exception {
+        CmsAuthenticationFilter authenticationFilter = new CmsAuthenticationFilter();
+        authenticationFilter.setAuthenticationManager(authenticationManagerBean());
+        authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+        authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        authenticationFilter.setFilterProcessesUrl("/login.do");
+        return authenticationFilter;
     }
 }
