@@ -3,12 +3,10 @@ package net.stackoverflow.cms.service;
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.pojo.entity.Permission;
 import net.stackoverflow.cms.pojo.entity.Role;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
-@Mapper
 public interface RoleService {
 
     List<Role> selectByPage(Page page);

@@ -32,7 +32,6 @@ public class CmsUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("username:" + username);
         List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
             put("username", username);
         }});
@@ -49,8 +48,10 @@ public class CmsUserDetailsService implements UserDetailsService {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority(permission.getName());
                 authorities.add(sga);
             }
+            log.info("加载完用户信息:" + username);
             return new CmsUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), authorities);
         } else {
+            log.error("找不到对应的用户:" + username);
             throw new UsernameNotFoundException(username);
         }
     }

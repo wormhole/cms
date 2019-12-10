@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.util.JsonUtils;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -22,7 +24,9 @@ public class CmsAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-        log.error(accessDeniedException.getMessage());
+        HttpSession session = request.getSession();
+        UserDetails userDetails = (UserDetails) session.getAttribute("user");
+        log.error("权限不足:" + userDetails.getUsername() + "->" + request.getRequestURI());
 
         response.setStatus(403);
         response.setContentType("application/json;charset=utf-8");

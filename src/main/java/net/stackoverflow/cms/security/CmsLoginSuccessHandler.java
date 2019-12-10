@@ -23,8 +23,8 @@ public class CmsLoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         HttpSession session = request.getSession();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        log.info(userDetails.getUsername() + ":登录成功");
         session.setAttribute("user", userDetails);
+        log.info(userDetails.getUsername() + ":登录成功");
         log.info("重定向到:" + request.getContextPath());
         response.sendRedirect(request.getContextPath());
     }
