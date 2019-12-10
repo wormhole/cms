@@ -2,11 +2,17 @@ package net.stackoverflow.cms.common;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.exception.BusinessException;
+import net.stackoverflow.cms.util.JsonUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
+/**
+ * Controller基类
+ *
+ * @author 凉衫薄
+ */
 @Slf4j
 public class BaseController {
 
@@ -18,6 +24,8 @@ public class BaseController {
      * @return
      */
     protected Map<String, List<Object>> vo2dto(Map<String, Class> clazzMap, BaseVO vo) {
+
+        log.info(JsonUtils.bean2json(vo));
 
         Map<String, List<Object>> result = new HashMap<>(16);
         Set<String> key = clazzMap.keySet();
@@ -43,7 +51,7 @@ public class BaseController {
                         dtos.add(dto);
                     } catch (Exception e) {
                         log.error(e.getMessage());
-                        throw new BusinessException("vo2po转换错误");
+                        throw new BusinessException("vo2dto转换错误");
                     }
                 }
                 result.put(name, dtos);
