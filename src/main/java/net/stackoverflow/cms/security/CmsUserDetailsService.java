@@ -40,7 +40,7 @@ public class CmsUserDetailsService implements UserDetailsService {
             List<Role> roles = userService.getRoleByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (Role role : roles) {
-                SimpleGrantedAuthority sga = new SimpleGrantedAuthority(role.getName());
+                SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + role.getName());
                 authorities.add(sga);
             }
             return new CmsUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), authorities);

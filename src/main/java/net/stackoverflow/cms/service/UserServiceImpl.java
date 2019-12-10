@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
         List<Role> roles = new ArrayList<>();
         if ((null != userRoles) && (userRoles.size() > 0)) {
             for (UserRole userRole : userRoles) {
-                Role role = roleDAO.select(userRole.getId());
+                Role role = roleDAO.select(userRole.getRoleId());
                 roles.add(role);
             }
         }
