@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
+import net.stackoverflow.cms.pojo.entity.Permission;
 import net.stackoverflow.cms.pojo.entity.Role;
 import net.stackoverflow.cms.pojo.entity.User;
 import net.stackoverflow.cms.service.UserService;
@@ -38,9 +39,14 @@ public class CmsUserDetailsService implements UserDetailsService {
         if (!CollectionUtils.isEmpty(users)) {
             User user = users.get(0);
             List<Role> roles = userService.getRoleByUserId(user.getId());
+            List<Permission> permissions = userService.getPermissionByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (Role role : roles) {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + role.getName());
+                authorities.add(sga);
+            }
+            for (Permission permission : permissions) {
+                SimpleGrantedAuthority sga = new SimpleGrantedAuthority(permission.getName());
                 authorities.add(sga);
             }
             return new CmsUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), authorities);
