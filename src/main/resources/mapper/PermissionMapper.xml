@@ -8,7 +8,6 @@
     <resultMap id="permissionMap" type="permission">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
-        <result property="url" column="url"/>
         <result property="description" column="description"/>
     </resultMap>
 
@@ -18,9 +17,6 @@
             <if test="searchMap != null">
                 <if test="searchMap.name != null">
                     name = #{searchMap.name}
-                </if>
-                <if test="searchMap.url != null">
-                    and url = #{searchMap.url}
                 </if>
                 <if test="searchMap.description != null">
                     and description = #{searchMap.description}
@@ -36,9 +32,6 @@
             <if test="name != null">
                 name = #{name}
             </if>
-            <if test="url != null">
-                and url = #{url}
-            </if>
             <if test="description != null">
                 and description = #{searchMap.description}
             </if>
@@ -50,14 +43,14 @@
     </select>
 
     <insert id="insert" parameterType="permission">
-        insert into permission (id,name,url,description) values (#{id},#{name},#{url},#{description})
+        insert into permission (id,name,description) values (#{id},#{name},#{description})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into permission (id,name,url,description)
+        insert into permission (id,name,description)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.name},#{item.url},#{item.description})
+            (#{item.id},#{item.name},#{item.description})
         </foreach>
     </insert>
 
@@ -78,9 +71,6 @@
             <if test="name != null">
                 name = #{name},
             </if>
-            <if test="url != null">
-                url = #{url},
-            </if>
             <if test="description != null">
                 description = #{description}
             </if>
@@ -94,9 +84,6 @@
             <set>
                 <if test="item.name != null">
                     name = #{item.name},
-                </if>
-                <if test="item.url != null">
-                    url = #{item.url},
                 </if>
                 <if test="item.description != null">
                     description = #{item.description}
