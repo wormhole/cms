@@ -1,6 +1,8 @@
 package net.stackoverflow.cms.config;
 
-import net.stackoverflow.cms.security.LoginSuccessHandler;
+import net.stackoverflow.cms.security.CmsAccessDeniedHandler;
+import net.stackoverflow.cms.security.CmsLoginFailureHandler;
+import net.stackoverflow.cms.security.CmsLoginSuccessHandler;
 import net.stackoverflow.cms.security.Md5PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
@@ -29,19 +33,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.headers().frameOptions().sameOrigin();
+        http.logout().logoutSuccessUrl("/");
+        http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
         http.formLogin()
                 .loginPage("/login")
                 .loginProcessingUrl("/login.do")
                 .failureUrl("/login")
-                .defaultSuccessUrl("/")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .successHandler(loginSuccessHandler());
+                .successHandler(loginSuccessHandler())
+                .failureHandler(loginFailureHandler());
         http.authorizeRequests()
                 .antMatchers("/login", "/login.do", "/register", "/vcode", "/favicon.icon", "/static/**").permitAll()
                 .anyRequest().hasAnyRole("admin");
-        http.logout().logoutSuccessUrl("/");
-        http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
+        http.exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler());
     }
 
     @Override
@@ -56,6 +62,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler();
+        return new CmsLoginSuccessHandler();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler loginFailureHandler() {
+        return new CmsLoginFailureHandler();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CmsAccessDeniedHandler();
     }
 }
