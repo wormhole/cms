@@ -3,43 +3,37 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
+    <link rel="stylesheet" href="/static/plugins/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/static/css/register.css"/>
-    <script src="/static/plugins/layui/layui.js"></script>
-    <title>内容管理系统 - 注册</title>
+    <script type="text/javascript" src="/static/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <title>注册</title>
 </head>
 <body>
-<div class="register">
+<div class="register-outer">
     <h3>用户注册</h3>
-    <div class="register-wrap">
-        <blockquote class="layui-elem-quote hidden"></blockquote>
-        <form class="layui-form">
-            <div class="layui-form-item">
-                <input type="text" id="username" required placeholder="用户名" class="layui-input">
-            </div>
-            <div class="layui-form-item">
-                <input type="tel" id="telephone" required placeholder="电话" class="layui-input">
-            </div>
-            <div class="layui-form-item">
-                <input type="email" id="email" required placeholder="邮箱" class="layui-input">
-            </div>
-            <div class="layui-form-item">
-                <input type="password" id="password" required placeholder="密码" class="layui-input">
-            </div>
-            <div class="layui-form-item">
-                <input type="password" id="re-password" required placeholder="确认密码" class="layui-input">
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <input type="text" id="vcode" required placeholder="验证码" class="layui-input">
-                </div>
-                <div class="layui-inline">
-                    <img src="/vcode" class="verify-img" id="verify-img"/>
-                </div>
-            </div>
-        </form>
-        <div class="layui-form-item">
-            <button class="layui-btn layui-btn-normal" id="register-btn">注册</button>
+    <div class="register-inner">
+        <div class="register-line">
+            <input type="text" class="form-control" id="username" placeholder="用户名">
+        </div>
+        <div class="register-line">
+            <input type="tel" class="form-control" id="username" placeholder="电话">
+        </div>
+        <div class="register-line">
+            <input type="email" class="form-control" id="username" placeholder="电话">
+        </div>
+        <div class="register-line">
+            <input type="password" class="form-control" id="password" placeholder="密码">
+        </div>
+        <div class="register-line">
+            <input type="password" class="form-control" id="check-password" placeholder="确认密码">
+        </div>
+        <div class="register-line form-inline">
+            <input type="text" class="form-control" id="vcode" placeholder="验证码">
+            <img src="/vcode" class="verify-img" id="verify-img"/>
+        </div>
+        <div class="login-line">
+            <button class="btn btn-block btn-primary" id="register-btn">注册</button>
         </div>
     </div>
 </div>
