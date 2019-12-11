@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
-    <link rel="stylesheet" href="/static/css/dashboard.css"/>
+    <link rel="stylesheet" href="/static/css/admin/dashboard.css"/>
     <script src="/static/plugins/echarts/echarts.min.js"></script>
     <script src="/static/plugins/layui/layui.js"></script>
     <title>内容管理系统</title>
@@ -18,6 +18,6 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/static/js/dashboard.js"></script>
+<script type="text/javascript" src="/static/js/admin/dashboard.js"></script>
 </body>
 </html>

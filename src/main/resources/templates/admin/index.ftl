@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
-    <link rel="stylesheet" href="/static/css/index.css"/>
+    <link rel="stylesheet" href="/static/css/admin/index.css"/>
     <script src="/static/plugins/layui/layui.js"></script>
     <title>内容管理系统</title>
 </head>
@@ -67,7 +67,7 @@
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-                    <iframe src="/dashboard" width="100%" height="100%" name="iframe" scrolling="auto"
+                    <iframe src="/admin/dashboard" width="100%" height="100%" name="iframe" scrolling="auto"
                             class="iframe" framborder="0"></iframe>
                 </div>
             </div>
@@ -79,6 +79,6 @@
         <center>底部信息</center>
     </div>
 </div>
-<script type="text/javascript" src="/static/js/index.js"></script>
+<script type="text/javascript" src="/static/js/admin/index.js"></script>
 </body>
 </html>

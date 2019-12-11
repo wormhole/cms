@@ -16,18 +16,18 @@
     <div class="login-inner">
         <form id="login-form" action="/login.do" method="post">
             <div class="login-line">
-                <input type="text" class="form-control" id="username" placeholder="用户名">
+                <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
             </div>
             <div class="login-line">
-                <input type="password" class="form-control" id="password" placeholder="密码">
+                <input type="password" class="form-control" id="password" name="password" placeholder="密码">
             </div>
             <div class="login-line form-inline">
-                <input type="text" class="form-control" id="vcode" placeholder="验证码">
+                <input type="text" class="form-control" id="vcode" name="vcode" placeholder="验证码">
                 <img src="/vcode" class="verify-img" id="verify-img"/>
             </div>
             <div class="form-group login-line">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="remember-me">
+                    <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
                     <label class="form-check-label" for="remember-me">
                         记住我
                     </label>
