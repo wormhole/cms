@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/static/css/register.css"/>
+    <link rel="stylesheet" href="/static/css/footer.css"/>
     <script type="text/javascript" src="/static/plugins/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <title>注册</title>
@@ -37,6 +38,7 @@
         </div>
     </div>
 </div>
+<footer>copyright &copy; 2019 by 凉衫薄</footer>
 <script type="text/javascript" src="/static/js/register.js"></script>
 </body>
 </html>

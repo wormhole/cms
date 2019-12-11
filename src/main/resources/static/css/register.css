@@ -8,24 +8,24 @@ body {
 }
 
 .register-outer {
-    width: 400px;
+    width: 440px;
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -65%);
+    transform: translate(-50%, -55%);
 }
 
 .register-outer h3 {
     color: #fff;
     text-align: center;
     height: 60px;
-    font-size: 30px;
+    font-size: 35px;
 }
 
 .register-inner {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     border-radius: 6px;
-    padding: 30px;
+    padding: 40px 50px 30px 50px;
     background: rgba(255, 255, 255, 0.3);
 }
 
