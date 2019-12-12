@@ -60,22 +60,12 @@ public class VCodeController {
         BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g = bi.createGraphics();
-        Font font = new Font("Times New Roman", Font.PLAIN, 20);
+        Font font = new Font("Consolas", Font.PLAIN, 25);
         g.setFont(font);
-        g.setColor(new Color(160, 120, 80));
+        g.setColor(new Color(80, 80, 180));
         g.setBackground(new Color(255, 255, 255));
         g.clearRect(0, 0, width, height);
 
-        Random random = new Random();
-        for (int i = 0; i < 50; i++) {
-            int x = random.nextInt(width);
-            int y = random.nextInt(height);
-            int x1 = random.nextInt(15);
-            int y1 = random.nextInt(15);
-            g.drawLine(x, y, x + x1, y + y1);
-        }
-
-        g.setColor(new Color(80, 80, 180));
         FontRenderContext context = g.getFontRenderContext();
         Rectangle2D bounds = font.getStringBounds(code, context);
         double x = (width - bounds.getWidth()) / 2;
