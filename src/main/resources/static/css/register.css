@@ -7,7 +7,7 @@ body {
     height: 100%;
 }
 
-.register-outer {
+.cms-register-outer {
     width: 440px;
     position: absolute;
     left: 50%;
@@ -15,7 +15,7 @@ body {
     transform: translate(-50%, -55%);
 }
 
-.register-outer h3 {
+.cms-register-outer h3 {
     color: #fff;
     text-align: center;
     height: 60px;
@@ -23,27 +23,27 @@ body {
     font-family: "幼圆";
 }
 
-.register-inner {
+.cms-register-inner {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     border-radius: 6px;
     padding: 40px 50px 30px 50px;
     background: rgba(255, 255, 255, 0.3);
 }
 
-.register-inner .register-line {
+.cms-register-inner .cms-register-line {
     margin-bottom: 23px;
 }
 
-.register-inner .form-control {
+.cms-register-inner .form-control {
     height: 45px;
 }
 
-.register-inner .verify-img {
+.cms-register-inner .cms-verify-img {
     width: 130px;
     height: 40px;
     margin-left: 10px;
 }
 
-.register-inner #register-btn {
+.cms-register-inner btn {
     width: 100%;
 }

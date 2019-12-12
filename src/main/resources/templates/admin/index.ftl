@@ -15,7 +15,7 @@
         <img src="/static/image/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
         内容管理系统
     </a>
-    <div class="user-dropdown">
+    <div class="cms-user-dropdown">
         <ul class="navbar-nav">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="user" role="button" data-toggle="dropdown"

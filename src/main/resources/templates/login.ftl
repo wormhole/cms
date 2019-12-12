@@ -11,21 +11,21 @@
     <title>登录</title>
 </head>
 <body>
-<div class="login-outer">
+<div class="cms-login-outer">
     <h3>用户登录</h3>
-    <div class="login-inner">
-        <form id="login-form" action="/login.do" method="post">
-            <div class="login-line">
+    <div class="cms-login-inner">
+        <form id="cms-login-form" action="/login.do" method="post">
+            <div class="cms-login-line">
                 <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
             </div>
-            <div class="login-line">
+            <div class="cms-login-line">
                 <input type="password" class="form-control" id="password" name="password" placeholder="密码">
             </div>
-            <div class="login-line form-inline">
+            <div class="cms-login-line form-inline">
                 <input type="text" class="form-control" id="vcode" name="vcode" placeholder="验证码">
-                <img src="/vcode" class="verify-img" id="verify-img"/>
+                <img src="/vcode" class="cms-verify-img" id="cms-verify-img"/>
             </div>
-            <div class="form-group login-line">
+            <div class="form-group cms-login-line">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
                     <label class="form-check-label" for="remember-me">
@@ -33,7 +33,7 @@
                     </label>
                 </div>
             </div>
-            <div class="login-line">
+            <div class="cms-login-line">
                 <button type="submit" class="btn btn-block btn-primary">登录</button>
             </div>
         </form>

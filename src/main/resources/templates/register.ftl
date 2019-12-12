@@ -11,30 +11,30 @@
     <title>注册</title>
 </head>
 <body>
-<div class="register-outer">
+<div class="cms-register-outer">
     <h3>用户注册</h3>
-    <div class="register-inner">
-        <div class="register-line">
+    <div class="cms-register-inner">
+        <div class="cms-register-line">
             <input type="text" class="form-control" id="username" placeholder="用户名">
         </div>
-        <div class="register-line">
+        <div class="cms-register-line">
             <input type="tel" class="form-control" id="username" placeholder="电话">
         </div>
-        <div class="register-line">
+        <div class="cms-register-line">
             <input type="email" class="form-control" id="username" placeholder="电话">
         </div>
-        <div class="register-line">
+        <div class="cms-register-line">
             <input type="password" class="form-control" id="password" placeholder="密码">
         </div>
-        <div class="register-line">
+        <div class="cms-register-line">
             <input type="password" class="form-control" id="check-password" placeholder="确认密码">
         </div>
-        <div class="register-line form-inline">
+        <div class="cms-register-line form-inline">
             <input type="text" class="form-control" id="vcode" placeholder="验证码">
-            <img src="/vcode" class="verify-img" id="verify-img"/>
+            <img src="/vcode" class="cms-verify-img" id="cms-verify-img"/>
         </div>
-        <div class="login-line">
-            <button class="btn btn-block btn-primary" id="register-btn">注册</button>
+        <div class="cms-register-line">
+            <button class="btn btn-block btn-primary" id="cms-register-btn">注册</button>
         </div>
     </div>
 </div>

@@ -7,7 +7,7 @@ body {
     height: 100%;
 }
 
-.login-outer {
+.cms-login-outer {
     width: 440px;
     position: absolute;
     left: 50%;
@@ -15,7 +15,7 @@ body {
     transform: translate(-50%, -60%);
 }
 
-.login-outer h3 {
+.cms-login-outer h3 {
     color: #fff;
     text-align: center;
     height: 60px;
@@ -23,31 +23,31 @@ body {
     font-family: "幼圆";
 }
 
-.login-inner {
+.cms-login-outer a {
+    text-decoration: underline;
+}
+
+.cms-login-inner {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     border-radius: 6px;
     padding: 40px 50px 30px 50px;
     background: rgba(255, 255, 255, 0.3);
 }
 
-.login-inner .login-line {
+.cms-login-inner .cms-login-line {
     margin-bottom: 23px;
 }
 
-.login-inner .form-control {
+.cms-login-inner .form-control {
     height: 45px;
 }
 
-.login-inner .verify-img {
+.cms-login-inner .cms-verify-img {
     width: 130px;
     height: 40px;
     margin-left: 10px;
 }
 
-.login-inner #login-btn {
+.cms-login-inner btn {
     width: 100%;
-}
-
-.login a {
-    text-decoration: underline;
 }
