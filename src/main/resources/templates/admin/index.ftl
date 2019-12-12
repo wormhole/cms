@@ -3,82 +3,31 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
+    <link rel="stylesheet" href="/static/plugins/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/static/css/admin/index.css"/>
-    <script src="/static/plugins/layui/layui.js"></script>
+    <script type="text/javascript" src="/static/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <title>内容管理系统</title>
 </head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <!-- 头部区域（可配合layui已有的水平导航） -->
-    <div class="layui-header">
-        <div class="layui-logo">内容管理系统</div>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <a href="javascript:"><i class="layui-icon layui-icon-notice"></i>&nbsp;&nbsp;消息</a>
-            </li>
-            <li class="layui-nav-item">
-                <a href="javascript:">
-                    <img src="/static/image/background.png" class="layui-nav-img layui-circle">
-                    ${Session.user.username}
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a href="javascript:" data-url="/user/info" data-title="个人信息"
-                           data-id="info">个人信息</a></dd>
-                    <dd><a href="/logout">注销</a></dd>
-                </dl>
-            </li>
-        </ul>
-    </div>
-
-    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <ul class="layui-nav layui-nav-tree">
-                <li class="layui-nav-item">
-                    <a href="javascript:"><i class="layui-icon layui-icon-user"></i>&nbsp;&nbsp;用户</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:" data-url="/user/info" data-title="个人中心"
-                               data-id="info">个人信息</a>
-                        </dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:"><i class="layui-icon layui-icon-set-fill"></i>&nbsp;&nbsp;系统</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:" data-url="/system/configuration" data-title="常规设置"
-                               data-id="configuration">常规设置</a></dd>
-                        <dd><a href="javascript:" data-url="/system/menu" data-title="菜单管理"
-                               data-id="menu">菜单管理</a>
-                        </dd>
-                        <dd><a href="javascript:" data-url="/system/backup" data-title="数据备份"
-                               data-id="backup">数据备份</a></dd>
-                    </dl>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- 内容主体区域 -->
-    <div class="layui-body">
-        <div class="layui-tab layui-tab-brief" lay-filter="tabs" lay-allowClose="true">
-            <ul class="layui-tab-title">
-                <li class="layui-this"><span class="layui-icon layui-icon-home"></span>&nbsp;&nbsp;首页</li>
-            </ul>
-            <div class="layui-tab-content">
-                <div class="layui-tab-item layui-show">
-                    <iframe src="/admin/dashboard" width="100%" height="100%" name="iframe" scrolling="auto"
-                            class="iframe" framborder="0"></iframe>
-                </div>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="/admin">
+        <img src="/static/image/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+        内容管理系统
+    </a>
+    <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="user" role="button" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                admin
+            </a>
+            <div class="dropdown-menu" aria-labelledby="user">
+                <a class="dropdown-item" href="#">个人信息</a>
+                <a class="dropdown-item" href="#">注销</a>
             </div>
-        </div>
-    </div>
-
-    <!-- 底部固定区域 -->
-    <div class="layui-footer">
-        <center>底部信息</center>
-    </div>
-</div>
+        </li>
+    </ul>
+</nav>
 <script type="text/javascript" src="/static/js/admin/index.js"></script>
 </body>
 </html>
