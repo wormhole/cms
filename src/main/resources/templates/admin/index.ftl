@@ -28,7 +28,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="user">
                     <a class="dropdown-item" href="#">个人信息</a>
-                    <a class="dropdown-item" href="#">注销</a>
+                    <a class="dropdown-item" href="/logout">注销</a>
                 </div>
             </li>
         </ul>

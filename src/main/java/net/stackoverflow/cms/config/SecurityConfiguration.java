@@ -36,6 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler());
+        http.addFilterBefore(verifyCodeFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -65,12 +66,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public CmsAuthenticationFilter authenticationFilter() throws Exception {
-        CmsAuthenticationFilter authenticationFilter = new CmsAuthenticationFilter();
+    public CmsUsernamePasswordAuthenticationFilter authenticationFilter() throws Exception {
+        CmsUsernamePasswordAuthenticationFilter authenticationFilter = new CmsUsernamePasswordAuthenticationFilter();
         authenticationFilter.setAuthenticationManager(authenticationManagerBean());
         authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         authenticationFilter.setFilterProcessesUrl("/login.do");
         return authenticationFilter;
+    }
+
+    @Bean
+    public VerifyCodeFilter verifyCodeFilter() {
+        VerifyCodeFilter verifyCodeFilter = new VerifyCodeFilter();
+        verifyCodeFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        return verifyCodeFilter;
     }
 }

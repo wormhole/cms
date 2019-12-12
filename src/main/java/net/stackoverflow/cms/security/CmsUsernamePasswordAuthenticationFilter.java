@@ -20,7 +20,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @Slf4j
-public class CmsAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class CmsUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (request.getContentType().equals(MediaType.APPLICATION_JSON_UTF8_VALUE) || request.getContentType().equals(MediaType.APPLICATION_JSON_VALUE)) {
