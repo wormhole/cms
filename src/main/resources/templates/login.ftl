@@ -23,7 +23,7 @@
             </div>
             <div class="cms-login-line form-inline">
                 <input type="text" class="form-control" id="vcode" name="vcode" placeholder="验证码">
-                <img src="/vcode" class="cms-verify-img" id="cms-verify-img"/>
+                <img src="/vcode" class="cms-verify-img" id="verify-img"/>
             </div>
             <div class="form-group cms-login-line">
                 <div class="form-check">

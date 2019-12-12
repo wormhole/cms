@@ -31,7 +31,7 @@ body {
 }
 
 .cms-register-inner .cms-register-line {
-    margin-bottom: 23px;
+    padding-bottom: 10px;
 }
 
 .cms-register-inner .form-control {

@@ -52,7 +52,7 @@ public class RegisterController extends BaseController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity register(@RequestBody UserVO userVO, HttpSession session) {
 
@@ -81,7 +81,7 @@ public class RegisterController extends BaseController {
             e.printStackTrace();
             result.setStatus(Result.Status.FAILURE);
             result.setMessage("服务器错误");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
         }
     }
 }

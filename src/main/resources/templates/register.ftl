@@ -18,10 +18,10 @@
             <input type="text" class="form-control" id="username" placeholder="用户名">
         </div>
         <div class="cms-register-line">
-            <input type="tel" class="form-control" id="username" placeholder="电话">
+            <input type="tel" class="form-control" id="telephone" placeholder="电话">
         </div>
         <div class="cms-register-line">
-            <input type="email" class="form-control" id="username" placeholder="电话">
+            <input type="email" class="form-control" id="email" placeholder="邮箱">
         </div>
         <div class="cms-register-line">
             <input type="password" class="form-control" id="password" placeholder="密码">
@@ -31,10 +31,10 @@
         </div>
         <div class="cms-register-line form-inline">
             <input type="text" class="form-control" id="vcode" placeholder="验证码">
-            <img src="/vcode" class="cms-verify-img" id="cms-verify-img"/>
+            <img src="/vcode" class="cms-verify-img" id="verify-img"/>
         </div>
         <div class="cms-register-line">
-            <button class="btn btn-block btn-primary" id="cms-register-btn">注册</button>
+            <button class="btn btn-block btn-primary" id="register-btn">注册</button>
         </div>
     </div>
 </div>
