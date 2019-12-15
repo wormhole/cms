@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.exception.VerifyCodeException;
 import net.stackoverflow.cms.util.JsonUtils;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -25,12 +26,12 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
 
         log.error(exception.getMessage());
 
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter out = response.getWriter();
         Result result = new Result();
         result.setStatus(Result.Status.FAILURE);
         if (exception instanceof VerifyCodeException) {
-            result.setMessage("验证码不能为空或验证码错误");
+            result.setMessage(exception.getMessage());
         } else {
             result.setMessage("用户名或密码错误");
         }

@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.web.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,7 @@ import java.util.Random;
  * @author 凉衫薄
  */
 @Controller
+@Slf4j
 public class VCodeController {
 
     /**
@@ -35,6 +37,7 @@ public class VCodeController {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String verifyCode = drawImg(output);
+        log.info("sessionId:" + session.getId() + ",验证码:" + verifyCode);
 
         session.setAttribute("vcode", verifyCode);
 

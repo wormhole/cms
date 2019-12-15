@@ -3,6 +3,7 @@ package net.stackoverflow.cms.security;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.util.JsonUtils;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -29,6 +30,8 @@ public class CmsLogoutSuccessHandler implements LogoutSuccessHandler {
         Result result = new Result();
         result.setStatus(Result.Status.SUCCESS);
         result.setMessage("注销登录成功");
+
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter out = response.getWriter();
         out.write(JsonUtils.bean2json(result));
         out.flush();

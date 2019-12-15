@@ -3,6 +3,7 @@ package net.stackoverflow.cms.security;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.util.JsonUtils;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -29,7 +30,7 @@ public class CmsAccessDeniedHandler implements AccessDeniedHandler {
         log.error("权限不足:" + userDetails.getUsername() + "->" + request.getRequestURI());
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter out = response.getWriter();
         Result result = new Result();
         result.setStatus(Result.Status.FAILURE);

@@ -1,6 +1,5 @@
 package net.stackoverflow.cms.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -9,9 +8,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 
 /**
  * 自定义认证过滤器（同时支持json和form）
@@ -20,21 +16,14 @@ import java.util.Map;
  */
 @Slf4j
 public class CmsUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        UsernamePasswordAuthenticationToken authRequest = null;
-        try (InputStream is = request.getInputStream()) {
-            Map authenticationBean = mapper.readValue(is, Map.class);
-            authRequest = new UsernamePasswordAuthenticationToken(authenticationBean.get("username"), authenticationBean.get("password"));
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            authRequest = new UsernamePasswordAuthenticationToken("", "");
-        } finally {
-            setDetails(request, authRequest);
-            return this.getAuthenticationManager().authenticate(authRequest);
-        }
-
+        String username = (String) request.getAttribute("username");
+        String password = (String) request.getAttribute("password");
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+        setDetails(request, authRequest);
+        return this.getAuthenticationManager().authenticate(authRequest);
     }
 }

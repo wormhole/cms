@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 
 /**
  * Spring Security配置类
@@ -27,13 +28,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+        http.cors().disable();
         http.headers().frameOptions().sameOrigin();
 
-        http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
+        http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30).rememberMeParameter("rememberMe").rememberMeServices(rememberMeService());
         http.logout().logoutSuccessHandler(logoutSuccessHandler());
-        http.formLogin().loginProcessingUrl("/login");
+        http.formLogin().loginProcessingUrl("/login.do");
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/vcode").permitAll()
+                .antMatchers("/login.do", "/register", "/vcode").permitAll()
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
@@ -44,6 +46,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public CmsRememberMeService rememberMeService() {
+        return new CmsRememberMeService("rememberMe", userDetailsService, new InMemoryTokenRepositoryImpl());
     }
 
     @Bean
