@@ -31,9 +31,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().disable();
         http.headers().frameOptions().sameOrigin();
 
-        http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30).rememberMeParameter("rememberMe").rememberMeServices(rememberMeService());
+        http.rememberMe().key("rememberMe").rememberMeServices(rememberMeService());
         http.logout().logoutSuccessHandler(logoutSuccessHandler());
-        http.formLogin().loginProcessingUrl("/login.do");
+        http.formLogin();
         http.authorizeRequests()
                 .antMatchers("/login.do", "/register", "/vcode").permitAll()
                 .anyRequest().hasAnyRole("admin");
@@ -50,7 +50,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CmsRememberMeService rememberMeService() {
-        return new CmsRememberMeService("rememberMe", userDetailsService, new InMemoryTokenRepositoryImpl());
+        CmsRememberMeService cmsRememberMeService = new CmsRememberMeService("rememberMe", userDetailsService, new InMemoryTokenRepositoryImpl());
+        cmsRememberMeService.setParameter("rememberMe");
+        cmsRememberMeService.setTokenValiditySeconds(60 * 60 * 24 * 30);
+        return cmsRememberMeService;
     }
 
     @Bean
@@ -90,6 +93,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         authenticationFilter.setFilterProcessesUrl("/login.do");
+        authenticationFilter.setRememberMeServices(rememberMeService());
         return authenticationFilter;
     }
 
