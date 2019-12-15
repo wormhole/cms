@@ -68,7 +68,7 @@ public class RegisterController extends BaseController {
             e.printStackTrace();
             result.setStatus(Result.Status.FAILURE);
             result.setMessage("服务器错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
 }
