@@ -31,9 +31,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
         http.logout().logoutSuccessHandler(logoutSuccessHandler());
-        http.formLogin();
+        http.formLogin().loginProcessingUrl("/login");
         http.authorizeRequests()
-                .antMatchers("/login.do", "/register.do", "/vcode").permitAll()
+                .antMatchers("/login", "/register", "/vcode").permitAll()
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());

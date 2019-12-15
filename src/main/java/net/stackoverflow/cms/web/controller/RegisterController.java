@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -34,25 +33,13 @@ public class RegisterController extends BaseController {
     private UserService userService;
 
     /**
-     * 注册页面跳转
-     *
-     * @return
-     */
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerPage() {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/register");
-        return mv;
-    }
-
-    /**
      * 用户注册接口
      *
      * @param userVO
      * @param session
      * @return
      */
-    @RequestMapping(value = "/register.do", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity register(@RequestBody UserVO userVO, HttpSession session) {
 
