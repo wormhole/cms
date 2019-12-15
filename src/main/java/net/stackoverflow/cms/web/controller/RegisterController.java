@@ -68,7 +68,7 @@ public class RegisterController extends BaseController {
             e.printStackTrace();
             result.setStatus(Result.Status.FAILURE);
             result.setMessage("服务器错误");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
         }
     }
 }
