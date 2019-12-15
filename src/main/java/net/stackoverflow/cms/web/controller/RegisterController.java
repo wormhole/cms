@@ -50,7 +50,10 @@ public class RegisterController extends BaseController {
             if (!vcode.equalsIgnoreCase(userVO.getVcode())) {
                 Map<String, String> errorMap = new HashMap<>(16);
                 errorMap.put("vcode", "验证码错误");
-                return ResponseEntity.status(HttpStatus.OK).body(errorMap);
+                result.setStatus(Result.Status.FAILURE);
+                result.setData(errorMap);
+                result.setMessage("验证码错误");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
             //保存至数据库
