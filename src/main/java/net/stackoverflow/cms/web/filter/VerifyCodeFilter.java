@@ -34,7 +34,7 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if ("POST".equalsIgnoreCase(request.getMethod()) && pathMatcher.match("/login.do", request.getServletPath())) {
+        if ("POST".equalsIgnoreCase(request.getMethod()) && pathMatcher.match("/login", request.getServletPath())) {
             String vcode = null;
             String username = null;
             String password = null;

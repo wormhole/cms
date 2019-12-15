@@ -35,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.logout().logoutSuccessHandler(logoutSuccessHandler());
         http.formLogin();
         http.authorizeRequests()
-                .antMatchers("/login.do", "/register", "/vcode").permitAll()
+                .antMatchers("/login", "/register", "/vcode", "/logout").permitAll()
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
@@ -92,7 +92,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         authenticationFilter.setAuthenticationManager(authenticationManagerBean());
         authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-        authenticationFilter.setFilterProcessesUrl("/login.do");
+        authenticationFilter.setFilterProcessesUrl("/login");
         authenticationFilter.setRememberMeServices(rememberMeService());
         return authenticationFilter;
     }
