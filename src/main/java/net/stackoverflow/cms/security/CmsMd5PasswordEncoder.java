@@ -8,7 +8,7 @@ import org.springframework.util.DigestUtils;
  *
  * @author 凉衫薄
  */
-public class Md5PasswordEncoder implements PasswordEncoder {
+public class CmsMd5PasswordEncoder implements PasswordEncoder {
 
     private final String salt = "4F2016C6B934D55BD7120E5D0E62CCE3";
 

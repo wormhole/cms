@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -29,14 +28,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.headers().frameOptions().sameOrigin();
-        http.logout();
+
         http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
+        http.logout().logoutSuccessHandler(logoutSuccessHandler());
         http.formLogin();
         http.authorizeRequests()
                 .antMatchers("/login.do", "/register.do", "/vcode").permitAll()
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler());
+                .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
         http.addFilterBefore(verifyCodeFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
@@ -47,8 +47,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new Md5PasswordEncoder();
+    public CmsMd5PasswordEncoder passwordEncoder() {
+        return new CmsMd5PasswordEncoder();
     }
 
     @Bean
@@ -62,8 +62,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    public CmsLogoutSuccessHandler logoutSuccessHandler() {
+        return new CmsLogoutSuccessHandler();
+    }
+
+    @Bean
     public CmsAccessDeniedHandler accessDeniedHandler() {
         return new CmsAccessDeniedHandler();
+    }
+
+    @Bean
+    public CmsAuthenticationEntryPoint authenticationEntryPoint() {
+        return new CmsAuthenticationEntryPoint();
     }
 
     @Bean

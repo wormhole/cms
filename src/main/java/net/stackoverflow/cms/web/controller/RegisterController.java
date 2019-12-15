@@ -4,7 +4,7 @@ import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.pojo.entity.User;
 import net.stackoverflow.cms.pojo.vo.UserVO;
-import net.stackoverflow.cms.security.Md5PasswordEncoder;
+import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class RegisterController extends BaseController {
             BeanUtils.copyProperties(userVO, user);
             user.setId(UUID.randomUUID().toString());
             user.setEnabled(1);
-            user.setPassword(new Md5PasswordEncoder().encode(user.getPassword()));
+            user.setPassword(new CmsMd5PasswordEncoder().encode(user.getPassword()));
             userService.insert(user);
 
             result.setStatus(Result.Status.SUCCESS);
