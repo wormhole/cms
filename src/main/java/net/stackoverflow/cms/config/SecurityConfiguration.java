@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.config;
 
 import net.stackoverflow.cms.security.*;
+import net.stackoverflow.cms.web.filter.VerifyCodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
