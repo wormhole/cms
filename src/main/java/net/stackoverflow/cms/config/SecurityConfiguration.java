@@ -29,11 +29,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.headers().frameOptions().sameOrigin();
-        http.logout().logoutSuccessUrl("/");
+        http.logout();
         http.rememberMe().tokenValiditySeconds(60 * 60 * 24 * 30);
-        http.formLogin().loginPage("/login");
+        http.formLogin();
         http.authorizeRequests()
-                .antMatchers("/login", "/login.do", "/register", "/vcode", "/favicon.icon", "/static/**").permitAll()
+                .antMatchers("/login.do", "/register.do", "/vcode").permitAll()
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler());
