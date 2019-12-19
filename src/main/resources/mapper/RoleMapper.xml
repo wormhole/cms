@@ -9,6 +9,7 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
+        <result property="root" column="root"/>
     </resultMap>
 
     <select id="selectByPage" resultMap="baseMap" resultType="role">
@@ -20,6 +21,9 @@
                 </if>
                 <if test="searchMap.description != null">
                     and description = #{searchMap.description}
+                </if>
+                <if test="searchMap.root != null">
+                    and root = #{searchMap.root}
                 </if>
             </if>
         </where>
@@ -35,6 +39,9 @@
             <if test="description != null">
                 and description = #{description}
             </if>
+            <if test="root != null">
+                and root = #{root}
+            </if>
         </where>
     </select>
 
@@ -43,14 +50,14 @@
     </select>
 
     <insert id="insert" parameterType="role">
-        insert into role (id,name,description) values (#{id},#{name},#{description})
+        insert into role (id,name,description,root) values (#{id},#{name},#{description},#{root})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into role (id,name,description)
+        insert into role (id,name,description,root)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.name},#{item.description})
+            (#{item.id},#{item.name},#{item.description},#{item.root})
         </foreach>
     </insert>
 
@@ -74,6 +81,9 @@
             <if test="description != null">
                 description = #{description},
             </if>
+            <if test="root != null">
+                root = #{root}
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -87,6 +97,9 @@
                 </if>
                 <if test="item.description != null">
                     description = #{item.description}
+                </if>
+                <if test="item.root != null">
+                    root = #{item.root}
                 </if>
             </set>
             where id = #{item.id}
