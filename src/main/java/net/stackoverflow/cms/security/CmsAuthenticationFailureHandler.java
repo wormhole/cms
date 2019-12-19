@@ -24,15 +24,15 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        log.error(exception.getMessage());
-
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter out = response.getWriter();
         Result result = new Result();
         result.setStatus(Result.Status.FAILURE);
         if (exception instanceof VerifyCodeException) {
+            log.error(exception.getMessage());
             result.setMessage(exception.getMessage());
         } else {
+            log.error("用户名或密码错误");
             result.setMessage("用户名或密码错误");
         }
         out.write(JsonUtils.bean2json(result));
