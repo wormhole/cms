@@ -19,17 +19,17 @@ public class CmsUserDetails implements UserDetails {
     private final Integer enabled;
     private final String email;
     private final String telephone;
-    private final Integer root;
+    private final Integer deletable;
     private final List<GrantedAuthority> authorities;
 
-    public CmsUserDetails(String username, String password, Integer enabled, String email, String telephone, Integer root, List<GrantedAuthority> authorities) {
+    public CmsUserDetails(String username, String password, Integer enabled, String email, String telephone, Integer deletable, List<GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.email = email;
         this.telephone = telephone;
         this.authorities = authorities;
-        this.root = root;
+        this.deletable = deletable;
     }
 
     public String getEmail() {

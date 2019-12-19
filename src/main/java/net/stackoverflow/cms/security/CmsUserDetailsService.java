@@ -49,7 +49,7 @@ public class CmsUserDetailsService implements UserDetailsService {
                 authorities.add(sga);
             }
             log.info("加载完用户信息:" + username);
-            return new CmsUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), user.getRoot(), authorities);
+            return new CmsUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), user.getDeletable(), authorities);
         } else {
             log.error("找不到对应的用户:" + username);
             throw new UsernameNotFoundException(username);

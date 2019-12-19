@@ -9,6 +9,7 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
+        <result property="deletable" column="deletable"/>
     </resultMap>
 
     <select id="selectByPage" resultMap="permissionMap" resultType="permission">
@@ -20,6 +21,9 @@
                 </if>
                 <if test="searchMap.description != null">
                     and description = #{searchMap.description}
+                </if>
+                <if test="searchMap.deletable != null">
+                    and deletable = #{searchMap.deletable}
                 </if>
             </if>
         </where>
@@ -35,6 +39,9 @@
             <if test="description != null">
                 and description = #{searchMap.description}
             </if>
+            <if test="deletable != null">
+                and deletable = #{searchMap.deletable}
+            </if>
         </where>
     </select>
 
@@ -43,14 +50,14 @@
     </select>
 
     <insert id="insert" parameterType="permission">
-        insert into permission (id,name,description) values (#{id},#{name},#{description})
+        insert into permission (id,name,description,deletable) values (#{id},#{name},#{description},#{deletable})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into permission (id,name,description)
+        insert into permission (id,name,description,deletable)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.name},#{item.description})
+            (#{item.id},#{item.name},#{item.description},#{item.deletable})
         </foreach>
     </insert>
 
@@ -74,6 +81,9 @@
             <if test="description != null">
                 description = #{description}
             </if>
+            <if test="deletable != null">
+                deletable = #{deletable}
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -87,6 +97,9 @@
                 </if>
                 <if test="item.description != null">
                     description = #{item.description}
+                </if>
+                <if test="item.deletable != null">
+                    deletable = #{item.deletable}
                 </if>
             </set>
             where id = #{item.id}

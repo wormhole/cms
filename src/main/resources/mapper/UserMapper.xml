@@ -12,7 +12,7 @@
         <result property="enabled" column="enabled"/>
         <result property="email" column="email"/>
         <result property="telephone" column="telephone"/>
-        <result property="root" column="root"/>
+        <result property="deletable" column="deletable"/>
     </resultMap>
 
     <select id="selectByPage" resultMap="baseMap" resultType="user">
@@ -31,8 +31,8 @@
                 <if test="searchMap.telephone != null">
                     and telephone = #{searchMap.telephone}
                 </if>
-                <if test="searchMap.root != null">
-                    and root = #{searchMap.root}
+                <if test="searchMap.deletable != null">
+                    and deletable = #{searchMap.deletable}
                 </if>
             </if>
         </where>
@@ -54,8 +54,8 @@
             <if test="telephone != null">
                 and telephone = #{telephone}
             </if>
-            <if test="root != null">
-                and root = #{root}
+            <if test="deletable != null">
+                and deletable = #{deletable}
             </if>
         </where>
     </select>
@@ -65,14 +65,14 @@
     </select>
 
     <insert id="insert" parameterType="user">
-        insert into user (id,username,password,email,telephone,enabled,root) values (#{id},#{username},#{password},#{email},#{telephone},#{enabled},#{root})
+        insert into user (id,username,password,email,telephone,enabled,deletable) values (#{id},#{username},#{password},#{email},#{telephone},#{enabled},#{deletable})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user (id,username,password,email,telephone,enabled,root)
+        insert into user (id,username,password,email,telephone,enabled,deletable)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled},#{item.root})
+            (#{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled},#{item.deletable})
         </foreach>
     </insert>
 
@@ -105,8 +105,8 @@
             <if test="enabled != null">
                 enabled = #{enabled}
             </if>
-            <if test="root != null">
-                root = #{root}
+            <if test="deletable != null">
+                deletable = #{deletable}
             </if>
         </set>
         where id = #{id}
@@ -131,8 +131,8 @@
                 <if test="item.enabled != null">
                     enabled = #{item.enabled}
                 </if>
-                <if test="item.root != null">
-                    root = #{item.root}
+                <if test="item.deletable != null">
+                    deletable = #{item.deletable}
                 </if>
             </set>
             where id = #{item.id}

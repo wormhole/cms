@@ -21,5 +21,5 @@ public class Role implements Serializable {
     private String id;
     private String name;
     private String description;
-    private Integer root;
+    private Integer deletable;
 }
