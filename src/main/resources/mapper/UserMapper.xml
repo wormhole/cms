@@ -12,6 +12,7 @@
         <result property="enabled" column="enabled"/>
         <result property="email" column="email"/>
         <result property="telephone" column="telephone"/>
+        <result property="root" column="root"/>
     </resultMap>
 
     <select id="selectByPage" resultMap="baseMap" resultType="user">
@@ -29,6 +30,9 @@
                 </if>
                 <if test="searchMap.telephone != null">
                     and telephone = #{searchMap.telephone}
+                </if>
+                <if test="searchMap.root != null">
+                    and root = #{searchMap.root}
                 </if>
             </if>
         </where>
@@ -50,6 +54,9 @@
             <if test="telephone != null">
                 and telephone = #{telephone}
             </if>
+            <if test="root != null">
+                and root = #{root}
+            </if>
         </where>
     </select>
 
@@ -58,14 +65,14 @@
     </select>
 
     <insert id="insert" parameterType="user">
-        insert into user (id,username,password,email,telephone,enabled) values (#{id},#{username},#{password},#{email},#{telephone},#{enabled})
+        insert into user (id,username,password,email,telephone,enabled,root) values (#{id},#{username},#{password},#{email},#{telephone},#{enabled},#{root})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user (id,username,password,email,telephone,enabled)
+        insert into user (id,username,password,email,telephone,enabled,root)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled})
+            (#{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled},#{item.root})
         </foreach>
     </insert>
 
@@ -98,6 +105,9 @@
             <if test="enabled != null">
                 enabled = #{enabled}
             </if>
+            <if test="root != null">
+                root = #{root}
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -120,6 +130,9 @@
                 </if>
                 <if test="item.enabled != null">
                     enabled = #{item.enabled}
+                </if>
+                <if test="item.root != null">
+                    root = #{item.root}
                 </if>
             </set>
             where id = #{item.id}

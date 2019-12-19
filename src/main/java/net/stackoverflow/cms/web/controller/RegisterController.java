@@ -6,6 +6,7 @@ import net.stackoverflow.cms.pojo.entity.User;
 import net.stackoverflow.cms.pojo.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.UserService;
+import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -48,11 +49,39 @@ public class RegisterController extends BaseController {
             //校验验证码
             String vcode = (String) session.getAttribute("vcode");
             if (!vcode.equalsIgnoreCase(userVO.getVcode())) {
-                Map<String, String> errorMap = new HashMap<>(16);
-                errorMap.put("vcode", "验证码错误");
                 result.setStatus(Result.Status.FAILURE);
-                result.setData(errorMap);
                 result.setMessage("验证码错误");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            //校验数据
+            if (!ValidateUtils.validateUsername(userVO.getUsername())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("用户名不能为空");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            } else {
+                List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
+                    put("username", userVO.getUsername());
+                }});
+                if (users.size() != 0) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("用户名重复");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+            }
+            if (!ValidateUtils.validateTelephone(userVO.getTelephone())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("电话号码格式错误");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            if (!ValidateUtils.validateEmail(userVO.getEmail())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("邮箱格式错误");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            if (!ValidateUtils.validatePassword(userVO.getPassword())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("密码长度不能小于6");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 

@@ -20,7 +20,6 @@ public class UserVO implements Serializable {
 
     private String username;
     private String password;
-    private String checkPassword;
     private String telephone;
     private String email;
     private String vcode;
