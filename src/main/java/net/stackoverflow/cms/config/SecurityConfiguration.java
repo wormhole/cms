@@ -35,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.logout().logoutSuccessHandler(logoutSuccessHandler());
         http.formLogin();
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/vcode", "/logout").permitAll()
+                .antMatchers("/login", "/register", "/vcode").permitAll()
                 .anyRequest().hasAnyRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
