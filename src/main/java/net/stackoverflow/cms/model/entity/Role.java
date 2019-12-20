@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.pojo.entity;
+package net.stackoverflow.cms.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 用户-角色实体类
+ * 角色实体类
  *
  * @author 凉衫薄
  */
@@ -16,9 +16,10 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRole implements Serializable {
+public class Role implements Serializable {
 
     private String id;
-    private String userId;
-    private String roleId;
+    private String name;
+    private String description;
+    private Integer deletable;
 }

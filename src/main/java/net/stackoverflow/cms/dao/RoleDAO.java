@@ -1,7 +1,7 @@
 package net.stackoverflow.cms.dao;
 
 import net.stackoverflow.cms.common.Page;
-import net.stackoverflow.cms.pojo.entity.Role;
+import net.stackoverflow.cms.model.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.dao.PermissionDAO;
-import net.stackoverflow.cms.pojo.entity.Permission;
+import net.stackoverflow.cms.model.entity.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

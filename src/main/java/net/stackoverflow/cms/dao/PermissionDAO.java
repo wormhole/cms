@@ -1,7 +1,7 @@
 package net.stackoverflow.cms.dao;
 
 import net.stackoverflow.cms.common.Page;
-import net.stackoverflow.cms.pojo.entity.Permission;
+import net.stackoverflow.cms.model.entity.Permission;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

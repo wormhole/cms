@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.pojo.vo;
+package net.stackoverflow.cms.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 用户VO类
+ * 用户实体类
  *
  * @author 凉衫薄
  */
@@ -16,12 +16,14 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVO implements Serializable {
+public class User implements Serializable {
 
+    private String id;
     private String username;
     private String password;
-    private String telephone;
     private String email;
-    private String vcode;
+    private String telephone;
+    private Integer enabled;
+    private Integer deletable;
 
 }

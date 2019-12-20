@@ -2,7 +2,7 @@ package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.dao.*;
-import net.stackoverflow.cms.pojo.entity.*;
+import net.stackoverflow.cms.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

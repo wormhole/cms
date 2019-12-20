@@ -1,9 +1,9 @@
 package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.pojo.entity.Permission;
-import net.stackoverflow.cms.pojo.entity.Role;
-import net.stackoverflow.cms.pojo.entity.User;
+import net.stackoverflow.cms.model.entity.Permission;
+import net.stackoverflow.cms.model.entity.Role;
+import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
