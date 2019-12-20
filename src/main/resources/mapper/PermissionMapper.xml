@@ -5,19 +5,25 @@
 
 <mapper namespace="net.stackoverflow.hr.dao.PermissionDAO">
 
-    <resultMap id="permissionMap" type="permission">
+    <resultMap id="baseMap" type="permission">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
         <result property="deletable" column="deletable"/>
     </resultMap>
 
-    <select id="selectByPage" resultMap="permissionMap" resultType="permission">
+    <select id="selectByPage" resultMap="baseMap" resultType="permission">
         select * from permission
         <where>
             <if test="searchMap != null">
+                <if test="searchMap.ids != null">
+                    id in
+                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
                 <if test="searchMap.name != null">
-                    name = #{searchMap.name}
+                    and name = #{searchMap.name}
                 </if>
                 <if test="searchMap.description != null">
                     and description = #{searchMap.description}
@@ -26,15 +32,24 @@
                     and deletable = #{searchMap.deletable}
                 </if>
             </if>
+            <if test="key != null">
+                and (name like CONCAT('%',#{key},'%') or description like CONCAT('%',#{key},'%'))
+            </if>
         </where>
-        order by #{order} #{sort} #{offset},#{limit}
+        order by ${order} ${sort} ${offset},${limit}
     </select>
 
-    <select id="selectByCondition" resultMap="permissionMap" resultType="permission">
+    <select id="selectByCondition" resultMap="baseMap" resultType="permission">
         select * from permission
         <where>
+            <if test="ids != null">
+                id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
             <if test="name != null">
-                name = #{name}
+                and name = #{name}
             </if>
             <if test="description != null">
                 and description = #{searchMap.description}
@@ -45,7 +60,7 @@
         </where>
     </select>
 
-    <select id="select" resultMap="permissionMap" resultType="permission">
+    <select id="select" resultMap="baseMap" resultType="permission">
         select * from permission where id = #{id}
     </select>
 

@@ -73,10 +73,6 @@
             <if test="deletable != null">
                 and deletable = #{deletable}
             </if>
-            <if test="key != null">
-                and (username like CONCAT('%',#{key},'%') or email like CONCAT('%',#{key},'%') or telephone like
-                CONCAT('%',#{key},'%'))
-            </if>
         </where>
     </select>
 
