@@ -1,12 +1,8 @@
 package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.Page;
-import net.stackoverflow.cms.dao.PermissionDAO;
-import net.stackoverflow.cms.dao.RoleDAO;
-import net.stackoverflow.cms.dao.RolePermissionDAO;
-import net.stackoverflow.cms.model.entity.Permission;
-import net.stackoverflow.cms.model.entity.Role;
-import net.stackoverflow.cms.model.entity.RolePermission;
+import net.stackoverflow.cms.dao.*;
+import net.stackoverflow.cms.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +18,10 @@ public class RoleServiceImpl implements RoleService {
     private PermissionDAO permissionDAO;
     @Autowired
     private RolePermissionDAO rolePermissionDAO;
+    @Autowired
+    private UserRoleDAO userRoleDAO;
+    @Autowired
+    private UserDAO userDAO;
 
     @Override
     public List<Role> selectByPage(Page page) {
@@ -123,5 +123,24 @@ public class RoleServiceImpl implements RoleService {
         }
 
         return permissions;
+    }
+
+    @Override
+    public List<User> selectUserByRoleIds(List<String> roleIds) {
+
+        Set<String> userIds = new HashSet<>();
+        for (String roleId : roleIds) {
+            List<UserRole> userRoles = userRoleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("roleId", roleId);
+            }});
+            if (userRoles != null && userRoles.size() > 0) {
+                for (UserRole userRole : userRoles) {
+                    userIds.add(userRole.getUserId());
+                }
+            }
+        }
+        return userDAO.selectByCondition(new HashMap<String, Object>(16) {{
+            put("ids", userIds);
+        }});
     }
 }

@@ -8,19 +8,20 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 用户VO类
+ * 注册用户VO类
  *
  * @author 凉衫薄
  */
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVO implements Serializable {
+public class LoginVO implements Serializable {
 
-    private String id;
     private String username;
-    private String email;
+    private String password;
     private String telephone;
-    private Integer enabled;
+    private String email;
+    private String vcode;
+
 }

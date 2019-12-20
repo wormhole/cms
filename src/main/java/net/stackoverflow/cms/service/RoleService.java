@@ -3,6 +3,7 @@ package net.stackoverflow.cms.service;
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
+import net.stackoverflow.cms.model.entity.User;
 
 import java.util.List;
 import java.util.Map;
@@ -32,4 +33,6 @@ public interface RoleService {
     void revokePermission(String roleId, String permissionId);
 
     List<Permission> getPermissionByRoleId(String roleId);
+
+    List<User> selectUserByRoleIds(List<String> roleIds);
 }
