@@ -19,8 +19,14 @@
         select * from user
         <where>
             <if test="searchMap != null">
+                <if test="searchMap.ids != null">
+                    id in
+                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
                 <if test="searchMap.username != null">
-                    username = #{searchMap.username}
+                    and username = #{searchMap.username}
                 </if>
                 <if test="searchMap.enabled != null">
                     and enabled = #{searchMap.enabled}
@@ -35,15 +41,25 @@
                     and deletable = #{searchMap.deletable}
                 </if>
             </if>
+            <if test="key != null">
+                and (username like CONCAT('%',#{key},'%') or email like CONCAT('%',#{key},'%') or telephone like
+                CONCAT('%',#{key},'%'))
+            </if>
         </where>
-        order by #{order} #{sort} limit #{offset},#{limit}
+        order by ${order} ${sort} limit ${offset},${limit}
     </select>
 
     <select id="selectByCondition" resultMap="baseMap" resultType="user">
         select * from user
         <where>
+            <if test="ids != null">
+                id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
             <if test="username != null">
-                username = #{username}
+                and username = #{username}
             </if>
             <if test="enabled != null">
                 and enabled = #{enabled}
@@ -56,6 +72,10 @@
             </if>
             <if test="deletable != null">
                 and deletable = #{deletable}
+            </if>
+            <if test="key != null">
+                and (username like CONCAT('%',#{key},'%') or email like CONCAT('%',#{key},'%') or telephone like
+                CONCAT('%',#{key},'%'))
             </if>
         </where>
     </select>
