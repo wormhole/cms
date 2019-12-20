@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.common;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,8 +35,12 @@ public class Page {
         this.page = page;
         this.limit = limit;
         this.offset = (page - 1) * limit;
-        this.order = order;
-        this.sort = sort;
+        if (StringUtils.isNotBlank(order)) {
+            this.order = order;
+        }
+        if (StringUtils.isNotBlank(sort)) {
+            this.sort = sort;
+        }
     }
 
     public Page(Integer page, Integer limit, Map<String, Object> searchMap, Map<String, Object> likeMap) {
