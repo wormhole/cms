@@ -13,11 +13,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -29,7 +27,7 @@ import java.util.UUID;
  *
  * @author 凉衫薄
  */
-@Controller
+@RestController
 @Slf4j
 public class RegisterController extends BaseController {
 
@@ -43,8 +41,7 @@ public class RegisterController extends BaseController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    @ResponseBody
+    @PostMapping(value = "/register")
     public ResponseEntity register(@RequestBody UserVO userVO, HttpSession session) {
 
         log.info("请求参数：" + JsonUtils.bean2json(userVO));
