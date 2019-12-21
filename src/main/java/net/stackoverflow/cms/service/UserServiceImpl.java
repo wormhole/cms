@@ -24,6 +24,11 @@ public class UserServiceImpl implements UserService {
     private RolePermissionDAO rolePermissionDAO;
 
     @Override
+    public int totalSize() {
+        return userDAO.totalSize();
+    }
+
+    @Override
     public List<User> selectByPage(Page page) {
         return userDAO.selectByPage(page);
     }

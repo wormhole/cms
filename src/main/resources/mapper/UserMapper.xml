@@ -15,6 +15,10 @@
         <result property="deletable" column="deletable"/>
     </resultMap>
 
+    <select id="totalSize">
+        select count(*) from user
+    </select>
+
     <select id="selectByPage" resultMap="baseMap" resultType="user">
         select * from user
         <where>

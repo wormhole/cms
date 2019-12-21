@@ -84,9 +84,14 @@ public class UserManageController extends BaseController {
                 BeanUtils.copyProperties(user, userVO);
                 userVOs.add(userVO);
             }
-            result.setStatus(Result.Status.FAILURE);
+            int total = userService.totalSize();
+            Map<String, Object> resultMap = new HashMap<>(16);
+            resultMap.put("list", userVOs);
+            resultMap.put("total", total);
+
+            result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
-            result.setData(userVOs);
+            result.setData(resultMap);
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
