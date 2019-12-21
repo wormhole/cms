@@ -10,6 +10,7 @@ import net.stackoverflow.cms.model.vo.RoleVO;
 import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
+import net.stackoverflow.cms.util.JsonUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,7 @@ public class UserManageController extends BaseController {
             @RequestParam(value = "limit") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false) String order,
-            @RequestParam(value = "roleIds", required = false) List<String> roleIds,
+            @RequestParam(value = "roleIds[]", required = false) List<String> roleIds,
             @RequestParam(value = "key", required = false) String key) {
 
         Result result = new Result();
@@ -104,6 +105,7 @@ public class UserManageController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(resultMap);
+            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
