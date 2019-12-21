@@ -83,6 +83,9 @@ public class UserManageController extends BaseController {
                 sort = "username";
                 order = "asc";
             }
+            if (StringUtils.isBlank(key)) {
+                key = null;
+            }
             Page pageParam = new Page(page, limit, sort, order, searchMap, key);
             List<User> users = userService.selectByPage(pageParam);
 
