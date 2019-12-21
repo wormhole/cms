@@ -79,7 +79,7 @@ public class UserManageController extends BaseController {
 
             Map<String, Object> searchMap = new HashMap<>(16);
             searchMap.put("ids", userIds);
-            if (StringUtils.isBlank(order) || StringUtils.isBlank()) {
+            if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "username";
                 order = "asc";
             }
