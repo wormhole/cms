@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * 用户VO类
+ * 角色VO类
  *
  * @author 凉衫薄
  */
@@ -17,12 +16,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVO implements Serializable {
+public class RoleVO implements Serializable {
 
     private String id;
-    private String username;
-    private String email;
-    private String telephone;
-    private Integer enabled;
-    private List<RoleVO> roles;
+    private String name;
+    private String description;
 }

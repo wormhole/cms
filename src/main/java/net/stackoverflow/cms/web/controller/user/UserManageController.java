@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.model.vo.RoleVO;
 import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -75,13 +77,23 @@ public class UserManageController extends BaseController {
 
             Map<String, Object> searchMap = new HashMap<>(16);
             searchMap.put("ids", userIds);
-            Page pageParam = new Page(page, limit, order, sort, searchMap, key);
+            Page pageParam = new Page(page, limit, sort, order, searchMap, key);
             List<User> users = userService.selectByPage(pageParam);
 
             List<UserVO> userVOs = new ArrayList<>();
             for (User user : users) {
                 UserVO userVO = new UserVO();
                 BeanUtils.copyProperties(user, userVO);
+                List<Role> roles = userService.getRoleByUserId(user.getId());
+                List<RoleVO> roleVOs = new ArrayList<>();
+                if (roles != null && roles.size() > 0) {
+                    for (Role role : roles) {
+                        RoleVO roleVO = new RoleVO();
+                        BeanUtils.copyProperties(role, roleVO);
+                        roleVOs.add(roleVO);
+                    }
+                }
+                userVO.setRoles(roleVOs);
                 userVOs.add(userVO);
             }
             int total = userService.totalSize();

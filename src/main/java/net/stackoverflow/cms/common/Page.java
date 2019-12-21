@@ -20,8 +20,8 @@ public class Page {
     private Integer page;
     private Integer limit;
     private Integer offset;
-    private String order = "id";
-    private String sort = "asc";
+    private String order = "asc";
+    private String sort = "id";
     private Map<String, Object> searchMap;
     private String key;
 
@@ -31,7 +31,7 @@ public class Page {
         this.offset = (page - 1) * limit;
     }
 
-    public Page(Integer page, Integer limit, String order, String sort, Map<String, Object> searchMap, String key) {
+    public Page(Integer page, Integer limit, String sort, String order, Map<String, Object> searchMap, String key) {
         this.page = page;
         this.limit = limit;
         this.offset = (page - 1) * limit;

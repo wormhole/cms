@@ -32,7 +32,7 @@
                 and (user_id like CONCAT('%',#{key},'%') or role_id like CONCAT('%',#{key},'%'))
             </if>
         </where>
-        order by ${order} ${sort} limit ${offset},${limit}
+        order by ${sort} ${order} limit ${offset},${limit}
     </select>
 
     <select id="selectByCondition" resultMap="baseMap" resultType="userRole">

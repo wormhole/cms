@@ -36,7 +36,7 @@
                 and (name like CONCAT('%',#{key},'%') or description like CONCAT('%',#{key},'%'))
             </if>
         </where>
-        order by ${order} ${sort} limit ${offset},${limit}
+        order by ${sort} ${order} limit ${offset},${limit}
     </select>
 
     <select id="selectByCondition" resultMap="baseMap" resultType="role">
