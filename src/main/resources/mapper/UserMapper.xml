@@ -15,7 +15,7 @@
         <result property="deletable" column="deletable"/>
     </resultMap>
 
-    <select id="totalSize">
+    <select id="totalSize" resultType="int">
         select count(*) from user
     </select>
 
