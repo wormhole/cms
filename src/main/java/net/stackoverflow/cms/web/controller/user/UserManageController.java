@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.web.controller.user;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Page;
@@ -78,6 +79,10 @@ public class UserManageController extends BaseController {
 
             Map<String, Object> searchMap = new HashMap<>(16);
             searchMap.put("ids", userIds);
+            if (StringUtils.isBlank(order) || StringUtils.isBlank()) {
+                sort = "username";
+                order = "asc";
+            }
             Page pageParam = new Page(page, limit, sort, order, searchMap, key);
             List<User> users = userService.selectByPage(pageParam);
 
