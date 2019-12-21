@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         if (permissionMap.size() > 0) {
-            permissions = (List<Permission>) permissionMap.values();
+            permissions = new ArrayList<>(permissionMap.values());
         }
         return permissions;
     }

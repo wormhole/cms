@@ -3,7 +3,7 @@
         "-//mybtis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="net.stackoverflow.hr.dao.PermissionDAO">
+<mapper namespace="net.stackoverflow.cms.dao.PermissionDAO">
 
     <resultMap id="baseMap" type="permission">
         <id property="id" column="id"/>
