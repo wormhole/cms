@@ -24,11 +24,6 @@ public class UserServiceImpl implements UserService {
     private RolePermissionDAO rolePermissionDAO;
 
     @Override
-    public int totalSize() {
-        return userDAO.totalSize();
-    }
-
-    @Override
     public List<User> selectByPage(Page page) {
         return userDAO.selectByPage(page);
     }
@@ -58,12 +53,35 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int delete(String id) {
+        List<UserRole> userRoles = userRoleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+            put("userId", id);
+        }});
+        if (userRoles != null && userRoles.size() > 0) {
+            List<String> ids = new ArrayList<>();
+            for (UserRole userRole : userRoles) {
+                ids.add(userRole.getId());
+            }
+            userRoleDAO.batchDelete(ids);
+        }
         return userDAO.delete(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(List<String> ids) {
+
+        List<String> userRoleIds = new ArrayList<>();
+        for (String id : ids) {
+            List<UserRole> userRoles = userRoleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("userId", id);
+            }});
+            if (userRoles != null && userRoles.size() > 0) {
+                for (UserRole userRole : userRoles) {
+                    userRoleIds.add(userRole.getId());
+                }
+            }
+        }
+        userRoleDAO.batchDelete(userRoleIds);
         return userDAO.batchDelete(ids);
     }
 

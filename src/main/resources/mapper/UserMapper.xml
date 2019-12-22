@@ -15,10 +15,6 @@
         <result property="deletable" column="deletable"/>
     </resultMap>
 
-    <select id="totalSize" resultType="int">
-        select count(*) from user
-    </select>
-
     <select id="selectByPage" resultMap="baseMap" resultType="user">
         select * from user
         <where>
@@ -50,7 +46,12 @@
                 CONCAT('%',#{key},'%'))
             </if>
         </where>
-        order by ${sort} ${order} limit ${offset},${limit}
+        <if test="order != null and sort != null">
+            order by ${sort} ${order}
+        </if>
+        <if test="offset != null and limit != null">
+            limit ${offset},${limit}
+        </if>
     </select>
 
     <select id="selectByCondition" resultMap="baseMap" resultType="user">

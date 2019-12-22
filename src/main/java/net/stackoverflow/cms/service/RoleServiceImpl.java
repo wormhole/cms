@@ -139,8 +139,12 @@ public class RoleServiceImpl implements RoleService {
                 }
             }
         }
-        return userDAO.selectByCondition(new HashMap<String, Object>(16) {{
-            put("ids", userIds);
-        }});
+        if (userIds.size() > 0) {
+            return userDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("ids", userIds);
+            }});
+        } else {
+            return null;
+        }
     }
 }

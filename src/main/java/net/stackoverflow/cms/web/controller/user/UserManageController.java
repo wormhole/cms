@@ -7,6 +7,7 @@ import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.model.vo.IdsVO;
 import net.stackoverflow.cms.model.vo.RoleVO;
 import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.service.RoleService;
@@ -16,10 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,19 +64,26 @@ public class UserManageController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            List<String> userIds = null;
+            //根据角色过滤
+            List<String> userIds = new ArrayList<>();
+            userIds.add("");
             if (roleIds != null && roleIds.size() > 0) {
                 List<User> users = roleService.selectUserByRoleIds(roleIds);
                 if (users != null && users.size() > 0) {
-                    userIds = new ArrayList<>();
                     for (User user : users) {
                         userIds.add(user.getId());
                     }
                 }
             }
 
+            Map<String, Object> resultMap = new HashMap<>(16);
+            List<UserVO> userVOs = new ArrayList<>();
             Map<String, Object> searchMap = new HashMap<>(16);
-            searchMap.put("ids", userIds);
+            int total = 0;
+
+            if (roleIds != null && roleIds.size() > 0) {
+                searchMap.put("ids", userIds);
+            }
             if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "deletable";
                 order = "asc";
@@ -88,8 +93,10 @@ public class UserManageController extends BaseController {
             }
             Page pageParam = new Page(page, limit, sort, order, searchMap, key);
             List<User> users = userService.selectByPage(pageParam);
+            pageParam.setLimit(null);
+            pageParam.setOffset(null);
+            total = userService.selectByPage(pageParam).size();
 
-            List<UserVO> userVOs = new ArrayList<>();
             for (User user : users) {
                 UserVO userVO = new UserVO();
                 BeanUtils.copyProperties(user, userVO);
@@ -105,8 +112,7 @@ public class UserManageController extends BaseController {
                 userVO.setRoles(roleVOs);
                 userVOs.add(userVO);
             }
-            int total = userService.totalSize();
-            Map<String, Object> resultMap = new HashMap<>(16);
+
             resultMap.put("list", userVOs);
             resultMap.put("total", total);
 
@@ -114,6 +120,43 @@ public class UserManageController extends BaseController {
             result.setMessage("success");
             result.setData(resultMap);
             log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("服务器错误");
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity delete(@RequestBody IdsVO idsVO) {
+        Result result = new Result();
+        try {
+            //校验参数
+            if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("参数不能为空");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            //检查是否有不可被删除的
+            Map<String, Object> searchMap = new HashMap<>(16);
+            searchMap.put("ids", idsVO.getIds());
+            List<User> users = userService.selectByCondition(searchMap);
+            for (User user : users) {
+                if (user.getDeletable() == 0) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("超级管理员不允许被删除");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+            }
+
+            userService.batchDelete(idsVO.getIds());
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("删除成功");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {

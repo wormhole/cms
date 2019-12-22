@@ -10,8 +10,6 @@ import java.util.Map;
 
 public interface UserService {
 
-    int totalSize();
-
     List<User> selectByPage(Page page);
 
     List<User> selectByCondition(Map<String, Object> searchMap);

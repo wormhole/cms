@@ -10,8 +10,6 @@ import java.util.Map;
 @Mapper
 public interface UserDAO {
 
-    int totalSize();
-
     List<User> selectByPage(Page page);
 
     List<User> selectByCondition(Map<String, Object> searchMap);
