@@ -19,11 +19,8 @@
         select * from user
         <where>
             <if test="searchMap != null">
-                <if test="searchMap.ids != null">
-                    id in
-                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
+                <if test="searchMap.id != null">
+                    id = #{searchMap.id}
                 </if>
                 <if test="searchMap.username != null">
                     and username = #{searchMap.username}
@@ -39,6 +36,12 @@
                 </if>
                 <if test="searchMap.deletable != null">
                     and deletable = #{searchMap.deletable}
+                </if>
+                <if test="searchMap.ids != null">
+                    and id in
+                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
                 </if>
             </if>
             <if test="key != null">
@@ -57,11 +60,8 @@
     <select id="selectByCondition" resultMap="baseMap" resultType="user">
         select * from user
         <where>
-            <if test="ids != null">
-                id in
-                <foreach collection="ids" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
+            <if test="id != null">
+                id = #{id}
             </if>
             <if test="username != null">
                 and username = #{username}
@@ -77,6 +77,12 @@
             </if>
             <if test="deletable != null">
                 and deletable = #{deletable}
+            </if>
+            <if test="ids != null">
+                and id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </where>
     </select>

@@ -7,6 +7,7 @@ import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.model.vo.GrantRoleVO;
 import net.stackoverflow.cms.model.vo.IdsVO;
 import net.stackoverflow.cms.model.vo.RoleVO;
 import net.stackoverflow.cms.model.vo.UserVO;
@@ -126,7 +127,7 @@ public class UserManageController extends BaseController {
             resultMap.put("total", total);
 
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("加载成功");
+            result.setMessage("success");
             result.setData(resultMap);
             log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -134,7 +135,7 @@ public class UserManageController extends BaseController {
         } catch (Exception e) {
             log.error(e.getMessage());
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage("服务器错误");
+            result.setMessage(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
@@ -145,7 +146,7 @@ public class UserManageController extends BaseController {
      * @param idsVO
      * @return
      */
-    @DeleteMapping("/delete")
+    @DeleteMapping(value = "/delete")
     public ResponseEntity delete(@RequestBody IdsVO idsVO) {
         Result result = new Result();
         try {
@@ -182,7 +183,13 @@ public class UserManageController extends BaseController {
         }
     }
 
-    @PutMapping("/enabled")
+    /**
+     * 启用
+     *
+     * @param idsVO
+     * @return
+     */
+    @PutMapping(value = "/enabled")
     public ResponseEntity enabled(@RequestBody IdsVO idsVO) {
         Result result = new Result();
         try {
@@ -220,7 +227,13 @@ public class UserManageController extends BaseController {
         }
     }
 
-    @PutMapping("/disabled")
+    /**
+     * 禁用
+     *
+     * @param idsVO
+     * @return
+     */
+    @PutMapping(value = "/disabled")
     public ResponseEntity disabled(@RequestBody IdsVO idsVO) {
         Result result = new Result();
         try {
@@ -247,6 +260,142 @@ public class UserManageController extends BaseController {
             userService.batchUpdate(users);
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("禁用成功");
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    /**
+     * 表格过滤参照
+     *
+     * @returnfilters
+     */
+    @GetMapping(value = "/filters")
+    public ResponseEntity filters() {
+        Result result = new Result();
+        try {
+            List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>(16));
+            List<RoleVO> roleVOs = new ArrayList<>();
+            for (Role role : roles) {
+                RoleVO roleVO = new RoleVO();
+                BeanUtils.copyProperties(role, roleVO);
+                roleVOs.add(roleVO);
+            }
+
+            Map<String, Object> retMap = new HashMap<>(16);
+            retMap.put("roles", roleVOs);
+
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("success");
+            result.setData(retMap);
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    /**
+     * 用户的角色参照
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/ref_user_role")
+    public ResponseEntity refUserRole(@RequestParam(value = "id") String id) {
+        Result result = new Result();
+        try {
+            //校验参数
+            if (StringUtils.isBlank(id)) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("id不能为空");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            User user = userService.select(id);
+            if (user == null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("不合法的id");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            } else if (user.getDeletable() == 0) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("超级管理员不允许被操作");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            List<Role> roles = userService.getRoleByUserId(id);
+            List<Role> allRoles = roleService.selectByCondition(new HashMap<String, Object>(16));
+
+            List<RoleVO> roleVOs = new ArrayList<>();
+            List<RoleVO> allRoleVOs = new ArrayList<>();
+            for (Role role : roles) {
+                RoleVO roleVO = new RoleVO();
+                BeanUtils.copyProperties(role, roleVO);
+                roleVOs.add(roleVO);
+            }
+            for (Role role : allRoles) {
+                RoleVO roleVO = new RoleVO();
+                BeanUtils.copyProperties(role, roleVO);
+                allRoleVOs.add(roleVO);
+            }
+
+            Map<String, Object> retMap = new HashMap<>(16);
+            retMap.put("target", roleVOs);
+            retMap.put("all", allRoleVOs);
+
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("success");
+            result.setData(retMap);
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    /**
+     * 授权
+     *
+     * @param grantRoleVO
+     * @return
+     */
+    @PutMapping(value = "/grant_role")
+    public ResponseEntity grantRole(@RequestBody GrantRoleVO grantRoleVO) {
+        Result result = new Result();
+        try {
+            //校验数据
+            if (StringUtils.isBlank(grantRoleVO.getUserId())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("userId不能为空");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            User user = userService.select(grantRoleVO.getUserId());
+            if (user == null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("不合法的id");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            } else if (user.getDeletable() == 0) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("超级管理员不允许被操作");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            userService.reGrantRole(grantRoleVO.getUserId(), grantRoleVO.getRoleIds());
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("授权成功");
             log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 

@@ -15,11 +15,8 @@
         select * from user_role
         <where>
             <if test="searchMap != null">
-                <if test="searchMap.ids != null">
-                    id in
-                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
+                <if test="searchMap.id != null">
+                    id = #{searchMap.id}
                 </if>
                 <if test="searchMap.userId != null">
                     and user_id = #{searchMap.userId}
@@ -27,28 +24,42 @@
                 <if test="searchMap.roleId != null">
                     and role_id = #{searchMap.roleId}
                 </if>
+                <if test="searchMap.ids != null">
+                    and id in
+                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
             </if>
             <if test="key != null">
                 and (user_id like CONCAT('%',#{key},'%') or role_id like CONCAT('%',#{key},'%'))
             </if>
         </where>
-        order by ${sort} ${order} limit ${offset},${limit}
+        <if test="sort != null and order != null">
+            order by ${sort} ${order}
+        </if>
+        <if test="offset != null and limit != null">
+            limit ${offset},${limit}
+        </if>
     </select>
 
     <select id="selectByCondition" resultMap="baseMap" resultType="userRole">
         select * from user_role
         <where>
-            <if test="ids != null">
-                id in
-                <foreach collection="ids" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
+            <if test="id != null">
+                id = #{id}
             </if>
             <if test="userId != null">
                 and user_id = #{userId}
             </if>
             <if test="roleId != null">
                 and role_id = #{roleId}
+            </if>
+            <if test="ids != null">
+                and id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </where>
     </select>
