@@ -39,6 +39,17 @@ public class UserManageController extends BaseController {
     @Autowired
     private RoleService roleService;
 
+    /**
+     * 分页查询用户信息
+     *
+     * @param page
+     * @param limit
+     * @param sort
+     * @param order
+     * @param roleIds
+     * @param key
+     * @return
+     */
     @GetMapping(value = "/list")
     public ResponseEntity list(
             @RequestParam(value = "page") Integer page,
@@ -54,13 +65,11 @@ public class UserManageController extends BaseController {
             if (page < 1) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("page不能小于1");
-                log.error("page小于1:" + page);
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
             if (limit < 1) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("limit不能小于1");
-                log.error("limit小于1:" + limit);
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
@@ -117,20 +126,25 @@ public class UserManageController extends BaseController {
             resultMap.put("total", total);
 
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
+            result.setMessage("加载成功");
             result.setData(resultMap);
             log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             result.setStatus(Result.Status.FAILURE);
             result.setMessage("服务器错误");
-            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
 
+    /**
+     * 删除用户
+     *
+     * @param idsVO
+     * @return
+     */
     @DeleteMapping("/delete")
     public ResponseEntity delete(@RequestBody IdsVO idsVO) {
         Result result = new Result();
@@ -138,7 +152,7 @@ public class UserManageController extends BaseController {
             //校验参数
             if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
                 result.setStatus(Result.Status.FAILURE);
-                result.setMessage("参数不能为空");
+                result.setMessage("请至少选择一条数据");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
@@ -157,12 +171,89 @@ public class UserManageController extends BaseController {
             userService.batchDelete(idsVO.getIds());
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("删除成功");
+            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("服务器错误");
             log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    @PutMapping("/enabled")
+    public ResponseEntity enabled(@RequestBody IdsVO idsVO) {
+        Result result = new Result();
+        try {
+            //校验参数
+            if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("请至少选择一条数据");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            Map<String, Object> searchMap = new HashMap<>(16);
+            searchMap.put("ids", idsVO.getIds());
+            List<User> users = userService.selectByCondition(searchMap);
+            for (User user : users) {
+                if (user.getDeletable() == 0) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("超级管理员不允许被操作");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+                user.setEnabled(1);
+            }
+
+            //更新数据库
+            userService.batchUpdate(users);
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("启用成功");
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    @PutMapping("/disabled")
+    public ResponseEntity disabled(@RequestBody IdsVO idsVO) {
+        Result result = new Result();
+        try {
+            //校验参数
+            if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("请至少选择一条数据");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            Map<String, Object> searchMap = new HashMap<>(16);
+            searchMap.put("ids", idsVO.getIds());
+            List<User> users = userService.selectByCondition(searchMap);
+            for (User user : users) {
+                if (user.getDeletable() == 0) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("超级管理员不允许被操作");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+                user.setEnabled(0);
+            }
+
+            //更新数据库
+            userService.batchUpdate(users);
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("禁用成功");
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }

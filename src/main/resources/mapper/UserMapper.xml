@@ -124,7 +124,7 @@
                 telephone = #{telephone},
             </if>
             <if test="enabled != null">
-                enabled = #{enabled}
+                enabled = #{enabled},
             </if>
             <if test="deletable != null">
                 deletable = #{deletable}
@@ -150,7 +150,7 @@
                     telephone = #{item.telephone},
                 </if>
                 <if test="item.enabled != null">
-                    enabled = #{item.enabled}
+                    enabled = #{item.enabled},
                 </if>
                 <if test="item.deletable != null">
                     deletable = #{item.deletable}

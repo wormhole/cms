@@ -57,7 +57,6 @@ public class RegisterController extends BaseController {
             if (!vcode.equalsIgnoreCase(loginVO.getVcode())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("验证码错误");
-                log.error("验证码错误: realVCode:" + vcode + " userVCode:" + loginVO.getVcode());
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
@@ -65,7 +64,6 @@ public class RegisterController extends BaseController {
             if (!ValidateUtils.validateUsername(loginVO.getUsername())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("用户名不能为空");
-                log.error("用户名为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
@@ -74,26 +72,22 @@ public class RegisterController extends BaseController {
                 if (users.size() != 0) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名重复");
-                    log.error("用户名重复:" + loginVO.getUsername());
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
             if (!ValidateUtils.validateTelephone(loginVO.getTelephone())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("电话号码格式错误");
-                log.error("电话号码格式错误:" + loginVO.getTelephone());
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
             if (!ValidateUtils.validateEmail(loginVO.getEmail())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("邮箱格式错误");
-                log.error("邮箱格式错误:" + loginVO.getEmail());
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
             if (!ValidateUtils.validatePassword(loginVO.getPassword())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("密码长度不能小于6");
-                log.error("密码长度小于6:" + loginVO.getPassword());
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
@@ -117,12 +111,12 @@ public class RegisterController extends BaseController {
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("注册成功");
-            log.info("注册成功");
+            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage("服务器错误");
+            result.setMessage(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
