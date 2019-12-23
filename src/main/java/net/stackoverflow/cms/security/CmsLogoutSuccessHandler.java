@@ -23,11 +23,11 @@ public class CmsLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("注销登录成功");
+        log.info("注销成功");
 
         Result result = new Result();
         result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("注销登录成功");
+        result.setMessage("注销成功");
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter out = response.getWriter();
