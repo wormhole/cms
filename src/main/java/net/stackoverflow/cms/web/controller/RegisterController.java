@@ -5,7 +5,7 @@ import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.model.vo.LoginVO;
+import net.stackoverflow.cms.model.vo.RegisterVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -41,33 +41,33 @@ public class RegisterController extends BaseController {
     /**
      * 用户注册接口
      *
-     * @param loginVO
+     * @param registerVO
      * @param session
      * @return
      */
     @PostMapping(value = "/register")
-    public ResponseEntity register(@RequestBody LoginVO loginVO, HttpSession session) {
+    public ResponseEntity register(@RequestBody RegisterVO registerVO, HttpSession session) {
 
-        log.info("请求参数：" + JsonUtils.bean2json(loginVO));
+        log.info("请求参数：" + JsonUtils.bean2json(registerVO));
 
         Result result = new Result();
         try {
             //校验验证码
             String vcode = (String) session.getAttribute("vcode");
-            if (!vcode.equalsIgnoreCase(loginVO.getVcode())) {
+            if (!vcode.equalsIgnoreCase(registerVO.getVcode())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("验证码错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
             //校验数据
-            if (!ValidateUtils.validateUsername(loginVO.getUsername())) {
+            if (!ValidateUtils.validateUsername(registerVO.getUsername())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
-                    put("username", loginVO.getUsername());
+                    put("username", registerVO.getUsername());
                 }});
                 if (users.size() != 0) {
                     result.setStatus(Result.Status.FAILURE);
@@ -75,17 +75,17 @@ public class RegisterController extends BaseController {
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
-            if (!ValidateUtils.validateTelephone(loginVO.getTelephone())) {
+            if (!ValidateUtils.validateTelephone(registerVO.getTelephone())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("电话号码格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validateEmail(loginVO.getEmail())) {
+            if (!ValidateUtils.validateEmail(registerVO.getEmail())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("邮箱格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validatePassword(loginVO.getPassword())) {
+            if (!ValidateUtils.validatePassword(registerVO.getPassword())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("密码长度不能小于6");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -93,7 +93,7 @@ public class RegisterController extends BaseController {
 
             //保存至数据库
             User user = new User();
-            BeanUtils.copyProperties(loginVO, user);
+            BeanUtils.copyProperties(registerVO, user);
             user.setId(UUID.randomUUID().toString());
             user.setEnabled(1);
             user.setDeletable(1);

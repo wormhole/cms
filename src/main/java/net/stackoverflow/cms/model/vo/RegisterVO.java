@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginVO implements Serializable {
+public class RegisterVO implements Serializable {
 
     private String username;
     private String password;
