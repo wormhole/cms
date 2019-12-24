@@ -402,7 +402,7 @@ public class UserManageController extends BaseController {
         Result result = new Result();
         try {
             //校验参数
-            if (updateUserVO.getType() != 0 || updateUserVO.getType() != 1) {
+            if (updateUserVO.getType() != 0 && updateUserVO.getType() != 1) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("类型错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
