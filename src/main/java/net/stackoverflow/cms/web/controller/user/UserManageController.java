@@ -7,13 +7,12 @@ import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.model.vo.GrantRoleVO;
-import net.stackoverflow.cms.model.vo.IdsVO;
-import net.stackoverflow.cms.model.vo.RoleVO;
-import net.stackoverflow.cms.model.vo.UserVO;
+import net.stackoverflow.cms.model.vo.*;
+import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.JsonUtils;
+import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,18 +61,6 @@ public class UserManageController extends BaseController {
 
         Result result = new Result();
         try {
-            //校验参数
-            if (page < 1) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("page不能小于1");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            if (limit < 1) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("limit不能小于1");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-
             //根据角色过滤
             List<String> userIds = new ArrayList<>();
             userIds.add("");
@@ -326,10 +313,6 @@ public class UserManageController extends BaseController {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else if (user.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("超级管理员不允许被操作");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
             List<Role> roles = userService.getRoleByUserId(id);
@@ -399,6 +382,84 @@ public class UserManageController extends BaseController {
             log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param updateUserVO
+     * @return
+     */
+    @PutMapping(value = "/update")
+    public ResponseEntity update(@RequestBody UpdateUserVO updateUserVO) {
+
+        Result result = new Result();
+        try {
+            //校验参数
+            if (updateUserVO.getType() != 0 || updateUserVO.getType() != 1) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("类型错误");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            User user = userService.select(updateUserVO.getId());
+            if (user == null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("不合法的id");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
+            if (updateUserVO.getType() == 0) {
+                if (!ValidateUtils.validateUsername(updateUserVO.getUsername())) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("用户名不能为空");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                } else {
+                    if (!user.getUsername().equals(updateUserVO.getUsername())) {
+                        List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
+                            put("username", updateUserVO.getUsername());
+                        }});
+                        if (users != null && users.size() > 0) {
+                            result.setStatus(Result.Status.FAILURE);
+                            result.setMessage("用户名已存在");
+                            return ResponseEntity.status(HttpStatus.OK).body(result);
+                        }
+                    }
+                }
+                if (!ValidateUtils.validateEmail(updateUserVO.getEmail())) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("邮箱格式错误");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+                if (!ValidateUtils.validateTelephone(updateUserVO.getTelephone())) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("电话号码格式错误");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+                user.setUsername(updateUserVO.getUsername());
+                user.setEmail(updateUserVO.getEmail());
+                user.setTelephone(updateUserVO.getTelephone());
+                userService.update(user);
+            } else if (updateUserVO.getType() == 1) {
+                if (!ValidateUtils.validatePassword(updateUserVO.getPassword())) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("密码长度不能小于6");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+                String password = new CmsMd5PasswordEncoder().encode(updateUserVO.getPassword());
+                user.setPassword(password);
+                userService.update(user);
+            }
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("更新成功");
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
             result.setStatus(Result.Status.FAILURE);
