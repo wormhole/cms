@@ -25,5 +25,10 @@ public class UserVO implements Serializable {
     private String telephone;
     private Integer enabled;
     private Integer deletable;
+    private String password;
     private List<RoleVO> roles;
+    /**
+     * 操作类型：0-更新基本信息，1-更新密码
+     */
+    private Integer type;
 }

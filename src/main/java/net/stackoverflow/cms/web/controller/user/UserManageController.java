@@ -7,7 +7,10 @@ import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.model.vo.*;
+import net.stackoverflow.cms.model.vo.GrantRoleVO;
+import net.stackoverflow.cms.model.vo.IdsVO;
+import net.stackoverflow.cms.model.vo.RoleVO;
+import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -94,6 +97,7 @@ public class UserManageController extends BaseController {
             for (User user : users) {
                 UserVO userVO = new UserVO();
                 BeanUtils.copyProperties(user, userVO);
+                userVO.setPassword(null);
                 List<Role> roles = userService.getRoleByUserId(user.getId());
                 List<RoleVO> roleVOs = new ArrayList<>();
                 if (roles != null && roles.size() > 0) {
@@ -390,37 +394,37 @@ public class UserManageController extends BaseController {
     /**
      * 更新用户信息
      *
-     * @param opUserVO
+     * @param userVO
      * @return
      */
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody OpUserVO opUserVO) {
+    public ResponseEntity update(@RequestBody UserVO userVO) {
 
         Result result = new Result();
         try {
             //校验参数
-            if (opUserVO.getType() != 0 && opUserVO.getType() != 1) {
+            if (userVO.getType() != 0 && userVO.getType() != 1) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("类型错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            User user = userService.select(opUserVO.getId());
+            User user = userService.select(userVO.getId());
             if (user == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            if (opUserVO.getType() == 0) {
-                if (!ValidateUtils.validateUsername(opUserVO.getUsername())) {
+            if (userVO.getType() == 0) {
+                if (!ValidateUtils.validateUsername(userVO.getUsername())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名不能为空");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 } else {
-                    if (!user.getUsername().equals(opUserVO.getUsername())) {
+                    if (!user.getUsername().equals(userVO.getUsername())) {
                         List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
-                            put("username", opUserVO.getUsername());
+                            put("username", userVO.getUsername());
                         }});
                         if (users != null && users.size() > 0) {
                             result.setStatus(Result.Status.FAILURE);
@@ -429,27 +433,27 @@ public class UserManageController extends BaseController {
                         }
                     }
                 }
-                if (!ValidateUtils.validateEmail(opUserVO.getEmail())) {
+                if (!ValidateUtils.validateEmail(userVO.getEmail())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("邮箱格式错误");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
-                if (!ValidateUtils.validateTelephone(opUserVO.getTelephone())) {
+                if (!ValidateUtils.validateTelephone(userVO.getTelephone())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("电话号码格式错误");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
-                user.setUsername(opUserVO.getUsername());
-                user.setEmail(opUserVO.getEmail());
-                user.setTelephone(opUserVO.getTelephone());
+                user.setUsername(userVO.getUsername());
+                user.setEmail(userVO.getEmail());
+                user.setTelephone(userVO.getTelephone());
                 userService.update(user);
-            } else if (opUserVO.getType() == 1) {
-                if (!ValidateUtils.validatePassword(opUserVO.getPassword())) {
+            } else if (userVO.getType() == 1) {
+                if (!ValidateUtils.validatePassword(userVO.getPassword())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("密码长度不能小于6");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
-                String password = new CmsMd5PasswordEncoder().encode(opUserVO.getPassword());
+                String password = new CmsMd5PasswordEncoder().encode(userVO.getPassword());
                 user.setPassword(password);
                 userService.update(user);
             }
@@ -468,21 +472,21 @@ public class UserManageController extends BaseController {
     /**
      * 添加用户
      *
-     * @param opUserVO
+     * @param userVO
      * @return
      */
     @PostMapping(value = "/add")
-    public ResponseEntity add(@RequestBody OpUserVO opUserVO) {
+    public ResponseEntity add(@RequestBody UserVO userVO) {
         Result result = new Result();
         try {
             //参数校验
-            if (!ValidateUtils.validateUsername(opUserVO.getUsername())) {
+            if (!ValidateUtils.validateUsername(userVO.getUsername())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
-                    put("username", opUserVO.getUsername());
+                    put("username", userVO.getUsername());
                 }});
                 if (users != null && users.size() > 0) {
                     result.setStatus(Result.Status.FAILURE);
@@ -490,24 +494,24 @@ public class UserManageController extends BaseController {
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
-            if (!ValidateUtils.validateEmail(opUserVO.getEmail())) {
+            if (!ValidateUtils.validateEmail(userVO.getEmail())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("邮箱格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validateTelephone(opUserVO.getTelephone())) {
+            if (!ValidateUtils.validateTelephone(userVO.getTelephone())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("电话号码格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validatePassword(opUserVO.getPassword())) {
+            if (!ValidateUtils.validatePassword(userVO.getPassword())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("密码长度不能小于6");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            String password = new CmsMd5PasswordEncoder().encode(opUserVO.getPassword());
+            String password = new CmsMd5PasswordEncoder().encode(userVO.getPassword());
             User user = new User();
-            BeanUtils.copyProperties(opUserVO, user);
+            BeanUtils.copyProperties(userVO, user);
             user.setId(UUID.randomUUID().toString());
             user.setPassword(password);
             user.setEnabled(1);
