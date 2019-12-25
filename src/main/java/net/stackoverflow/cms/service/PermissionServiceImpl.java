@@ -2,19 +2,26 @@ package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.dao.PermissionDAO;
+import net.stackoverflow.cms.dao.RoleDAO;
+import net.stackoverflow.cms.dao.RolePermissionDAO;
 import net.stackoverflow.cms.model.entity.Permission;
+import net.stackoverflow.cms.model.entity.Role;
+import net.stackoverflow.cms.model.entity.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PermissionServiceImpl implements PermissionService {
 
     @Autowired
     private PermissionDAO permissionDAO;
+    @Autowired
+    private RolePermissionDAO rolePermissionDAO;
+    @Autowired
+    private RoleDAO roleDAO;
 
     @Override
     public List<Permission> selectByPage(Page page) {
@@ -65,5 +72,27 @@ public class PermissionServiceImpl implements PermissionService {
     @Transactional(rollbackFor = Exception.class)
     public int batchUpdate(List<Permission> permissions) {
         return permissionDAO.batchUpdate(permissions);
+    }
+
+    @Override
+    public List<Role> selectRoleByPermissionIds(List<String> permissionIds) {
+        Set<String> roleIds = new HashSet<>();
+        for (String permissionId : permissionIds) {
+            List<RolePermission> rolePermissions = rolePermissionDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("permissionId", permissionId);
+            }});
+            if (rolePermissions != null && rolePermissions.size() > 0) {
+                for (RolePermission rolePermission : rolePermissions) {
+                    roleIds.add(rolePermission.getRoleId());
+                }
+            }
+        }
+        if (roleIds.size() > 0) {
+            return roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("ids", roleIds);
+            }});
+        } else {
+            return null;
+        }
     }
 }

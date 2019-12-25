@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * 角色VO类
+ * 权限VO类
  *
  * @author 凉衫薄
  */
@@ -17,11 +16,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleVO implements Serializable {
+public class PermissionVO implements Serializable {
 
     private String id;
     private String name;
     private String description;
-    List<PermissionVO> permissions;
     private Integer deletable;
 }
