@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 用户信息更新VO
+ * 用户信息操作VO
  *
  * @author 凉衫薄
  */
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateUserVO {
+public class OpUserVO {
 
     private String id;
     private String username;

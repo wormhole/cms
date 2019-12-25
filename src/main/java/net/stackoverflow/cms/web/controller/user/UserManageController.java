@@ -19,10 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用户管理模块
@@ -393,37 +390,37 @@ public class UserManageController extends BaseController {
     /**
      * 更新用户信息
      *
-     * @param updateUserVO
+     * @param opUserVO
      * @return
      */
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody UpdateUserVO updateUserVO) {
+    public ResponseEntity update(@RequestBody OpUserVO opUserVO) {
 
         Result result = new Result();
         try {
             //校验参数
-            if (updateUserVO.getType() != 0 && updateUserVO.getType() != 1) {
+            if (opUserVO.getType() != 0 && opUserVO.getType() != 1) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("类型错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            User user = userService.select(updateUserVO.getId());
+            User user = userService.select(opUserVO.getId());
             if (user == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            if (updateUserVO.getType() == 0) {
-                if (!ValidateUtils.validateUsername(updateUserVO.getUsername())) {
+            if (opUserVO.getType() == 0) {
+                if (!ValidateUtils.validateUsername(opUserVO.getUsername())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名不能为空");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 } else {
-                    if (!user.getUsername().equals(updateUserVO.getUsername())) {
+                    if (!user.getUsername().equals(opUserVO.getUsername())) {
                         List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
-                            put("username", updateUserVO.getUsername());
+                            put("username", opUserVO.getUsername());
                         }});
                         if (users != null && users.size() > 0) {
                             result.setStatus(Result.Status.FAILURE);
@@ -432,32 +429,102 @@ public class UserManageController extends BaseController {
                         }
                     }
                 }
-                if (!ValidateUtils.validateEmail(updateUserVO.getEmail())) {
+                if (!ValidateUtils.validateEmail(opUserVO.getEmail())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("邮箱格式错误");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
-                if (!ValidateUtils.validateTelephone(updateUserVO.getTelephone())) {
+                if (!ValidateUtils.validateTelephone(opUserVO.getTelephone())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("电话号码格式错误");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
-                user.setUsername(updateUserVO.getUsername());
-                user.setEmail(updateUserVO.getEmail());
-                user.setTelephone(updateUserVO.getTelephone());
+                user.setUsername(opUserVO.getUsername());
+                user.setEmail(opUserVO.getEmail());
+                user.setTelephone(opUserVO.getTelephone());
                 userService.update(user);
-            } else if (updateUserVO.getType() == 1) {
-                if (!ValidateUtils.validatePassword(updateUserVO.getPassword())) {
+            } else if (opUserVO.getType() == 1) {
+                if (!ValidateUtils.validatePassword(opUserVO.getPassword())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("密码长度不能小于6");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
-                String password = new CmsMd5PasswordEncoder().encode(updateUserVO.getPassword());
+                String password = new CmsMd5PasswordEncoder().encode(opUserVO.getPassword());
                 user.setPassword(password);
                 userService.update(user);
             }
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("更新成功");
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    /**
+     * 添加用户
+     *
+     * @param opUserVO
+     * @return
+     */
+    @PostMapping(value = "/add")
+    public ResponseEntity add(@RequestBody OpUserVO opUserVO) {
+        Result result = new Result();
+        try {
+            //参数校验
+            if (!ValidateUtils.validateUsername(opUserVO.getUsername())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("用户名不能为空");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            } else {
+                List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
+                    put("username", opUserVO.getUsername());
+                }});
+                if (users != null && users.size() > 0) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("用户名已存在");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
+                }
+            }
+            if (!ValidateUtils.validateEmail(opUserVO.getEmail())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("邮箱格式错误");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            if (!ValidateUtils.validateTelephone(opUserVO.getTelephone())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("电话号码格式错误");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            if (!ValidateUtils.validatePassword(opUserVO.getPassword())) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("密码长度不能小于6");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            String password = new CmsMd5PasswordEncoder().encode(opUserVO.getPassword());
+            User user = new User();
+            BeanUtils.copyProperties(opUserVO, user);
+            user.setId(UUID.randomUUID().toString());
+            user.setPassword(password);
+            user.setEnabled(1);
+            user.setDeletable(1);
+            userService.insert(user);
+
+            //默认授予访客角色及权限
+            List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>(16) {{
+                put("name", "guest");
+            }});
+            if (roles != null && roles.size() == 1) {
+                Role guest = roles.get(0);
+                userService.grantRole(user.getId(), guest.getId());
+            }
+
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("添加成功");
             log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
