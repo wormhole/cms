@@ -30,6 +30,8 @@ public interface RoleService {
 
     void grantPermission(String roleId, String permissionId);
 
+    void reGrantPermission(String roleId, List<String> permissionIds);
+
     void revokePermission(String roleId, String permissionId);
 
     List<Permission> getPermissionByRoleId(String roleId);

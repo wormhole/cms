@@ -68,4 +68,14 @@ public class ValidateUtils {
             return password.length() >= 6;
         }
     }
+
+    /**
+     * 校验名称
+     *
+     * @param name
+     * @return
+     */
+    public static boolean validateName(String name) {
+        return !StringUtils.isEmpty(name);
+    }
 }

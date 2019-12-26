@@ -94,6 +94,30 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void reGrantPermission(String roleId, List<String> permissionIds) {
+        List<RolePermission> rolePermissions = rolePermissionDAO.selectByCondition(new HashMap<String, Object>(16) {{
+            put("roleId", roleId);
+        }});
+        if (rolePermissions != null && rolePermissions.size() > 0) {
+            List<String> ids = new ArrayList<>();
+            for (RolePermission rolePermission : rolePermissions) {
+                ids.add(rolePermission.getId());
+            }
+            rolePermissionDAO.batchDelete(ids);
+        }
+        rolePermissions = new ArrayList<>();
+        for (String permissionId : permissionIds) {
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setId(UUID.randomUUID().toString());
+            rolePermission.setRoleId(roleId);
+            rolePermission.setPermissionId(permissionId);
+            rolePermissions.add(rolePermission);
+        }
+        rolePermissionDAO.batchInsert(rolePermissions);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void revokePermission(String roleId, String permissionId) {
         List<RolePermission> rolePermissions = rolePermissionDAO.selectByCondition(new HashMap<String, Object>(16) {{
             put("roleId", roleId);
