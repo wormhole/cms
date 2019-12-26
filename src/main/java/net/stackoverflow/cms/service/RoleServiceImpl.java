@@ -113,7 +113,9 @@ public class RoleServiceImpl implements RoleService {
             rolePermission.setPermissionId(permissionId);
             rolePermissions.add(rolePermission);
         }
-        rolePermissionDAO.batchInsert(rolePermissions);
+        if (rolePermissions.size() > 0) {
+            rolePermissionDAO.batchInsert(rolePermissions);
+        }
     }
 
     @Override

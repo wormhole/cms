@@ -135,7 +135,9 @@ public class UserServiceImpl implements UserService {
             userRole.setRoleId(roleId);
             userRoles.add(userRole);
         }
-        userRoleDAO.batchInsert(userRoles);
+        if (userRoles.size() > 0) {
+            userRoleDAO.batchInsert(userRoles);
+        }
     }
 
     @Override
