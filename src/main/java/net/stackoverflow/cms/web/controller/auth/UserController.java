@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.web.controller.user;
+package net.stackoverflow.cms.web.controller.auth;
 
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +30,9 @@ import java.util.*;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/user/user_manage")
+@RequestMapping(value = "/auth/user")
 @Slf4j
-public class UserManageController extends BaseController {
+public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
