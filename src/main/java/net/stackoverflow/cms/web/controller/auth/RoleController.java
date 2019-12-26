@@ -131,4 +131,38 @@ public class RoleController extends BaseController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
     }
+
+    /**
+     * 表格过滤参照
+     *
+     * @returnfilters
+     */
+    @GetMapping(value = "/filters")
+    public ResponseEntity filters() {
+        Result result = new Result();
+        try {
+            List<Permission> permissions = permissionService.selectByCondition(new HashMap<String, Object>(16));
+            List<PermissionVO> permissionVOs = new ArrayList<>();
+            for (Permission permission : permissions) {
+                PermissionVO permissionVO = new PermissionVO();
+                BeanUtils.copyProperties(permission, permissionVO);
+                permissionVOs.add(permissionVO);
+            }
+
+            Map<String, Object> retMap = new HashMap<>(16);
+            retMap.put("permissions", permissionVOs);
+
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("success");
+            result.setData(retMap);
+            log.info(JsonUtils.bean2json(result));
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
 }
