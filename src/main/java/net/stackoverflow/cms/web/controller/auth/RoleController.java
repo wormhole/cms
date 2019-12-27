@@ -13,7 +13,6 @@ import net.stackoverflow.cms.model.vo.PermissionVO;
 import net.stackoverflow.cms.model.vo.RoleVO;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
-import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.JsonUtils;
 import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
@@ -34,8 +33,6 @@ import java.util.*;
 @Slf4j
 public class RoleController extends BaseController {
 
-    @Autowired
-    private UserService userService;
     @Autowired
     private RoleService roleService;
     @Autowired
