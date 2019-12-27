@@ -184,7 +184,7 @@ public class RoleController extends BaseController {
             for (Role role : roles) {
                 if (role.getDeletable() == 0) {
                     result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("该角色不允许被删除");
+                    result.setMessage("包含不允许被删除的角色");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }

@@ -16,11 +16,8 @@
         select * from permission
         <where>
             <if test="searchMap != null">
-                <if test="searchMap.ids != null">
-                    id in
-                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
+                <if test="searchMap.id != null">
+                    id = #{searchMap.id}
                 </if>
                 <if test="searchMap.name != null">
                     and name = #{searchMap.name}
@@ -31,22 +28,30 @@
                 <if test="searchMap.deletable != null">
                     and deletable = #{searchMap.deletable}
                 </if>
+                <if test="searchMap.ids != null">
+                    and id in
+                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
             </if>
             <if test="key != null">
                 and (name like CONCAT('%',#{key},'%') or description like CONCAT('%',#{key},'%'))
             </if>
         </where>
-        order by ${sort} ${order} ${offset},${limit}
+        <if test="order != null and sort != null">
+            order by ${sort} ${order}
+        </if>
+        <if test="offset != null and limit != null">
+            limit ${offset},${limit}
+        </if>
     </select>
 
     <select id="selectByCondition" resultMap="baseMap" resultType="permission">
         select * from permission
         <where>
-            <if test="ids != null">
-                id in
-                <foreach collection="ids" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
+            <if test="id != null">
+                id = #{id}
             </if>
             <if test="name != null">
                 and name = #{name}
@@ -56,6 +61,12 @@
             </if>
             <if test="deletable != null">
                 and deletable = #{searchMap.deletable}
+            </if>
+            <if test="ids != null">
+                and id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </where>
     </select>
