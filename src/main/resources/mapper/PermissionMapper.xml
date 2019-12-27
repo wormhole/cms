@@ -105,7 +105,7 @@
                 name = #{name},
             </if>
             <if test="description != null">
-                description = #{description}
+                description = #{description},
             </if>
             <if test="deletable != null">
                 deletable = #{deletable}
@@ -122,7 +122,7 @@
                     name = #{item.name},
                 </if>
                 <if test="item.description != null">
-                    description = #{item.description}
+                    description = #{item.description},
                 </if>
                 <if test="item.deletable != null">
                     deletable = #{item.deletable}
