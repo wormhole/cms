@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 
 /**
  * Spring Security配置类
@@ -31,18 +32,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().disable();
         http.headers().frameOptions().sameOrigin();
 
-        http.rememberMe().key("rememberMe").rememberMeServices(rememberMeService());
         http.logout().logoutSuccessHandler(logoutSuccessHandler());
         http.formLogin();
+        http.rememberMe().key("rememberMe");
         http.authorizeRequests()
                 .antMatchers("/login", "/register", "/vcode").permitAll()
-                .antMatchers("/dashboard").hasAnyAuthority("dashboard")
+                .antMatchers("/home/**").authenticated()
+                .antMatchers("/dashboard/**").hasAnyAuthority("dashboard")
                 .antMatchers("/user/**").hasAnyAuthority("user")
                 .anyRequest().permitAll();
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
         http.addFilterBefore(verifyCodeFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(rememberMeAuthenticationFilter(), RememberMeAuthenticationFilter.class);
     }
 
     @Override
@@ -97,6 +100,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         authenticationFilter.setFilterProcessesUrl("/login");
         authenticationFilter.setRememberMeServices(rememberMeService());
         return authenticationFilter;
+    }
+
+    @Bean
+    public CmsRememberMeAuthenticationFilter rememberMeAuthenticationFilter() throws Exception {
+        CmsRememberMeAuthenticationFilter rememberMeAuthenticationFilter = new CmsRememberMeAuthenticationFilter(authenticationManagerBean(), rememberMeService());
+        return rememberMeAuthenticationFilter;
     }
 
     @Bean
