@@ -1,6 +1,5 @@
 package net.stackoverflow.cms.web.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 
 /**
  * 登录验证码过滤器
@@ -35,24 +32,7 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         if ("POST".equalsIgnoreCase(request.getMethod()) && pathMatcher.match("/login", request.getServletPath())) {
-            String vcode = null;
-            String username = null;
-            String password = null;
-            boolean rememberMe = false;
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                InputStream is = request.getInputStream();
-                Map authenticationBean = mapper.readValue(is, Map.class);
-                vcode = (String) authenticationBean.get("vcode");
-                username = (String) authenticationBean.get("username");
-                password = (String) authenticationBean.get("password");
-                rememberMe = (boolean) authenticationBean.get("rememberMe");
-                request.setAttribute("username", username);
-                request.setAttribute("password", password);
-                request.setAttribute("rememberMe", rememberMe);
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
+            String vcode = request.getParameter("vcode");
             String realVcode = (String) request.getSession().getAttribute("vcode");
             if (StringUtils.isBlank(vcode)) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码不能为空"));

@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class CmsUserDetails implements UserDetails {
 
+    private final String id;
     private final String username;
     private final String password;
     private final Integer enabled;
@@ -22,7 +23,8 @@ public class CmsUserDetails implements UserDetails {
     private final Integer deletable;
     private final List<GrantedAuthority> authorities;
 
-    public CmsUserDetails(String username, String password, Integer enabled, String email, String telephone, Integer deletable, List<GrantedAuthority> authorities) {
+    public CmsUserDetails(String id, String username, String password, Integer enabled, String email, String telephone, Integer deletable, List<GrantedAuthority> authorities) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -30,6 +32,18 @@ public class CmsUserDetails implements UserDetails {
         this.telephone = telephone;
         this.authorities = authorities;
         this.deletable = deletable;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Integer getEnabled() {
+        return enabled;
+    }
+
+    public Integer getDeletable() {
+        return deletable;
     }
 
     public String getEmail() {

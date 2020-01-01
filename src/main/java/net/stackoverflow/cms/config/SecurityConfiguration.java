@@ -11,8 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 
 /**
  * Spring Security配置类
@@ -33,8 +31,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().sameOrigin();
 
         http.logout().logoutSuccessHandler(logoutSuccessHandler());
-        http.formLogin();
-        http.rememberMe().key("rememberMe");
+        http.formLogin()
+                .successHandler(authenticationSuccessHandler())
+                .failureHandler(authenticationFailureHandler())
+                .loginProcessingUrl("/login")
+                .usernameParameter("username")
+                .passwordParameter("password");
+        http.rememberMe()
+                .userDetailsService(userDetailsService)
+                .tokenValiditySeconds(60 * 60 * 24 * 30)
+                .rememberMeParameter("rememberMe");
         http.authorizeRequests()
                 .antMatchers("/login", "/register", "/vcode").permitAll()
                 .antMatchers("/home/**").authenticated()
@@ -44,21 +50,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
         http.addFilterBefore(verifyCodeFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAt(rememberMeAuthenticationFilter(), RememberMeAuthenticationFilter.class);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public CmsRememberMeService rememberMeService() {
-        CmsRememberMeService cmsRememberMeService = new CmsRememberMeService("rememberMe", userDetailsService, new InMemoryTokenRepositoryImpl());
-        cmsRememberMeService.setParameter("rememberMe");
-        cmsRememberMeService.setTokenValiditySeconds(60 * 60 * 24 * 30);
-        return cmsRememberMeService;
     }
 
     @Bean
@@ -89,23 +85,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CmsAuthenticationEntryPoint authenticationEntryPoint() {
         return new CmsAuthenticationEntryPoint();
-    }
-
-    @Bean
-    public CmsUsernamePasswordAuthenticationFilter authenticationFilter() throws Exception {
-        CmsUsernamePasswordAuthenticationFilter authenticationFilter = new CmsUsernamePasswordAuthenticationFilter();
-        authenticationFilter.setAuthenticationManager(authenticationManagerBean());
-        authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
-        authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-        authenticationFilter.setFilterProcessesUrl("/login");
-        authenticationFilter.setRememberMeServices(rememberMeService());
-        return authenticationFilter;
-    }
-
-    @Bean
-    public CmsRememberMeAuthenticationFilter rememberMeAuthenticationFilter() throws Exception {
-        CmsRememberMeAuthenticationFilter rememberMeAuthenticationFilter = new CmsRememberMeAuthenticationFilter(authenticationManagerBean(), rememberMeService());
-        return rememberMeAuthenticationFilter;
     }
 
     @Bean
