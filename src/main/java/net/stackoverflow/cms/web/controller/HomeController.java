@@ -22,9 +22,9 @@ import java.util.List;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/layout")
+@RequestMapping(value = "/home")
 @Slf4j
-public class LayoutController extends BaseController {
+public class HomeController extends BaseController {
 
     /**
      * 获取菜单权限
