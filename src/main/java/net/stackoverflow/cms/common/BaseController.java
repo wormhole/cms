@@ -2,7 +2,9 @@ package net.stackoverflow.cms.common;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.exception.BusinessException;
+import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.util.JsonUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -15,6 +17,15 @@ import java.util.*;
  */
 @Slf4j
 public class BaseController {
+
+    /**
+     * 获取UserDetails
+     *
+     * @return
+     */
+    protected CmsUserDetails getUserDetails() {
+        return (CmsUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 
     /**
      * vo转dto

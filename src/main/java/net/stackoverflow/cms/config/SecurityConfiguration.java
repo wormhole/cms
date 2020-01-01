@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMeParameter("rememberMe");
         http.authorizeRequests()
                 .antMatchers("/login", "/register", "/vcode").permitAll()
-                .antMatchers("/home/**").authenticated()
+                .antMatchers("/layout/**").authenticated()
                 .antMatchers("/dashboard/**").hasAnyAuthority("dashboard")
                 .antMatchers("/user/**").hasAnyAuthority("user")
                 .anyRequest().permitAll();
