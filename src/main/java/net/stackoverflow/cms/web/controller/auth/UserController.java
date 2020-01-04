@@ -76,7 +76,6 @@ public class UserController extends BaseController {
             Map<String, Object> resultMap = new HashMap<>(16);
             List<UserVO> userVOs = new ArrayList<>();
             Map<String, Object> searchMap = new HashMap<>(16);
-            int total = 0;
 
             if (roleIds != null && roleIds.size() > 0) {
                 searchMap.put("ids", userIds);
@@ -92,7 +91,7 @@ public class UserController extends BaseController {
             List<User> users = userService.selectByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);
-            total = userService.selectByPage(pageParam).size();
+            int total = userService.selectByPage(pageParam).size();
 
             for (User user : users) {
                 UserVO userVO = new UserVO();
@@ -371,10 +370,6 @@ public class UserController extends BaseController {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else if (user.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("超级管理员不允许被操作");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
             userService.reGrantRole(grantRoleVO.getUserId(), grantRoleVO.getRoleIds());
@@ -517,15 +512,6 @@ public class UserController extends BaseController {
             user.setEnabled(1);
             user.setDeletable(1);
             userService.insert(user);
-
-            //默认授予访客角色及权限
-            List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>(16) {{
-                put("name", "guest");
-            }});
-            if (roles != null && roles.size() == 1) {
-                Role guest = roles.get(0);
-                userService.grantRole(user.getId(), guest.getId());
-            }
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("添加成功");

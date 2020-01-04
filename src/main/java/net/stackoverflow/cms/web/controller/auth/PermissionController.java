@@ -54,7 +54,6 @@ public class PermissionController extends BaseController {
         try {
             Map<String, Object> resultMap = new HashMap<>(16);
             Map<String, Object> searchMap = new HashMap<>(16);
-            int total = 0;
 
             if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "deletable";
@@ -67,7 +66,7 @@ public class PermissionController extends BaseController {
             List<Permission> permissions = permissionService.selectByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);
-            total = permissionService.selectByPage(pageParam).size();
+            int total = permissionService.selectByPage(pageParam).size();
 
             List<PermissionVO> permissionVOs = new ArrayList<>();
             for (Permission permission : permissions) {

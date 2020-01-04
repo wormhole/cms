@@ -3,7 +3,6 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.RegisterVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
@@ -99,15 +98,6 @@ public class RegisterController extends BaseController {
             user.setDeletable(1);
             user.setPassword(new CmsMd5PasswordEncoder().encode(user.getPassword()));
             userService.insert(user);
-
-            //默认授予访客角色及权限
-            List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>(16) {{
-                put("name", "guest");
-            }});
-            if (roles != null && roles.size() == 1) {
-                Role guest = roles.get(0);
-                userService.grantRole(user.getId(), guest.getId());
-            }
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("注册成功");

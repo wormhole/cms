@@ -20,8 +20,6 @@ import java.util.List;
 public class UserAuthorityVO implements Serializable {
 
     private String username;
-    private String email;
-    private String telephone;
     private List<String> roles;
     private List<String> permissions;
 }

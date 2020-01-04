@@ -41,12 +41,30 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(User user) {
+        //默认授予访客角色及权限
+        List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+            put("name", "default");
+        }});
+        if (roles != null && roles.size() == 1) {
+            Role guest = roles.get(0);
+            grantRole(user.getId(), guest.getId());
+        }
         return userDAO.insert(user);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchInsert(List<User> users) {
+        //默认授予访客角色及权限
+        for (User user : users) {
+            List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("name", "default");
+            }});
+            if (roles != null && roles.size() == 1) {
+                Role guest = roles.get(0);
+                grantRole(user.getId(), guest.getId());
+            }
+        }
         return userDAO.batchInsert(users);
     }
 

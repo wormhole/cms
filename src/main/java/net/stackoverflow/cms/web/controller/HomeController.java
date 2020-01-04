@@ -3,12 +3,16 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.model.entity.Permission;
+import net.stackoverflow.cms.model.entity.Role;
+import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.UserAuthorityVO;
 import net.stackoverflow.cms.security.CmsUserDetails;
+import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.JsonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,32 +30,37 @@ import java.util.List;
 @Slf4j
 public class HomeController extends BaseController {
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 获取菜单权限
      *
      * @return
      */
-    @GetMapping(value = "/menu")
-    public ResponseEntity menu() {
+    @GetMapping(value = "/authority")
+    public ResponseEntity authority() {
         Result result = new Result();
         try {
             CmsUserDetails userDetails = getUserDetails();
             UserAuthorityVO userAuthorityVO = new UserAuthorityVO();
-            userAuthorityVO.setUsername(userDetails.getUsername());
-            userAuthorityVO.setEmail(userDetails.getEmail());
-            userAuthorityVO.setTelephone(userDetails.getTelephone());
-            List<String> roles = new ArrayList<>();
-            List<String> permissions = new ArrayList<>();
-            for (GrantedAuthority authority : userDetails.getAuthorities()) {
-                String str = authority.getAuthority();
-                if (str.startsWith("ROLE_")) {
-                    roles.add(str.substring(str.indexOf("_") + 1));
-                } else {
-                    permissions.add(str);
-                }
+
+            User user = userService.select(userDetails.getId());
+            userAuthorityVO.setUsername(user.getUsername());
+            List<Role> roles = userService.getRoleByUserId(user.getId());
+            List<Permission> permissions = userService.getPermissionByUserId(user.getId());
+
+            List<String> roleStrs = new ArrayList<>();
+            List<String> permissionStrs = new ArrayList<>();
+
+            for (Role role : roles) {
+                roleStrs.add(role.getName());
             }
-            userAuthorityVO.setRoles(roles);
-            userAuthorityVO.setPermissions(permissions);
+            for (Permission permission : permissions) {
+                permissionStrs.add(permission.getName());
+            }
+            userAuthorityVO.setRoles(roleStrs);
+            userAuthorityVO.setPermissions(permissionStrs);
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");

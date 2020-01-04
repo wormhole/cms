@@ -74,7 +74,6 @@ public class RoleController extends BaseController {
 
             Map<String, Object> resultMap = new HashMap<>(16);
             Map<String, Object> searchMap = new HashMap<>(16);
-            int total = 0;
 
             if (permissionIds != null && permissionIds.size() > 0) {
                 searchMap.put("ids", roleIds);
@@ -90,7 +89,7 @@ public class RoleController extends BaseController {
             List<Role> roles = roleService.selectByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);
-            total = roleService.selectByPage(pageParam).size();
+            int total = roleService.selectByPage(pageParam).size();
 
             List<RoleVO> roleVOs = new ArrayList<>();
             for (Role role : roles) {
@@ -281,10 +280,6 @@ public class RoleController extends BaseController {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else if (role.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("该角色不允许被操作");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
             roleService.reGrantPermission(grantPermissionVO.getRoleId(), grantPermissionVO.getPermissionIds());
@@ -388,15 +383,6 @@ public class RoleController extends BaseController {
             role.setId(UUID.randomUUID().toString());
             role.setDeletable(1);
             roleService.insert(role);
-
-            //默认授予控制面板权限
-            List<Permission> permissions = permissionService.selectByCondition(new HashMap<String, Object>(16) {{
-                put("name", "dashboard");
-            }});
-            if (permissions != null && permissions.size() > 0) {
-                Permission permission = permissions.get(0);
-                roleService.grantPermission(role.getId(), permission.getId());
-            }
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("添加成功");
