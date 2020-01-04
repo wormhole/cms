@@ -32,13 +32,13 @@ public class CmsUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
+        List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
             put("username", username);
         }});
         if (!CollectionUtils.isEmpty(users)) {
             User user = users.get(0);
-            List<Role> roles = userService.getRoleByUserId(user.getId());
-            List<Permission> permissions = userService.getPermissionByUserId(user.getId());
+            List<Role> roles = userService.findRoleByUserId(user.getId());
+            List<Permission> permissions = userService.findPermissionByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (Role role : roles) {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + role.getName());

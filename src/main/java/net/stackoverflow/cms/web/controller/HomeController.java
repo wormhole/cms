@@ -45,10 +45,10 @@ public class HomeController extends BaseController {
             CmsUserDetails userDetails = getUserDetails();
             UserAuthorityVO userAuthorityVO = new UserAuthorityVO();
 
-            User user = userService.select(userDetails.getId());
+            User user = userService.findById(userDetails.getId());
             userAuthorityVO.setUsername(user.getUsername());
-            List<Role> roles = userService.getRoleByUserId(user.getId());
-            List<Permission> permissions = userService.getPermissionByUserId(user.getId());
+            List<Role> roles = userService.findRoleByUserId(user.getId());
+            List<Permission> permissions = userService.findPermissionByUserId(user.getId());
 
             List<String> roleStrs = new ArrayList<>();
             List<String> permissionStrs = new ArrayList<>();

@@ -24,23 +24,30 @@ public class UserServiceImpl implements UserService {
     private RolePermissionDAO rolePermissionDAO;
 
     @Override
-    public List<User> selectByPage(Page page) {
+    public List<User> findByPage(Page page) {
         return userDAO.selectByPage(page);
     }
 
     @Override
-    public List<User> selectByCondition(Map<String, Object> searchMap) {
+    public List<User> findByCondition(Map<String, Object> searchMap) {
         return userDAO.selectByCondition(searchMap);
     }
 
     @Override
-    public User select(String id) {
+    public List<User> findByIds(List<String> ids) {
+        Map<String, Object> searchMap = new HashMap<>(16);
+        searchMap.put("ids", ids);
+        return userDAO.selectByCondition(searchMap);
+    }
+
+    @Override
+    public User findById(String id) {
         return userDAO.select(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(User user) {
+    public void save(User user) {
         //默认授予访客角色及权限
         List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
             put("name", "default");
@@ -49,44 +56,12 @@ public class UserServiceImpl implements UserService {
             Role guest = roles.get(0);
             grantRole(user.getId(), guest.getId());
         }
-        return userDAO.insert(user);
+        userDAO.insert(user);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<User> users) {
-        //默认授予访客角色及权限
-        for (User user : users) {
-            List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
-                put("name", "default");
-            }});
-            if (roles != null && roles.size() == 1) {
-                Role guest = roles.get(0);
-                grantRole(user.getId(), guest.getId());
-            }
-        }
-        return userDAO.batchInsert(users);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int delete(String id) {
-        List<UserRole> userRoles = userRoleDAO.selectByCondition(new HashMap<String, Object>(16) {{
-            put("userId", id);
-        }});
-        if (userRoles != null && userRoles.size() > 0) {
-            List<String> ids = new ArrayList<>();
-            for (UserRole userRole : userRoles) {
-                ids.add(userRole.getId());
-            }
-            userRoleDAO.batchDelete(ids);
-        }
-        return userDAO.delete(id);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int batchDelete(List<String> ids) {
+    public void batchDelete(List<String> ids) {
 
         List<String> userRoleIds = new ArrayList<>();
         for (String id : ids) {
@@ -100,19 +75,19 @@ public class UserServiceImpl implements UserService {
             }
         }
         userRoleDAO.batchDelete(userRoleIds);
-        return userDAO.batchDelete(ids);
+        userDAO.batchDelete(ids);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int update(User user) {
-        return userDAO.update(user);
+    public void update(User user) {
+        userDAO.update(user);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<User> users) {
-        return userDAO.batchUpdate(users);
+    public void batchUpdate(List<User> users) {
+        userDAO.batchUpdate(users);
     }
 
     @Override
@@ -159,22 +134,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void revokeRole(String userId, String roleId) {
-        List<UserRole> userRoles = userRoleDAO.selectByCondition(new HashMap<String, Object>(16) {{
-            put("userId", userId);
-            put("roleId", roleId);
-        }});
-
-        if (userRoles.size() == 0) {
-            return;
-        }
-
-        userRoleDAO.delete(userRoles.get(0).getId());
-    }
-
-    @Override
-    public List<Role> getRoleByUserId(String userId) {
+    public List<Role> findRoleByUserId(String userId) {
         List<UserRole> userRoles = userRoleDAO.selectByCondition(new HashMap<String, Object>(16) {{
             put("userId", userId);
         }});
@@ -189,8 +149,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Permission> getPermissionByUserId(String userId) {
-        List<Role> roles = getRoleByUserId(userId);
+    public List<Permission> findPermissionByUserId(String userId) {
+        List<Role> roles = findRoleByUserId(userId);
         Map<String, Permission> permissionMap = new HashMap<>(16);
         List<Permission> permissions = new ArrayList<>();
         for (Role role : roles) {

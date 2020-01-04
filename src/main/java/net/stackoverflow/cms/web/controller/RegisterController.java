@@ -65,7 +65,7 @@ public class RegisterController extends BaseController {
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
+                List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
                     put("username", registerVO.getUsername());
                 }});
                 if (users.size() != 0) {
@@ -97,7 +97,7 @@ public class RegisterController extends BaseController {
             user.setEnabled(1);
             user.setDeletable(1);
             user.setPassword(new CmsMd5PasswordEncoder().encode(user.getPassword()));
-            userService.insert(user);
+            userService.save(user);
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("注册成功");

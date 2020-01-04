@@ -10,31 +10,27 @@ import java.util.Map;
 
 public interface UserService {
 
-    List<User> selectByPage(Page page);
+    List<User> findByPage(Page page);
 
-    List<User> selectByCondition(Map<String, Object> searchMap);
+    List<User> findByCondition(Map<String, Object> searchMap);
 
-    User select(String id);
+    List<User> findByIds(List<String> ids);
 
-    int insert(User user);
+    User findById(String id);
 
-    int batchInsert(List<User> users);
+    void save(User user);
 
-    int delete(String id);
+    void batchDelete(List<String> ids);
 
-    int batchDelete(List<String> ids);
+    void update(User user);
 
-    int update(User user);
-
-    int batchUpdate(List<User> users);
+    void batchUpdate(List<User> users);
 
     void grantRole(String userId, String roleId);
 
     void reGrantRole(String userId, List<String> roleIds);
 
-    void revokeRole(String userId, String roleIds);
+    List<Role> findRoleByUserId(String userId);
 
-    List<Role> getRoleByUserId(String userId);
-
-    List<Permission> getPermissionByUserId(String userId);
+    List<Permission> findPermissionByUserId(String userId);
 }

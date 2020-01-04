@@ -74,7 +74,6 @@ public class UserController extends BaseController {
             }
 
             Map<String, Object> resultMap = new HashMap<>(16);
-            List<UserVO> userVOs = new ArrayList<>();
             Map<String, Object> searchMap = new HashMap<>(16);
 
             if (roleIds != null && roleIds.size() > 0) {
@@ -88,16 +87,17 @@ public class UserController extends BaseController {
                 key = null;
             }
             Page pageParam = new Page(page, limit, sort, order, searchMap, key);
-            List<User> users = userService.selectByPage(pageParam);
+            List<User> users = userService.findByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);
-            int total = userService.selectByPage(pageParam).size();
+            int total = userService.findByPage(pageParam).size();
 
+            List<UserVO> userVOs = new ArrayList<>();
             for (User user : users) {
                 UserVO userVO = new UserVO();
                 BeanUtils.copyProperties(user, userVO);
                 userVO.setPassword(null);
-                List<Role> roles = userService.getRoleByUserId(user.getId());
+                List<Role> roles = userService.findRoleByUserId(user.getId());
                 List<RoleVO> roleVOs = new ArrayList<>();
                 if (roles != null && roles.size() > 0) {
                     for (Role role : roles) {
@@ -145,9 +145,7 @@ public class UserController extends BaseController {
             }
 
             //检查是否有不可被删除的
-            Map<String, Object> searchMap = new HashMap<>(16);
-            searchMap.put("ids", idsVO.getIds());
-            List<User> users = userService.selectByCondition(searchMap);
+            List<User> users = userService.findByIds(idsVO.getIds());
             for (User user : users) {
                 if (user.getDeletable() == 0) {
                     result.setStatus(Result.Status.FAILURE);
@@ -187,9 +185,7 @@ public class UserController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            Map<String, Object> searchMap = new HashMap<>(16);
-            searchMap.put("ids", idsVO.getIds());
-            List<User> users = userService.selectByCondition(searchMap);
+            List<User> users = userService.findByIds(idsVO.getIds());
             for (User user : users) {
                 if (user.getDeletable() == 0) {
                     result.setStatus(Result.Status.FAILURE);
@@ -231,9 +227,7 @@ public class UserController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            Map<String, Object> searchMap = new HashMap<>(16);
-            searchMap.put("ids", idsVO.getIds());
-            List<User> users = userService.selectByCondition(searchMap);
+            List<User> users = userService.findByIds(idsVO.getIds());
             for (User user : users) {
                 if (user.getDeletable() == 0) {
                     result.setStatus(Result.Status.FAILURE);
@@ -308,14 +302,14 @@ public class UserController extends BaseController {
                 result.setMessage("id不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            User user = userService.select(id);
+            User user = userService.findById(id);
             if (user == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            List<Role> roles = userService.getRoleByUserId(id);
+            List<Role> roles = userService.findRoleByUserId(id);
             List<Role> allRoles = roleService.selectByCondition(new HashMap<String, Object>(16));
 
             List<RoleVO> roleVOs = new ArrayList<>();
@@ -365,7 +359,7 @@ public class UserController extends BaseController {
                 result.setMessage("userId不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            User user = userService.select(grantRoleVO.getUserId());
+            User user = userService.findById(grantRoleVO.getUserId());
             if (user == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
@@ -404,7 +398,7 @@ public class UserController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            User user = userService.select(userVO.getId());
+            User user = userService.findById(userVO.getId());
             if (user == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
@@ -418,7 +412,7 @@ public class UserController extends BaseController {
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 } else {
                     if (!user.getUsername().equals(userVO.getUsername())) {
-                        List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
+                        List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
                             put("username", userVO.getUsername());
                         }});
                         if (users != null && users.size() > 0) {
@@ -480,7 +474,7 @@ public class UserController extends BaseController {
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<User> users = userService.selectByCondition(new HashMap<String, Object>(16) {{
+                List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
                     put("username", userVO.getUsername());
                 }});
                 if (users != null && users.size() > 0) {
@@ -511,7 +505,7 @@ public class UserController extends BaseController {
             user.setPassword(password);
             user.setEnabled(1);
             user.setDeletable(1);
-            userService.insert(user);
+            userService.save(user);
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("添加成功");
