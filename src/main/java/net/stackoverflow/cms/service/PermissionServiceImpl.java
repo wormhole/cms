@@ -24,58 +24,52 @@ public class PermissionServiceImpl implements PermissionService {
     private RoleDAO roleDAO;
 
     @Override
-    public List<Permission> selectByPage(Page page) {
+    public List<Permission> findByPage(Page page) {
         return permissionDAO.selectByPage(page);
     }
 
     @Override
-    public List<Permission> selectByCondition(Map<String, Object> searchMap) {
+    public List<Permission> findByCondition(Map<String, Object> searchMap) {
         return permissionDAO.selectByCondition(searchMap);
     }
 
     @Override
-    public Permission select(String id) {
+    public List<Permission> findAll() {
+        return permissionDAO.selectByCondition(new HashMap<>());
+    }
+
+    @Override
+    public Permission findById(String id) {
         return permissionDAO.select(id);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int insert(Permission permission) {
-        return permissionDAO.insert(permission);
+    public List<Permission> findByIds(List<String> ids) {
+        Map<String, Object> searchMap = new HashMap<>();
+        searchMap.put("ids", ids);
+        return permissionDAO.selectByCondition(searchMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Permission> permissions) {
-        return permissionDAO.batchInsert(permissions);
+    public void save(Permission permission) {
+        permissionDAO.insert(permission);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(String id) {
-        return permissionDAO.delete(id);
+    public void batchDelete(List<String> ids) {
+        permissionDAO.batchDelete(ids);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDelete(List<String> ids) {
-        return permissionDAO.batchDelete(ids);
+    public void update(Permission permission) {
+        permissionDAO.update(permission);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int update(Permission permission) {
-        return permissionDAO.update(permission);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Permission> permissions) {
-        return permissionDAO.batchUpdate(permissions);
-    }
-
-    @Override
-    public List<Role> selectRoleByPermissionIds(List<String> permissionIds) {
+    public List<Role> findRoleByPermissionIds(List<String> permissionIds) {
         Set<String> roleIds = new HashSet<>();
         for (String permissionId : permissionIds) {
             List<RolePermission> rolePermissions = rolePermissionDAO.selectByCondition(new HashMap<String, Object>(16) {{

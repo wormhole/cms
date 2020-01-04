@@ -9,23 +9,21 @@ import java.util.Map;
 
 public interface PermissionService {
 
-    List<Permission> selectByPage(Page page);
+    List<Permission> findByPage(Page page);
 
-    List<Permission> selectByCondition(Map<String, Object> searchMap);
+    List<Permission> findByCondition(Map<String, Object> searchMap);
 
-    Permission select(String id);
+    List<Permission> findAll();
 
-    int insert(Permission permission);
+    Permission findById(String id);
 
-    int batchInsert(List<Permission> permissions);
+    List<Permission> findByIds(List<String> ids);
 
-    int delete(String id);
+    void save(Permission permission);
 
-    int batchDelete(List<String> ids);
+    void batchDelete(List<String> ids);
 
-    int update(Permission permission);
+    void update(Permission permission);
 
-    int batchUpdate(List<Permission> permissions);
-
-    List<Role> selectRoleByPermissionIds(List<String> permissionIds);
+    List<Role> findRoleByPermissionIds(List<String> permissionIds);
 }

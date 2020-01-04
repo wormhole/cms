@@ -63,10 +63,10 @@ public class PermissionController extends BaseController {
                 key = null;
             }
             Page pageParam = new Page(page, limit, sort, order, searchMap, key);
-            List<Permission> permissions = permissionService.selectByPage(pageParam);
+            List<Permission> permissions = permissionService.findByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);
-            int total = permissionService.selectByPage(pageParam).size();
+            int total = permissionService.findByPage(pageParam).size();
 
             List<PermissionVO> permissionVOs = new ArrayList<>();
             for (Permission permission : permissions) {
@@ -110,9 +110,7 @@ public class PermissionController extends BaseController {
             }
 
             //检查是否有不可被删除的
-            Map<String, Object> searchMap = new HashMap<>(16);
-            searchMap.put("ids", idsVO.getIds());
-            List<Permission> permissions = permissionService.selectByCondition(searchMap);
+            List<Permission> permissions = permissionService.findByIds(idsVO.getIds());
             for (Permission permission : permissions) {
                 if (permission.getDeletable() == 0) {
                     result.setStatus(Result.Status.FAILURE);
@@ -147,7 +145,7 @@ public class PermissionController extends BaseController {
         Result result = new Result();
         try {
             //校验参数
-            Permission permission = permissionService.select(permissionVO.getId());
+            Permission permission = permissionService.findById(permissionVO.getId());
             if (permission == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
@@ -164,7 +162,7 @@ public class PermissionController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 if (!permission.getName().equals(permissionVO.getName())) {
-                    List<Permission> permissions = permissionService.selectByCondition(new HashMap<String, Object>(16) {{
+                    List<Permission> permissions = permissionService.findByCondition(new HashMap<String, Object>(16) {{
                         put("name", permissionVO.getName());
                     }});
                     if (permissions != null && permissions.size() > 0) {
@@ -207,7 +205,7 @@ public class PermissionController extends BaseController {
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<Permission> permissions = permissionService.selectByCondition(new HashMap<String, Object>(16) {{
+                List<Permission> permissions = permissionService.findByCondition(new HashMap<String, Object>(16) {{
                     put("name", permissionVO.getName());
                 }});
                 if (permissions != null && permissions.size() > 0) {
@@ -221,7 +219,7 @@ public class PermissionController extends BaseController {
             BeanUtils.copyProperties(permissionVO, permission);
             permission.setId(UUID.randomUUID().toString());
             permission.setDeletable(1);
-            permissionService.insert(permission);
+            permissionService.save(permission);
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("添加成功");

@@ -64,7 +64,7 @@ public class RoleController extends BaseController {
             List<String> roleIds = new ArrayList<>();
             roleIds.add("");
             if (permissionIds != null && permissionIds.size() > 0) {
-                List<Role> roles = permissionService.selectRoleByPermissionIds(permissionIds);
+                List<Role> roles = permissionService.findRoleByPermissionIds(permissionIds);
                 if (roles != null && roles.size() > 0) {
                     for (Role role : roles) {
                         roleIds.add(role.getId());
@@ -86,16 +86,16 @@ public class RoleController extends BaseController {
                 key = null;
             }
             Page pageParam = new Page(page, limit, sort, order, searchMap, key);
-            List<Role> roles = roleService.selectByPage(pageParam);
+            List<Role> roles = roleService.findByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);
-            int total = roleService.selectByPage(pageParam).size();
+            int total = roleService.findByPage(pageParam).size();
 
             List<RoleVO> roleVOs = new ArrayList<>();
             for (Role role : roles) {
                 RoleVO roleVO = new RoleVO();
                 BeanUtils.copyProperties(role, roleVO);
-                List<Permission> permissions = roleService.getPermissionByRoleId(role.getId());
+                List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
                 List<PermissionVO> permissionVOs = new ArrayList<>();
                 if (permissions != null && permissions.size() > 0) {
                     for (Permission permission : permissions) {
@@ -134,7 +134,7 @@ public class RoleController extends BaseController {
     public ResponseEntity filters() {
         Result result = new Result();
         try {
-            List<Permission> permissions = permissionService.selectByCondition(new HashMap<String, Object>(16));
+            List<Permission> permissions = permissionService.findAll();
             List<PermissionVO> permissionVOs = new ArrayList<>();
             for (Permission permission : permissions) {
                 PermissionVO permissionVO = new PermissionVO();
@@ -177,9 +177,7 @@ public class RoleController extends BaseController {
             }
 
             //检查是否有不可被删除的
-            Map<String, Object> searchMap = new HashMap<>(16);
-            searchMap.put("ids", idsVO.getIds());
-            List<Role> roles = roleService.selectByCondition(searchMap);
+            List<Role> roles = roleService.findByIds(idsVO.getIds());
             for (Role role : roles) {
                 if (role.getDeletable() == 0) {
                     result.setStatus(Result.Status.FAILURE);
@@ -218,15 +216,15 @@ public class RoleController extends BaseController {
                 result.setMessage("id不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            Role role = roleService.select(id);
+            Role role = roleService.findById(id);
             if (role == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            List<Permission> permissions = roleService.getPermissionByRoleId(role.getId());
-            List<Permission> allPermissions = permissionService.selectByCondition(new HashMap<String, Object>(16));
+            List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
+            List<Permission> allPermissions = permissionService.findAll();
 
             List<PermissionVO> permissionVOs = new ArrayList<>();
             List<PermissionVO> allPermissionVOs = new ArrayList<>();
@@ -275,7 +273,7 @@ public class RoleController extends BaseController {
                 result.setMessage("roleId不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            Role role = roleService.select(grantPermissionVO.getRoleId());
+            Role role = roleService.findById(grantPermissionVO.getRoleId());
             if (role == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
@@ -308,7 +306,7 @@ public class RoleController extends BaseController {
         Result result = new Result();
         try {
             //校验参数
-            Role role = roleService.select(roleVO.getId());
+            Role role = roleService.findById(roleVO.getId());
             if (role == null) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
@@ -325,7 +323,7 @@ public class RoleController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 if (!role.getName().equals(roleVO.getName())) {
-                    List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>(16) {{
+                    List<Role> roles = roleService.findByCondition(new HashMap<String, Object>(16) {{
                         put("name", roleVO.getName());
                     }});
                     if (roles != null && roles.size() > 0) {
@@ -368,7 +366,7 @@ public class RoleController extends BaseController {
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>(16) {{
+                List<Role> roles = roleService.findByCondition(new HashMap<String, Object>(16) {{
                     put("name", roleVO.getName());
                 }});
                 if (roles != null && roles.size() > 0) {
@@ -382,7 +380,7 @@ public class RoleController extends BaseController {
             BeanUtils.copyProperties(roleVO, role);
             role.setId(UUID.randomUUID().toString());
             role.setDeletable(1);
-            roleService.insert(role);
+            roleService.save(role);
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("添加成功");

@@ -65,7 +65,7 @@ public class UserController extends BaseController {
             List<String> userIds = new ArrayList<>();
             userIds.add("");
             if (roleIds != null && roleIds.size() > 0) {
-                List<User> users = roleService.selectUserByRoleIds(roleIds);
+                List<User> users = roleService.findUserByRoleIds(roleIds);
                 if (users != null && users.size() > 0) {
                     for (User user : users) {
                         userIds.add(user.getId());
@@ -261,7 +261,7 @@ public class UserController extends BaseController {
     public ResponseEntity filters() {
         Result result = new Result();
         try {
-            List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>(16));
+            List<Role> roles = roleService.findAll();
             List<RoleVO> roleVOs = new ArrayList<>();
             for (Role role : roles) {
                 RoleVO roleVO = new RoleVO();
@@ -310,7 +310,7 @@ public class UserController extends BaseController {
             }
 
             List<Role> roles = userService.findRoleByUserId(id);
-            List<Role> allRoles = roleService.selectByCondition(new HashMap<String, Object>(16));
+            List<Role> allRoles = roleService.findAll();
 
             List<RoleVO> roleVOs = new ArrayList<>();
             List<RoleVO> allRoleVOs = new ArrayList<>();

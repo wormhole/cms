@@ -10,31 +10,25 @@ import java.util.Map;
 
 public interface RoleService {
 
-    List<Role> selectByPage(Page page);
+    List<Role> findByPage(Page page);
 
-    List<Role> selectByCondition(Map<String, Object> searchMap);
+    List<Role> findByCondition(Map<String, Object> searchMap);
 
-    Role select(String id);
+    List<Role> findAll();
 
-    int insert(Role role);
+    Role findById(String id);
 
-    int batchInsert(List<Role> roles);
+    List<Role> findByIds(List<String> ids);
 
-    int delete(String id);
+    void save(Role role);
 
-    int batchDelete(List<String> ids);
+    void batchDelete(List<String> ids);
 
-    int update(Role role);
-
-    int batchUpdate(List<Role> roles);
-
-    void grantPermission(String roleId, String permissionId);
+    void update(Role role);
 
     void reGrantPermission(String roleId, List<String> permissionIds);
 
-    void revokePermission(String roleId, String permissionId);
+    List<Permission> findPermissionByRoleId(String roleId);
 
-    List<Permission> getPermissionByRoleId(String roleId);
-
-    List<User> selectUserByRoleIds(List<String> roleIds);
+    List<User> findUserByRoleIds(List<String> roleIds);
 }
