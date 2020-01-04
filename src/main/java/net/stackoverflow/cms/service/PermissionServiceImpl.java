@@ -29,8 +29,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public List<Permission> findByCondition(Map<String, Object> searchMap) {
-        return permissionDAO.selectByCondition(searchMap);
+    public List<Permission> findByCondition(Map<String, Object> condition) {
+        return permissionDAO.selectByCondition(condition);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<Permission> findByIds(List<String> ids) {
-        Map<String, Object> searchMap = new HashMap<>();
-        searchMap.put("ids", ids);
-        return permissionDAO.selectByCondition(searchMap);
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("ids", ids);
+        return permissionDAO.selectByCondition(condition);
     }
 
     @Override

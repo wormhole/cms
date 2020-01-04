@@ -12,7 +12,7 @@ public interface PermissionDAO {
 
     List<Permission> selectByPage(Page page);
 
-    List<Permission> selectByCondition(Map<String, Object> searchMap);
+    List<Permission> selectByCondition(Map<String, Object> condition);
 
     Permission select(String id);
 

@@ -12,7 +12,7 @@ public interface RolePermissionDAO {
 
     List<RolePermission> selectByPage(Page page);
 
-    List<RolePermission> selectByCondition(Map<String, Object> searchMap);
+    List<RolePermission> selectByCondition(Map<String, Object> condition);
 
     RolePermission select(String id);
 

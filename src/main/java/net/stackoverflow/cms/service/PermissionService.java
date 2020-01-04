@@ -11,7 +11,7 @@ public interface PermissionService {
 
     List<Permission> findByPage(Page page);
 
-    List<Permission> findByCondition(Map<String, Object> searchMap);
+    List<Permission> findByCondition(Map<String, Object> condition);
 
     List<Permission> findAll();
 

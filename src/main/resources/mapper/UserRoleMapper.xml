@@ -14,19 +14,19 @@
     <select id="selectByPage" resultMap="baseMap" resultType="userRole">
         select * from user_role
         <where>
-            <if test="searchMap != null">
-                <if test="searchMap.id != null">
-                    id = #{searchMap.id}
+            <if test="condition != null">
+                <if test="condition.id != null">
+                    id = #{condition.id}
                 </if>
-                <if test="searchMap.userId != null">
-                    and user_id = #{searchMap.userId}
+                <if test="condition.userId != null">
+                    and user_id = #{condition.userId}
                 </if>
-                <if test="searchMap.roleId != null">
-                    and role_id = #{searchMap.roleId}
+                <if test="condition.roleId != null">
+                    and role_id = #{condition.roleId}
                 </if>
-                <if test="searchMap.ids != null">
+                <if test="condition.ids != null">
                     and id in
-                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
+                    <foreach collection="condition.ids" item="id" open="(" separator="," close=")">
                         #{id}
                     </foreach>
                 </if>

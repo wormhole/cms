@@ -53,7 +53,7 @@ public class PermissionController extends BaseController {
         Result result = new Result();
         try {
             Map<String, Object> resultMap = new HashMap<>(16);
-            Map<String, Object> searchMap = new HashMap<>(16);
+            Map<String, Object> condition = new HashMap<>(16);
 
             if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "deletable";
@@ -62,7 +62,7 @@ public class PermissionController extends BaseController {
             if (StringUtils.isBlank(key)) {
                 key = null;
             }
-            Page pageParam = new Page(page, limit, sort, order, searchMap, key);
+            Page pageParam = new Page(page, limit, sort, order, condition, key);
             List<Permission> permissions = permissionService.findByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);

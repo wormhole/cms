@@ -18,28 +18,28 @@
     <select id="selectByPage" resultMap="baseMap" resultType="user">
         select * from user
         <where>
-            <if test="searchMap != null">
-                <if test="searchMap.id != null">
-                    id = #{searchMap.id}
+            <if test="condition != null">
+                <if test="condition.id != null">
+                    id = #{condition.id}
                 </if>
-                <if test="searchMap.username != null">
-                    and username = #{searchMap.username}
+                <if test="condition.username != null">
+                    and username = #{condition.username}
                 </if>
-                <if test="searchMap.enabled != null">
-                    and enabled = #{searchMap.enabled}
+                <if test="condition.enabled != null">
+                    and enabled = #{condition.enabled}
                 </if>
-                <if test="searchMap.email != null">
-                    and email = #{searchMap.email}
+                <if test="condition.email != null">
+                    and email = #{condition.email}
                 </if>
-                <if test="searchMap.telephone != null">
-                    and telephone = #{searchMap.telephone}
+                <if test="condition.telephone != null">
+                    and telephone = #{condition.telephone}
                 </if>
-                <if test="searchMap.deletable != null">
-                    and deletable = #{searchMap.deletable}
+                <if test="condition.deletable != null">
+                    and deletable = #{condition.deletable}
                 </if>
-                <if test="searchMap.ids != null">
+                <if test="condition.ids != null">
                     and id in
-                    <foreach collection="searchMap.ids" item="id" open="(" separator="," close=")">
+                    <foreach collection="condition.ids" item="id" open="(" separator="," close=")">
                         #{id}
                     </foreach>
                 </if>

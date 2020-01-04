@@ -29,15 +29,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findByCondition(Map<String, Object> searchMap) {
-        return userDAO.selectByCondition(searchMap);
+    public List<User> findByCondition(Map<String, Object> condition) {
+        return userDAO.selectByCondition(condition);
     }
 
     @Override
     public List<User> findByIds(List<String> ids) {
-        Map<String, Object> searchMap = new HashMap<>(16);
-        searchMap.put("ids", ids);
-        return userDAO.selectByCondition(searchMap);
+        Map<String, Object> condition = new HashMap<>(16);
+        condition.put("ids", ids);
+        return userDAO.selectByCondition(condition);
     }
 
     @Override

@@ -29,8 +29,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> findByCondition(Map<String, Object> searchMap) {
-        return roleDAO.selectByCondition(searchMap);
+    public List<Role> findByCondition(Map<String, Object> condition) {
+        return roleDAO.selectByCondition(condition);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> findByIds(List<String> ids) {
-        Map<String, Object> searchMap = new HashMap<>(16);
-        searchMap.put("ids", ids);
-        return roleDAO.selectByCondition(searchMap);
+        Map<String, Object> condition = new HashMap<>(16);
+        condition.put("ids", ids);
+        return roleDAO.selectByCondition(condition);
     }
 
     @Override

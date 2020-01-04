@@ -12,7 +12,7 @@ public interface UserDAO {
 
     List<User> selectByPage(Page page);
 
-    List<User> selectByCondition(Map<String, Object> searchMap);
+    List<User> selectByCondition(Map<String, Object> condition);
 
     User select(String id);
 

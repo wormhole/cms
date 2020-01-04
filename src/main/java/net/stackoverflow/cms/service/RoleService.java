@@ -12,7 +12,7 @@ public interface RoleService {
 
     List<Role> findByPage(Page page);
 
-    List<Role> findByCondition(Map<String, Object> searchMap);
+    List<Role> findByCondition(Map<String, Object> condition);
 
     List<Role> findAll();
 

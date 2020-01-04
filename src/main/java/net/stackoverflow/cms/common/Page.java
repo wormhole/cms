@@ -22,7 +22,7 @@ public class Page {
     private Integer offset;
     private String order = "asc";
     private String sort = "id";
-    private Map<String, Object> searchMap;
+    private Map<String, Object> condition;
     private String key;
 
     public Page(Integer page, Integer limit) {
@@ -31,7 +31,7 @@ public class Page {
         this.offset = (page - 1) * limit;
     }
 
-    public Page(Integer page, Integer limit, String sort, String order, Map<String, Object> searchMap, String key) {
+    public Page(Integer page, Integer limit, String sort, String order, Map<String, Object> condition, String key) {
         this.page = page;
         this.limit = limit;
         this.offset = (page - 1) * limit;
@@ -41,7 +41,7 @@ public class Page {
         if (StringUtils.isNotBlank(sort)) {
             this.sort = sort;
         }
-        this.searchMap = searchMap;
+        this.condition = condition;
         if (StringUtils.isNotBlank(key)) {
             this.key = key;
         }

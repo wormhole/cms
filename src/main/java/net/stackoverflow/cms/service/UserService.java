@@ -12,7 +12,7 @@ public interface UserService {
 
     List<User> findByPage(Page page);
 
-    List<User> findByCondition(Map<String, Object> searchMap);
+    List<User> findByCondition(Map<String, Object> condition);
 
     List<User> findByIds(List<String> ids);
 

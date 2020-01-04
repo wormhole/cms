@@ -12,7 +12,7 @@ public interface UserRoleDAO {
 
     List<UserRole> selectByPage(Page page);
 
-    List<UserRole> selectByCondition(Map<String, Object> searchMap);
+    List<UserRole> selectByCondition(Map<String, Object> condition);
 
     UserRole select(String id);
 

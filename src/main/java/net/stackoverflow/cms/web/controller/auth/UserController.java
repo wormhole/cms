@@ -74,10 +74,10 @@ public class UserController extends BaseController {
             }
 
             Map<String, Object> resultMap = new HashMap<>(16);
-            Map<String, Object> searchMap = new HashMap<>(16);
+            Map<String, Object> condition = new HashMap<>(16);
 
             if (roleIds != null && roleIds.size() > 0) {
-                searchMap.put("ids", userIds);
+                condition.put("ids", userIds);
             }
             if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "deletable";
@@ -86,7 +86,7 @@ public class UserController extends BaseController {
             if (StringUtils.isBlank(key)) {
                 key = null;
             }
-            Page pageParam = new Page(page, limit, sort, order, searchMap, key);
+            Page pageParam = new Page(page, limit, sort, order, condition, key);
             List<User> users = userService.findByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);

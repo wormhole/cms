@@ -73,10 +73,10 @@ public class RoleController extends BaseController {
             }
 
             Map<String, Object> resultMap = new HashMap<>(16);
-            Map<String, Object> searchMap = new HashMap<>(16);
+            Map<String, Object> condition = new HashMap<>(16);
 
             if (permissionIds != null && permissionIds.size() > 0) {
-                searchMap.put("ids", roleIds);
+                condition.put("ids", roleIds);
             }
             if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "deletable";
@@ -85,7 +85,7 @@ public class RoleController extends BaseController {
             if (StringUtils.isBlank(key)) {
                 key = null;
             }
-            Page pageParam = new Page(page, limit, sort, order, searchMap, key);
+            Page pageParam = new Page(page, limit, sort, order, condition, key);
             List<Role> roles = roleService.findByPage(pageParam);
             pageParam.setLimit(null);
             pageParam.setOffset(null);
