@@ -11,6 +11,18 @@
         <result property="roleId" column="role_id"></result>
     </resultMap>
 
+    <sql id="columns">
+        id, user_id, role_id
+    </sql>
+
+    <sql id="columns_value">
+        #{id}, #{userId}, #{roleId}
+    </sql>
+
+    <sql id="columns_item_value">
+        #{item.id}, #{item.userId}, #{item.roleId}
+    </sql>
+
     <select id="selectByPage" resultMap="baseMap" resultType="userRole">
         select * from user_role
         <where>
@@ -39,7 +51,7 @@
             order by ${sort} ${order}
         </if>
         <if test="offset != null and limit != null">
-            limit ${offset},${limit}
+            limit ${offset}, ${limit}
         </if>
     </select>
 
@@ -69,15 +81,15 @@
     </select>
 
     <insert id="insert" parameterType="userRole">
-        insert into user_role (id,user_id,role_id)
-        values (#{id},#{userId},#{roleId})
+        insert into user_role (<include refid="columns"/>)
+        values (<include refid="columns_value"/>)
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user_role (id,user_id,role_id)
+        insert into user_role (<include refid="columns"/>)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.userId},#{item.roleId})
+            (<include refid="columns_item_value"/>)
         </foreach>
     </insert>
 

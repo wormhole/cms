@@ -12,6 +12,18 @@
         <result property="deletable" column="deletable"/>
     </resultMap>
 
+    <sql id="columns">
+        id, name, description, deletable
+    </sql>
+
+    <sql id="columns_value">
+        #{id}, #{name}, #{description}, #{deletable}
+    </sql>
+
+    <sql id="columns_item_value">
+        #{item.id}, #{item.name}, #{item.description}, #{item.deletable}
+    </sql>
+
     <select id="selectByPage" resultMap="baseMap" resultType="permission">
         select * from permission
         <where>
@@ -43,7 +55,7 @@
             order by ${sort} ${order}
         </if>
         <if test="offset != null and limit != null">
-            limit ${offset},${limit}
+            limit ${offset}, ${limit}
         </if>
     </select>
 
@@ -76,14 +88,14 @@
     </select>
 
     <insert id="insert" parameterType="permission">
-        insert into permission (id,name,description,deletable) values (#{id},#{name},#{description},#{deletable})
+        insert into permission (<include refid="columns"/>) values (<include refid="columns_value"/>)
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into permission (id,name,description,deletable)
+        insert into permission (<include refid="columns"/>)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.name},#{item.description},#{item.deletable})
+            (<include refid="columns_item_value"/>)
         </foreach>
     </insert>
 

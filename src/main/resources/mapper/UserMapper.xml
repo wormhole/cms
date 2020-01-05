@@ -15,6 +15,18 @@
         <result property="deletable" column="deletable"/>
     </resultMap>
 
+    <sql id="columns">
+        id, username, password, enabled, email, telephone, deletable
+    </sql>
+
+    <sql id="columns_value">
+        #{id}, #{username}, #{password}, #{email}, #{telephone}, #{enabled}, #{deletable}
+    </sql>
+
+    <sql id="columns_item_value">
+        #{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled},#{item.deletable}
+    </sql>
+
     <select id="selectByPage" resultMap="baseMap" resultType="user">
         select * from user
         <where>
@@ -53,7 +65,7 @@
             order by ${sort} ${order}
         </if>
         <if test="offset != null and limit != null">
-            limit ${offset},${limit}
+            limit ${offset}, ${limit}
         </if>
     </select>
 
@@ -92,14 +104,14 @@
     </select>
 
     <insert id="insert" parameterType="user">
-        insert into user (id,username,password,email,telephone,enabled,deletable) values (#{id},#{username},#{password},#{email},#{telephone},#{enabled},#{deletable})
+        insert into user (<include refid="columns"/>) values (<include refid="columns_value"/>)
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user (id,username,password,email,telephone,enabled,deletable)
+        insert into user (<include refid="columns"/>)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled},#{item.deletable})
+            (<include refid="columns_item_value"/>)
         </foreach>
     </insert>
 
