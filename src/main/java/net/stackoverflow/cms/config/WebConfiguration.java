@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -12,6 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
+    @Value("${application.upload-path}")
+    private String uploadPath;
+
     /**
      * 静态文件路径映射
      *
@@ -19,8 +23,8 @@ public class WebConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern("/static/**")) {
-            registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        if (!registry.hasMappingForPattern("/upload/**")) {
+            registry.addResourceHandler("/upload/**").addResourceLocations("file:" + uploadPath);
         }
     }
 }
