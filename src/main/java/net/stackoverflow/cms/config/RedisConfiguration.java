@@ -26,6 +26,5 @@ public class RedisConfiguration {
         RedisSerializer stringRedisSerializer = redisTemplate.getStringSerializer();
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
-        RedisCacheUtils.setRedisTemplate(redisTemplate);
     }
 }
