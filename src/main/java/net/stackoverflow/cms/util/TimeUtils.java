@@ -3,6 +3,11 @@ package net.stackoverflow.cms.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * 时间日期工具类
+ *
+ * @author 凉衫薄
+ */
 public class TimeUtils {
 
     /**
