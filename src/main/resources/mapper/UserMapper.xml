@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.cms.dao.UserDAO">
 
-    <resultMap id="baseMap" type="user">
+    <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.User">
         <id property="id" column="id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
@@ -27,7 +27,7 @@
         #{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled},#{item.deletable}
     </sql>
 
-    <select id="selectByPage" resultMap="baseMap" resultType="user">
+    <select id="selectByPage" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.User">
         select * from user
         <where>
             <if test="condition != null">
@@ -69,7 +69,7 @@
         </if>
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap" resultType="user">
+    <select id="selectByCondition" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.User">
         select * from user
         <where>
             <if test="id != null">
@@ -99,11 +99,11 @@
         </where>
     </select>
 
-    <select id="select" resultMap="baseMap" resultType="user">
+    <select id="select" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.User">
         select * from user where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="user">
+    <insert id="insert" parameterType="net.stackoverflow.cms.model.entity.User">
         insert into user (<include refid="columns"/>) values (<include refid="columns_value"/>)
     </insert>
 
@@ -126,7 +126,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="user">
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.User">
         update user
         <set>
             <if test="username != null">

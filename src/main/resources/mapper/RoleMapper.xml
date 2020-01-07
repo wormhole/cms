@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.cms.dao.RoleDAO">
 
-    <resultMap id="baseMap" type="role">
+    <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.Role">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
@@ -24,7 +24,7 @@
         #{item.id}, #{item.name}, #{item.description}, #{item.deletable}
     </sql>
 
-    <select id="selectByPage" resultMap="baseMap" resultType="role">
+    <select id="selectByPage" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Role">
         select * from role
         <where>
             <if test="condition != null">
@@ -59,7 +59,7 @@
         </if>
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap" resultType="role">
+    <select id="selectByCondition" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Role">
         select * from role
         <where>
             <if test="id != null">
@@ -83,11 +83,11 @@
         </where>
     </select>
 
-    <select id="select" resultMap="baseMap" resultType="role">
+    <select id="select" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Role">
         select * from role where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="role">
+    <insert id="insert" parameterType="net.stackoverflow.cms.model.entity.Role">
         insert into role (<include refid="columns"/>) values (<include refid="columns_value"/>)
     </insert>
 
@@ -110,7 +110,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="role">
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.Role">
         update role
         <set>
             <if test="name != null">

@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.cms.dao.PermissionDAO">
 
-    <resultMap id="baseMap" type="permission">
+    <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.Permission">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
@@ -24,7 +24,7 @@
         #{item.id}, #{item.name}, #{item.description}, #{item.deletable}
     </sql>
 
-    <select id="selectByPage" resultMap="baseMap" resultType="permission">
+    <select id="selectByPage" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Permission">
         select * from permission
         <where>
             <if test="condition != null">
@@ -59,7 +59,7 @@
         </if>
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap" resultType="permission">
+    <select id="selectByCondition" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Permission">
         select * from permission
         <where>
             <if test="id != null">
@@ -83,11 +83,11 @@
         </where>
     </select>
 
-    <select id="select" resultMap="baseMap" resultType="permission">
+    <select id="select" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Permission">
         select * from permission where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="permission">
+    <insert id="insert" parameterType="net.stackoverflow.cms.model.entity.Permission">
         insert into permission (<include refid="columns"/>) values (<include refid="columns_value"/>)
     </insert>
 
@@ -110,7 +110,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="permission">
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.Permission">
         update permission
         <set>
             <if test="name != null">

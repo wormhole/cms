@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.cms.dao.RolePermissionDAO">
 
-    <resultMap id="baseMap" type="rolePermission">
+    <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.RolePermission">
         <id property="id" column="id"></id>
         <result property="roleId" column="role_id"></result>
         <result property="permissionId" column="permission_id"></result>
@@ -23,7 +23,7 @@
         #{item.id}, #{item.roleId}, #{item.permissionId}
     </sql>
 
-    <select id="selectByPage" resultMap="baseMap" resultType="rolePermission">
+    <select id="selectByPage" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.RolePermission">
         select * from role_permission
         <where>
             <if test="condition != null">
@@ -55,7 +55,7 @@
         </if>
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap" resultType="rolePermission">
+    <select id="selectByCondition" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.RolePermission">
         select * from role_permission
         <where>
             <if test="id != null">
@@ -76,11 +76,11 @@
         </where>
     </select>
 
-    <select id="select" resultMap="baseMap" resultType="rolePermission">
+    <select id="select" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.RolePermission">
         select * from role_permission where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="rolePermission">
+    <insert id="insert" parameterType="net.stackoverflow.cms.model.entity.RolePermission">
         insert into role_permission (<include refid="columns"/>)
         values (<include refid="columns_value"/>)
     </insert>
@@ -104,7 +104,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="rolePermission">
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.RolePermission">
         update role_permission
         <set>
             <if test="roleId != null">
