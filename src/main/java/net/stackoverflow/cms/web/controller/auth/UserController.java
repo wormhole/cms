@@ -14,7 +14,6 @@ import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
-import net.stackoverflow.cms.util.JsonUtils;
 import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +115,6 @@ public class UserController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(resultMap);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -156,8 +154,7 @@ public class UserController extends BaseController {
 
             userService.batchDelete(idsVO.getIds());
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("删除成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -198,8 +195,7 @@ public class UserController extends BaseController {
             //更新数据库
             userService.batchUpdate(users);
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("启用成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -240,8 +236,7 @@ public class UserController extends BaseController {
             //更新数据库
             userService.batchUpdate(users);
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("禁用成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -275,7 +270,6 @@ public class UserController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(retMap);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -332,7 +326,6 @@ public class UserController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(retMap);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -368,8 +361,7 @@ public class UserController extends BaseController {
 
             userService.reGrantRole(grantRoleVO.getUserId(), grantRoleVO.getRoleIds());
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("授权成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -447,8 +439,7 @@ public class UserController extends BaseController {
                 userService.update(user);
             }
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("更新成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -508,8 +499,7 @@ public class UserController extends BaseController {
             userService.save(user);
 
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("添加成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -9,7 +9,6 @@ import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.vo.IdsVO;
 import net.stackoverflow.cms.model.vo.PermissionVO;
 import net.stackoverflow.cms.service.PermissionService;
-import net.stackoverflow.cms.util.JsonUtils;
 import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +80,6 @@ public class PermissionController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(resultMap);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -121,8 +119,7 @@ public class PermissionController extends BaseController {
 
             permissionService.batchDelete(idsVO.getIds());
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("删除成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -178,8 +175,7 @@ public class PermissionController extends BaseController {
             permissionService.update(permission);
 
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("更新成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -222,8 +218,7 @@ public class PermissionController extends BaseController {
             permissionService.save(permission);
 
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("添加成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());

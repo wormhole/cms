@@ -13,7 +13,6 @@ import net.stackoverflow.cms.model.vo.PermissionVO;
 import net.stackoverflow.cms.model.vo.RoleVO;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
-import net.stackoverflow.cms.util.JsonUtils;
 import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +113,6 @@ public class RoleController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(resultMap);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -148,7 +146,6 @@ public class RoleController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(retMap);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -188,8 +185,7 @@ public class RoleController extends BaseController {
 
             roleService.batchDelete(idsVO.getIds());
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("删除成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -246,7 +242,6 @@ public class RoleController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(retMap);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -282,8 +277,7 @@ public class RoleController extends BaseController {
 
             roleService.reGrantPermission(grantPermissionVO.getRoleId(), grantPermissionVO.getPermissionIds());
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("授权成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
 
         } catch (Exception e) {
@@ -339,8 +333,7 @@ public class RoleController extends BaseController {
             roleService.update(role);
 
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("更新成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -383,8 +376,7 @@ public class RoleController extends BaseController {
             roleService.save(role);
 
             result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("添加成功");
-            log.info(JsonUtils.bean2json(result));
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());

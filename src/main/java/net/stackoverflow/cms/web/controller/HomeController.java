@@ -9,7 +9,6 @@ import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.UserAuthorityVO;
 import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.UserService;
-import net.stackoverflow.cms.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +64,6 @@ public class HomeController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(userAuthorityVO);
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
