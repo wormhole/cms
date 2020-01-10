@@ -28,6 +28,6 @@ public class TimeUtils {
      */
     public static String pathWithDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/");
-        return sdf.format(sdf.format(new Date()));
+        return sdf.format(new Date());
     }
 }
