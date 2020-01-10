@@ -34,7 +34,9 @@ public class Page {
     public Page(Integer page, Integer limit, String sort, String order, Map<String, Object> condition, String key) {
         this.page = page;
         this.limit = limit;
-        this.offset = (page - 1) * limit;
+        if (page != null && limit != null) {
+            this.offset = (page - 1) * limit;
+        }
         if (StringUtils.isNotBlank(order)) {
             this.order = order;
         }
