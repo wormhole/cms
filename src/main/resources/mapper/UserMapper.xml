@@ -16,7 +16,7 @@
     </resultMap>
 
     <sql id="columns">
-        id, username, password, enabled, email, telephone, deletable
+        id, username, password, email, telephone, enabled, deletable
     </sql>
 
     <sql id="columns_value">
