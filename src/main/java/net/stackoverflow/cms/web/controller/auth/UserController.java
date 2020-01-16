@@ -14,7 +14,6 @@ import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
-import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -398,7 +397,7 @@ public class UserController extends BaseController {
             }
 
             if (userVO.getType() == 0) {
-                if (!ValidateUtils.validateUsername(userVO.getUsername())) {
+                if (!StringUtils.isBlank(userVO.getUsername())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名不能为空");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -414,12 +413,12 @@ public class UserController extends BaseController {
                         }
                     }
                 }
-                if (!ValidateUtils.validateEmail(userVO.getEmail())) {
+                if (!validateEmail(userVO.getEmail())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("邮箱格式错误");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
-                if (!ValidateUtils.validateTelephone(userVO.getTelephone())) {
+                if (!validateTelephone(userVO.getTelephone())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("电话号码格式错误");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -429,7 +428,7 @@ public class UserController extends BaseController {
                 user.setTelephone(userVO.getTelephone());
                 userService.update(user);
             } else if (userVO.getType() == 1) {
-                if (!ValidateUtils.validatePassword(userVO.getPassword())) {
+                if (!validatePassword(userVO.getPassword())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("密码长度不能小于6");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -460,7 +459,7 @@ public class UserController extends BaseController {
         Result result = new Result();
         try {
             //参数校验
-            if (!ValidateUtils.validateUsername(userVO.getUsername())) {
+            if (!StringUtils.isBlank(userVO.getUsername())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -474,17 +473,17 @@ public class UserController extends BaseController {
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
-            if (!ValidateUtils.validateEmail(userVO.getEmail())) {
+            if (!validateEmail(userVO.getEmail())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("邮箱格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validateTelephone(userVO.getTelephone())) {
+            if (!validateTelephone(userVO.getTelephone())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("电话号码格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validatePassword(userVO.getPassword())) {
+            if (!validatePassword(userVO.getPassword())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("密码长度不能小于6");
                 return ResponseEntity.status(HttpStatus.OK).body(result);

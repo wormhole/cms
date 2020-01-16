@@ -9,7 +9,6 @@ import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.vo.IdsVO;
 import net.stackoverflow.cms.model.vo.PermissionVO;
 import net.stackoverflow.cms.service.PermissionService;
-import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -153,7 +152,7 @@ public class PermissionController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            if (!ValidateUtils.validateName(permissionVO.getName())) {
+            if (!StringUtils.isBlank(permissionVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -196,7 +195,7 @@ public class PermissionController extends BaseController {
         Result result = new Result();
         try {
             //校验参数
-            if (!ValidateUtils.validateName(permissionVO.getName())) {
+            if (!StringUtils.isBlank(permissionVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);

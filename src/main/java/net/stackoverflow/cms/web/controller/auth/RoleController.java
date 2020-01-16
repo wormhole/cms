@@ -13,7 +13,6 @@ import net.stackoverflow.cms.model.vo.PermissionVO;
 import net.stackoverflow.cms.model.vo.RoleVO;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
-import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -311,7 +310,7 @@ public class RoleController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            if (!ValidateUtils.validateName(roleVO.getName())) {
+            if (!StringUtils.isBlank(roleVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -354,7 +353,7 @@ public class RoleController extends BaseController {
         Result result = new Result();
         try {
             //校验参数
-            if (!ValidateUtils.validateName(roleVO.getName())) {
+            if (!StringUtils.isBlank(roleVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);

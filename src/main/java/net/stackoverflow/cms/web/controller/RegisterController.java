@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.web.controller;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
@@ -9,7 +10,6 @@ import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.JsonUtils;
-import net.stackoverflow.cms.util.ValidateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,7 +60,7 @@ public class RegisterController extends BaseController {
             }
 
             //校验数据
-            if (!ValidateUtils.validateUsername(registerVO.getUsername())) {
+            if (!StringUtils.isBlank(registerVO.getUsername())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -74,17 +74,17 @@ public class RegisterController extends BaseController {
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
-            if (!ValidateUtils.validateTelephone(registerVO.getTelephone())) {
+            if (!validateTelephone(registerVO.getTelephone())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("电话号码格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validateEmail(registerVO.getEmail())) {
+            if (!validateEmail(registerVO.getEmail())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("邮箱格式错误");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-            if (!ValidateUtils.validatePassword(registerVO.getPassword())) {
+            if (!validatePassword(registerVO.getPassword())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("密码长度不能小于6");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
