@@ -152,7 +152,7 @@ public class PermissionController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            if (!StringUtils.isBlank(permissionVO.getName())) {
+            if (StringUtils.isBlank(permissionVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -195,7 +195,7 @@ public class PermissionController extends BaseController {
         Result result = new Result();
         try {
             //校验参数
-            if (!StringUtils.isBlank(permissionVO.getName())) {
+            if (StringUtils.isBlank(permissionVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);

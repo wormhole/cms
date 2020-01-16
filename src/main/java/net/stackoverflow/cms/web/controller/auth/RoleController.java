@@ -310,7 +310,7 @@ public class RoleController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
-            if (!StringUtils.isBlank(roleVO.getName())) {
+            if (StringUtils.isBlank(roleVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -353,7 +353,7 @@ public class RoleController extends BaseController {
         Result result = new Result();
         try {
             //校验参数
-            if (!StringUtils.isBlank(roleVO.getName())) {
+            if (StringUtils.isBlank(roleVO.getName())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);

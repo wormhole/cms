@@ -44,8 +44,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/login", "/register", "/vcode").permitAll()
                 .antMatchers("/home/**").authenticated()
-                .antMatchers("/dashboard/**").hasAnyAuthority("dashboard")
+                .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/user/**").hasAnyAuthority("user")
+                .antMatchers("/personal/**").authenticated()
                 .anyRequest().permitAll();
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());

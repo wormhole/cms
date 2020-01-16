@@ -8,13 +8,11 @@ import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +24,32 @@ public class PersonalController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * 获取个人信息
+     *
+     * @return
+     */
+    @GetMapping(value = "/info")
+    public ResponseEntity info() {
+        Result result = new Result();
+        try {
+            User user = userService.findById(getUserDetails().getId());
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            userVO.setPassword(null);
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("success");
+            result.setData(userVO);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+
+    }
 
 
     /**
@@ -49,7 +73,7 @@ public class PersonalController extends BaseController {
             User user = userService.findById(getUserDetails().getId());
 
             if (userVO.getType() == 0) {
-                if (!StringUtils.isBlank(userVO.getUsername())) {
+                if (StringUtils.isBlank(userVO.getUsername())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名不能为空");
                     return ResponseEntity.status(HttpStatus.OK).body(result);

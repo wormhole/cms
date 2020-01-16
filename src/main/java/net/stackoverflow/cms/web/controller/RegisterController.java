@@ -57,7 +57,7 @@ public class RegisterController extends BaseController {
             }
 
             //校验数据
-            if (!StringUtils.isBlank(registerVO.getUsername())) {
+            if (StringUtils.isBlank(registerVO.getUsername())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -98,7 +98,6 @@ public class RegisterController extends BaseController {
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("注册成功");
-            log.info(JsonUtils.bean2json(result));
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());

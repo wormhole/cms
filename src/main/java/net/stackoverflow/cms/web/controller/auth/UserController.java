@@ -397,7 +397,7 @@ public class UserController extends BaseController {
             }
 
             if (userVO.getType() == 0) {
-                if (!StringUtils.isBlank(userVO.getUsername())) {
+                if (StringUtils.isBlank(userVO.getUsername())) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名不能为空");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -459,7 +459,7 @@ public class UserController extends BaseController {
         Result result = new Result();
         try {
             //参数校验
-            if (!StringUtils.isBlank(userVO.getUsername())) {
+            if (StringUtils.isBlank(userVO.getUsername())) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
