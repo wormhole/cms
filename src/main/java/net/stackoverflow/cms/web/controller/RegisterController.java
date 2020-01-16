@@ -7,7 +7,6 @@ import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.RegisterVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
-import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.JsonUtils;
 import org.springframework.beans.BeanUtils;
@@ -34,8 +33,6 @@ public class RegisterController extends BaseController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private RoleService roleService;
 
     /**
      * 用户注册接口
