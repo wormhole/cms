@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.cms.dao.TokenDAO">
+
+    <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.Token">
+        <id property="id" column="id"/>
+        <result property="token" column="token"/>
+        <result property="lastUsed" column="last_used" jdbcType="java.util.Date" typeHandler="TIMESTAMP"/>
+        <result property="userId" column="user_id"/>
+    </resultMap>
+
+    <sql id="columns">
+        id,token,last_used,user_id
+    </sql>
+
+    <sql id="columns_value">
+        #{id},#{token},#{lastUsed},#{userId}
+    </sql>
+
+    <sql id="columns_item_value">
+        #{item.id},#{item.token},#{item.lastUsed},#{item.userId}
+    </sql>
+
+    <select id="selectByPage" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Token">
+        select * from token
+        <where>
+            <if test="condition != null">
+                <if test="condition.id != null">
+                    id = #{condition.id}
+                </if>
+                <if test="condition.token != null">
+                    and token = #{condition.token}
+                </if>
+                <if test="condition.lastUsed != null">
+                    and last_used = #{condition.lastUsed}
+                </if>
+                <if test="condition.userId != null">
+                    and user_id = #{condition.userId}
+                </if>
+                <if test="condition.ids != null">
+                    and id in
+                    <foreach collection="condition.ids" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+            </if>
+            <if test="key != null">
+                and (id like CONCAT('%',#{key},'%') or token like CONCAT('%',#{key},'%'))
+            </if>
+        </where>
+        <if test="order != null and sort != null">
+            order by ${sort} ${order}
+        </if>
+        <if test="offset != null and limit != null">
+            limit ${offset}, ${limit}
+        </if>
+    </select>
+
+    <select id="selectByCondition" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Token">
+        select * from token
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="token != null">
+                and token = #{token}
+            </if>
+            <if test="lastUsed != null">
+                and last_used = #{lastUsed}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="ids != null">
+                and id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="select" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Token">
+        select * from token where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="net.stackoverflow.cms.model.entity.Token">
+        insert into token (<include refid="columns"/>) values (<include refid="columns_value"/>)
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into token (<include refid="columns"/>)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (<include refid="columns_item_value"/>)
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="string">
+        delete from token where id = #{id}
+    </delete>
+
+    <delete id="batchDelete" parameterType="list">
+        delete from token where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.Token">
+        update token
+        <set>
+            <if test="token != null">
+                token = #{token},
+            </if>
+            <if test="lastUsed != null">
+                last_used = #{lastUsed},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update role
+            <set>
+                <if test="item.token != null">
+                    token = #{item.token},
+                </if>
+                <if test="item.lastUsed != null">
+                    last_used = #{item.lastUsed},
+                </if>
+                <if test="item.userId != null">
+                    user_id = #{item.userId}
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>
