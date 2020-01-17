@@ -1,15 +1,14 @@
 package net.stackoverflow.cms.config;
 
 import net.stackoverflow.cms.security.*;
+import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.web.filter.VerifyCodeFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -20,9 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,7 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .usernameParameter("username")
                 .passwordParameter("password");
         http.rememberMe()
-                .userDetailsService(userDetailsService)
+                .userDetailsService(userDetailsService())
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
                 .rememberMeParameter("rememberMe");
         http.authorizeRequests()
@@ -55,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -94,4 +90,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         verifyCodeFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         return verifyCodeFilter;
     }
+
+    @Bean
+    public CmsUserDetailsService userDetailsService(UserService userService) {
+        return new CmsUserDetailsService(userService);
+    }
+
 }
