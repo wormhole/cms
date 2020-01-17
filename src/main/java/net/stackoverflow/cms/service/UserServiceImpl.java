@@ -41,6 +41,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByUsername(String username) {
+        Map<String, Object> condition = new HashMap<>(16);
+        condition.put("username", username);
+        List<User> users = userDAO.selectByCondition(condition);
+        if (users.size() > 0) {
+            return users.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public User findById(String id) {
         return userDAO.select(id);
     }

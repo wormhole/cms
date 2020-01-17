@@ -10,10 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,11 +30,8 @@ public class CmsUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
-            put("username", username);
-        }});
-        if (!CollectionUtils.isEmpty(users)) {
-            User user = users.get(0);
+        User user = userService.findByUsername(username);
+        if (user != null) {
             List<Role> roles = userService.findRoleByUserId(user.getId());
             List<Permission> permissions = userService.findPermissionByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();

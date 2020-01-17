@@ -403,10 +403,8 @@ public class UserController extends BaseController {
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 } else {
                     if (!user.getUsername().equals(userVO.getUsername())) {
-                        List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
-                            put("username", userVO.getUsername());
-                        }});
-                        if (users != null && users.size() > 0) {
+                        User users = userService.findByUsername(userVO.getUsername());
+                        if (users != null) {
                             result.setStatus(Result.Status.FAILURE);
                             result.setMessage("用户名已存在");
                             return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -464,10 +462,8 @@ public class UserController extends BaseController {
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
-                    put("username", userVO.getUsername());
-                }});
-                if (users != null && users.size() > 0) {
+                User user = userService.findByUsername(userVO.getUsername());
+                if (user != null) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名已存在");
                     return ResponseEntity.status(HttpStatus.OK).body(result);

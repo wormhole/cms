@@ -28,10 +28,8 @@ public class CmsJdbcTokenRepositoryImpl implements PersistentTokenRepository {
         tk.setId(token.getSeries());
         tk.setToken(token.getTokenValue());
         tk.setLastUsed(token.getDate());
-        List<User> users = userService.findByCondition(new HashMap<String, Object>() {{
-            put("username", token.getUsername());
-        }});
-        tk.setUserId(users.get(0).getId());
+        User user = userService.findByUsername(token.getUsername());
+        tk.setUserId(user.getId());
         tokenService.save(tk);
     }
 
@@ -56,14 +54,12 @@ public class CmsJdbcTokenRepositoryImpl implements PersistentTokenRepository {
 
     @Override
     public void removeUserTokens(String username) {
-        List<User> users = userService.findByCondition(new HashMap<String, Object>() {{
-            put("username", username);
-        }});
+        User user = userService.findByUsername(username);
 
         List<Token> tokens = new ArrayList<>();
-        if (users != null && users.size() > 0) {
+        if (user != null) {
             tokens = tokenService.findByCondition(new HashMap<String, Object>() {{
-                put("userId", users.get(0).getId());
+                put("userId", user.getId());
             }});
         }
         if (tokens.size() > 0) {

@@ -14,9 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/personal")
 @Slf4j
@@ -79,10 +76,8 @@ public class PersonalController extends BaseController {
                     return ResponseEntity.status(HttpStatus.OK).body(result);
                 } else {
                     if (!user.getUsername().equals(userVO.getUsername())) {
-                        List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
-                            put("username", userVO.getUsername());
-                        }});
-                        if (users != null && users.size() > 0) {
+                        User users = userService.findByUsername(userVO.getUsername());
+                        if (users != null) {
                             result.setStatus(Result.Status.FAILURE);
                             result.setMessage("用户名已存在");
                             return ResponseEntity.status(HttpStatus.OK).body(result);

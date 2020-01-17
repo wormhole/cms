@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -62,10 +60,8 @@ public class RegisterController extends BaseController {
                 result.setMessage("用户名不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<User> users = userService.findByCondition(new HashMap<String, Object>(16) {{
-                    put("username", registerVO.getUsername());
-                }});
-                if (users.size() != 0) {
+                User user = userService.findByUsername(registerVO.getUsername());
+                if (user != null) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("用户名重复");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
