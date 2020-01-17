@@ -1,8 +1,10 @@
 package net.stackoverflow.cms.config;
 
 import net.stackoverflow.cms.security.*;
+import net.stackoverflow.cms.service.TokenService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.web.filter.VerifyCodeFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private TokenService tokenService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
@@ -36,7 +43,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.rememberMe()
                 .userDetailsService(userDetailsService())
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
-                .rememberMeParameter("rememberMe");
+                .rememberMeParameter("rememberMe")
+                .tokenRepository(tokenRepository());
         http.authorizeRequests()
                 .antMatchers("/login", "/register", "/vcode").permitAll()
                 .antMatchers("/home/**").authenticated()
@@ -92,8 +100,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public CmsUserDetailsService userDetailsService(UserService userService) {
+    public CmsUserDetailsService userDetailsService() {
         return new CmsUserDetailsService(userService);
+    }
+
+    @Bean
+    public CmsJdbcTokenRepositoryImpl tokenRepository() {
+        return new CmsJdbcTokenRepositoryImpl(tokenService, userService);
     }
 
 }

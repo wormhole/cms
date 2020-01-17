@@ -8,7 +8,7 @@
     <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.Token">
         <id property="id" column="id"/>
         <result property="token" column="token"/>
-        <result property="lastUsed" column="last_used" jdbcType="java.util.Date" typeHandler="TIMESTAMP"/>
+        <result property="lastUsed" column="last_used" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         <result property="userId" column="user_id"/>
     </resultMap>
 

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * token实体类
@@ -20,7 +21,7 @@ public class Token implements Serializable {
 
     private String id;
     private String token;
-    private String lastUsed;
+    private Date lastUsed;
     private String userId;
 
 }
