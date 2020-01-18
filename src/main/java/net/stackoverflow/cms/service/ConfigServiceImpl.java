@@ -1,0 +1,83 @@
+package net.stackoverflow.cms.service;
+
+import net.stackoverflow.cms.common.Page;
+import net.stackoverflow.cms.dao.ConfigDAO;
+import net.stackoverflow.cms.model.entity.Config;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class ConfigServiceImpl implements ConfigService {
+
+    @Autowired
+    private ConfigDAO configDAO;
+
+    @Override
+    public List<Config> findByPage(Page page) {
+        return configDAO.selectByPage(page);
+    }
+
+    @Override
+    public List<Config> findByCondition(Map<String, Object> condition) {
+        return configDAO.selectByCondition(condition);
+    }
+
+    @Override
+    public List<Config> findAll() {
+        return configDAO.selectByCondition(new HashMap<>());
+    }
+
+    @Override
+    public Config findById(String id) {
+        return configDAO.select(id);
+    }
+
+    @Override
+    public List<Config> findByIds(List<String> ids) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("ids", ids);
+        return configDAO.selectByCondition(condition);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void save(Config config) {
+        configDAO.insert(config);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchSave(List<Config> configs) {
+        configDAO.batchInsert(configs);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(String id) {
+        configDAO.delete(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchDelete(List<String> ids) {
+        configDAO.batchDelete(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Config config) {
+        configDAO.update(config);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchUpdate(List<Config> configs) {
+        configDAO.batchUpdate(configs);
+    }
+
+}

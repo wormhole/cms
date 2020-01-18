@@ -3,12 +3,16 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.model.entity.Config;
 import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.model.vo.ConfigVO;
 import net.stackoverflow.cms.model.vo.UserAuthorityVO;
 import net.stackoverflow.cms.security.CmsUserDetails;
+import net.stackoverflow.cms.service.ConfigService;
 import net.stackoverflow.cms.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +35,36 @@ public class HomeController extends BaseController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ConfigService configService;
+
+    /**
+     * 获取配置信息
+     *
+     * @return
+     */
+    @GetMapping(value = "/config")
+    public ResponseEntity config() {
+        Result result = new Result();
+        try {
+            List<Config> configs = configService.findAll();
+            List<ConfigVO> configVOs = new ArrayList<>();
+            for (Config config : configs) {
+                ConfigVO configVO = new ConfigVO();
+                BeanUtils.copyProperties(config, configVO);
+                configVOs.add(configVO);
+            }
+            result.setMessage("success");
+            result.setStatus(Result.Status.SUCCESS);
+            result.setData(configVOs);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
 
     /**
      * 获取菜单权限
