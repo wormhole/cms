@@ -14,6 +14,8 @@ public interface RoleService {
 
     List<Role> findByCondition(Map<String, Object> condition);
 
+    Role findByName(String name);
+
     List<Role> findAll();
 
     Role findById(String id);

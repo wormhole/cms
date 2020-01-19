@@ -34,6 +34,18 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Role findByName(String name) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("name", name);
+        List<Role> roles = roleDAO.selectByCondition(condition);
+        if (roles != null && roles.size() > 0) {
+            return roles.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public List<Role> findAll() {
         return roleDAO.selectByCondition(new HashMap<>());
     }
@@ -59,6 +71,28 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void batchDelete(List<String> ids) {
+        List<String> userRoleIds = new ArrayList<>();
+        List<String> rolePermissionIds = new ArrayList<>();
+        for (String id : ids) {
+            List<UserRole> userRoles = userRoleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("roleId", id);
+            }});
+            List<RolePermission> rolePermissions = rolePermissionDAO.selectByCondition(new HashMap<String, Object>(16) {{
+                put("roleId", id);
+            }});
+            if (userRoles != null && userRoles.size() > 0) {
+                for (UserRole userRole : userRoles) {
+                    userRoleIds.add(userRole.getId());
+                }
+            }
+            if (rolePermissions != null && rolePermissions.size() > 0) {
+                for (RolePermission rolePermission : rolePermissions) {
+                    rolePermissionIds.add(rolePermission.getId());
+                }
+            }
+        }
+        userRoleDAO.batchDelete(userRoleIds);
+        rolePermissionDAO.batchDelete(rolePermissionIds);
         roleDAO.batchDelete(ids);
     }
 

@@ -316,10 +316,8 @@ public class RoleController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 if (!role.getName().equals(roleVO.getName())) {
-                    List<Role> roles = roleService.findByCondition(new HashMap<String, Object>(16) {{
-                        put("name", roleVO.getName());
-                    }});
-                    if (roles != null && roles.size() > 0) {
+                    Role roles = roleService.findByName(roleVO.getName());
+                    if (roles != null) {
                         result.setStatus(Result.Status.FAILURE);
                         result.setMessage("角色名已存在");
                         return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -358,10 +356,8 @@ public class RoleController extends BaseController {
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<Role> roles = roleService.findByCondition(new HashMap<String, Object>(16) {{
-                    put("name", roleVO.getName());
-                }});
-                if (roles != null && roles.size() > 0) {
+                Role role = roleService.findByName(roleVO.getName());
+                if (role != null) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("角色名已存在");
                     return ResponseEntity.status(HttpStatus.OK).body(result);
