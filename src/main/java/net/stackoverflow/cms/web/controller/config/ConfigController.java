@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 系统设置接口
+ *
+ * @author 凉衫薄
+ */
 @RestController
 @RequestMapping(value = "/config")
 @Slf4j
