@@ -23,4 +23,5 @@ public class File implements Serializable {
     private String name;
     private String path;
     private Date time;
+    private String userId;
 }
