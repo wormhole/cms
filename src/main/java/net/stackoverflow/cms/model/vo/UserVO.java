@@ -27,6 +27,7 @@ public class UserVO implements Serializable {
     private Integer deletable;
     private String password;
     private List<RoleVO> roles;
+    private String vcode;
     /**
      * 操作类型：0-更新基本信息，1-更新密码
      */
