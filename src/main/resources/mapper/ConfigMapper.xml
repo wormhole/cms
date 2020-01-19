@@ -118,7 +118,7 @@
 
     <update id="batchUpdate" parameterType="list">
         <foreach collection="list" item="item" open="" close="" separator=";">
-            update role
+            update config
             <set>
                 <if test="item.key != null">
                     `key` = #{item.key},
