@@ -158,10 +158,8 @@ public class PermissionController extends BaseController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
                 if (!permission.getName().equals(permissionVO.getName())) {
-                    List<Permission> permissions = permissionService.findByCondition(new HashMap<String, Object>(16) {{
-                        put("name", permissionVO.getName());
-                    }});
-                    if (permissions != null && permissions.size() > 0) {
+                    Permission permissions = permissionService.findByName(permission.getName());
+                    if (permissions != null) {
                         result.setStatus(Result.Status.FAILURE);
                         result.setMessage("权限名已存在");
                         return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -200,10 +198,8 @@ public class PermissionController extends BaseController {
                 result.setMessage("名称不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             } else {
-                List<Permission> permissions = permissionService.findByCondition(new HashMap<String, Object>(16) {{
-                    put("name", permissionVO.getName());
-                }});
-                if (permissions != null && permissions.size() > 0) {
+                Permission permission = permissionService.findByName(permissionVO.getName());
+                if (permission != null) {
                     result.setStatus(Result.Status.FAILURE);
                     result.setMessage("权限名已存在");
                     return ResponseEntity.status(HttpStatus.OK).body(result);

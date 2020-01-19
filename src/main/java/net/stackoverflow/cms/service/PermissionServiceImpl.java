@@ -34,6 +34,18 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
+    public Permission findByName(String name) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("name", name);
+        List<Permission> permissions = permissionDAO.selectByCondition(condition);
+        if (permissions != null && permissions.size() > 0) {
+            return permissions.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public List<Permission> findAll() {
         return permissionDAO.selectByCondition(new HashMap<>());
     }

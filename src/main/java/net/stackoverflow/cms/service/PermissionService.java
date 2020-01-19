@@ -13,6 +13,8 @@ public interface PermissionService {
 
     List<Permission> findByCondition(Map<String, Object> condition);
 
+    Permission findByName(String name);
+
     List<Permission> findAll();
 
     Permission findById(String id);
