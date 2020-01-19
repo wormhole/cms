@@ -13,8 +13,6 @@ public interface ConfigService {
 
     List<Config> findAll();
 
-    Config findById(String id);
-
     void update(Config config);
 
     void batchUpdate(List<Config> configs);

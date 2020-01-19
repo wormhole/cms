@@ -39,11 +39,6 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Config findById(String id) {
-        return configDAO.select(id);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(Config config) {
         configDAO.update(config);
