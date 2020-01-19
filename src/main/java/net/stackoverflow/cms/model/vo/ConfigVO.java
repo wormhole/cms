@@ -7,6 +7,11 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+/**
+ * 配置信息VO
+ *
+ * @author 凉衫薄
+ */
 @Getter
 @Setter
 @NoArgsConstructor
