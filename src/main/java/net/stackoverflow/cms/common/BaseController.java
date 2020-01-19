@@ -1,10 +1,17 @@
 package net.stackoverflow.cms.common;
 
 import lombok.extern.slf4j.Slf4j;
+import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.security.CmsUserDetails;
+import net.stackoverflow.cms.service.FileService;
+import net.stackoverflow.cms.util.TimeUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,12 +38,33 @@ public class BaseController {
     }
 
     /**
+     * 文件上传公共服务
+     *
+     * @param file
+     * @return
+     */
+    protected File saveFile(MultipartFile file, String uploadPath, FileService fileService) throws IOException {
+        String filename = file.getOriginalFilename();
+        String ext = filename.substring(filename.lastIndexOf("."));
+        String path = TimeUtils.pathWithDate() + UUID.randomUUID().toString() + ext;
+        String absolutePath = uploadPath + path;
+        java.io.File uploadFile = new java.io.File(absolutePath);
+        if (!uploadFile.getParentFile().exists()) {
+            uploadFile.mkdirs();
+        }
+        file.transferTo(uploadFile);
+        File filePO = new File(UUID.randomUUID().toString(), filename, path, new Date());
+        fileService.save(filePO);
+        return filePO;
+    }
+
+    /**
      * 校验电话号码
      *
      * @param telephone
      * @return
      */
-    public boolean validateTelephone(String telephone) {
+    protected boolean validateTelephone(String telephone) {
         if (telephone == null) {
             return false;
         }
@@ -50,7 +78,7 @@ public class BaseController {
      * @param email
      * @return
      */
-    public boolean validateEmail(String email) {
+    protected boolean validateEmail(String email) {
         if (email == null) {
             return false;
         }
@@ -64,7 +92,7 @@ public class BaseController {
      * @param password
      * @return
      */
-    public boolean validatePassword(String password) {
+    protected boolean validatePassword(String password) {
         if (StringUtils.isEmpty(password)) {
             return false;
         } else {
