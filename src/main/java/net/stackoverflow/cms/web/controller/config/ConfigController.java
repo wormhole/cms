@@ -56,17 +56,23 @@ public class ConfigController extends BaseController {
     /**
      * 更新配置
      *
-     * @param configs
+     * @param configVOs
      * @return
      */
     @RequestMapping(value = "/update")
-    public ResponseEntity update(List<Config> configs) {
+    public ResponseEntity update(List<ConfigVO> configVOs) {
         Result result = new Result();
         try {
-            if (configs == null || configs.size() == 0) {
+            if (configVOs == null || configVOs.size() == 0) {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("参数不能为空");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+            List<Config> configs = new ArrayList<>();
+            for (ConfigVO configVO : configVOs) {
+                Config config = new Config();
+                BeanUtils.copyProperties(configVO, config);
+                configs.add(config);
             }
             configService.batchUpdate(configs);
             result.setStatus(Result.Status.SUCCESS);
