@@ -14,6 +14,7 @@ import net.stackoverflow.cms.service.ConfigService;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,8 @@ public class HomeController extends BaseController {
     private UserService userService;
     @Autowired
     private ConfigService configService;
+    @Value("${application.static-prefix}")
+    private String prefix;
 
     /**
      * 获取配置信息
@@ -52,6 +55,9 @@ public class HomeController extends BaseController {
             for (Config config : configs) {
                 ConfigVO configVO = new ConfigVO();
                 BeanUtils.copyProperties(config, configVO);
+                if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
+                    configVO.setValue(prefix + configVO.getValue());
+                }
                 configVOs.add(configVO);
             }
             result.setMessage("success");

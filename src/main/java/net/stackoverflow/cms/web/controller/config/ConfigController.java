@@ -56,6 +56,9 @@ public class ConfigController extends BaseController {
             for (Config config : configs) {
                 ConfigVO configVO = new ConfigVO();
                 BeanUtils.copyProperties(config, configVO);
+                if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
+                    configVO.setValue(prefix + configVO.getValue());
+                }
                 configVOs.add(configVO);
             }
             result.setMessage("success");
@@ -117,13 +120,9 @@ public class ConfigController extends BaseController {
             Config config = configService.findByKey("head");
             config.setValue(filePO.getPath());
             configService.update(config);
-            ConfigVO configVO = new ConfigVO();
-            BeanUtils.copyProperties(config, configVO);
-            configVO.setValue("/upload" + configVO.getValue());
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
-            result.setData(configVO);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
