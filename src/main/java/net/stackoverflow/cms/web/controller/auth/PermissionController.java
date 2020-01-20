@@ -146,10 +146,6 @@ public class PermissionController extends BaseController {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else if (permission.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("该权限不允许被操作");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
             if (StringUtils.isBlank(permissionVO.getName())) {

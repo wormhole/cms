@@ -304,10 +304,6 @@ public class RoleController extends BaseController {
                 result.setStatus(Result.Status.FAILURE);
                 result.setMessage("不合法的id");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else if (role.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("该角色不允许被操作");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
 
             if (StringUtils.isBlank(roleVO.getName())) {
