@@ -15,6 +15,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Value("${application.upload-path}")
     private String uploadPath;
+    @Value("${application.static-prefix}")
+    private String prefix;
 
     /**
      * 静态文件路径映射
@@ -23,8 +25,8 @@ public class WebConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern("/upload/**")) {
-            registry.addResourceHandler("/upload/**").addResourceLocations("file:" + uploadPath);
+        if (!registry.hasMappingForPattern(prefix + "/**")) {
+            registry.addResourceHandler(prefix + "/**").addResourceLocations("file:" + uploadPath);
         }
     }
 }
