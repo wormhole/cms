@@ -38,6 +38,10 @@ public class ConfigController extends BaseController {
     @Autowired
     private FileService fileService;
 
+    private final String TITLE = "内容管理系统";
+    private final String COPYRIGHT = "copyright © 2020 by 凉衫薄";
+    private final String HEAD = "default";
+
     /**
      * 获取配置信息
      *
@@ -99,6 +103,12 @@ public class ConfigController extends BaseController {
         }
     }
 
+    /**
+     * 更新头像
+     *
+     * @param file
+     * @return
+     */
     @PostMapping(value = "/head")
     public ResponseEntity head(@RequestParam("file") MultipartFile file) {
         Result result = new Result();
@@ -114,6 +124,43 @@ public class ConfigController extends BaseController {
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
             result.setData(configVO);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    /**
+     * 还原默认配置
+     *
+     * @return
+     */
+    @PutMapping(value = "/restore")
+    public ResponseEntity restore() {
+        Result result = new Result();
+        try {
+            List<Config> configs = configService.findAll();
+            for (Config config : configs) {
+                switch (config.getKey()) {
+                    case "title":
+                        config.setValue(TITLE);
+                        break;
+                    case "copyright":
+                        config.setValue(COPYRIGHT);
+                        break;
+                    case "head":
+                        config.setValue(HEAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            configService.batchUpdate(configs);
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("success");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
