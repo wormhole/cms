@@ -3,6 +3,7 @@ package net.stackoverflow.cms.web.controller.dashboard;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.model.vo.CountVO;
 import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
@@ -52,13 +53,13 @@ public class DashboardController extends BaseController {
             Map<String, Object> map = new HashMap<>(16);
 
             //获取用户,角色,权限数量
-            Map<String, Object> countMap = new HashMap<>(16);
             Integer userCount = userService.count();
             Integer roleCount = roleService.count();
             Integer permissionCount = permissionService.count();
-            countMap.put("userCount", userCount);
-            countMap.put("roleCount", roleCount);
-            countMap.put("permissionCount", permissionCount);
+            List<CountVO> countVOs = new ArrayList<>();
+            countVOs.add(new CountVO("用户", userCount));
+            countVOs.add(new CountVO("角色", roleCount));
+            countVOs.add(new CountVO("权限", permissionCount));
 
             //获取所有在线用户
             List<Object> principals = sessionRegistry.getAllPrincipals();
@@ -108,7 +109,7 @@ public class DashboardController extends BaseController {
             systemMap.put("netSend", doubleFormat(upload) + "GB");
             systemMap.put("netReceive", doubleFormat(download) + "GB");
 
-            map.put("count", countMap);
+            map.put("count", countVOs);
             map.put("online", users);
             map.put("system", systemMap);
 
