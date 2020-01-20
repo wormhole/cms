@@ -58,6 +58,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Integer count() {
+        return userDAO.selectByCondition(new HashMap<>()).size();
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(User user) {
         //默认授予访客角色及权限

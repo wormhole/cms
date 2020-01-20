@@ -63,6 +63,11 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
+    public Integer count() {
+        return permissionDAO.selectByCondition(new HashMap<>()).size();
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(Permission permission) {
         permissionDAO.insert(permission);

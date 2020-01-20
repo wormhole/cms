@@ -20,6 +20,8 @@ public interface UserService {
 
     User findById(String id);
 
+    Integer count();
+
     void save(User user);
 
     void batchDelete(List<String> ids);

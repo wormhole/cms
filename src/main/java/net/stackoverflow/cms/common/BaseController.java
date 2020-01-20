@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -56,6 +57,17 @@ public class BaseController {
         File filePO = new File(UUID.randomUUID().toString(), filename, path, new Date(), getUserDetails().getId());
         fileService.save(filePO);
         return filePO;
+    }
+
+    /**
+     * double保留两位小数输出
+     *
+     * @param num
+     * @return
+     */
+    protected double doubleFormat(double num) {
+        BigDecimal b = new BigDecimal(num);
+        return b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**

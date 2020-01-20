@@ -21,6 +21,8 @@ public interface PermissionService {
 
     List<Permission> findByIds(List<String> ids);
 
+    Integer count();
+
     void save(Permission permission);
 
     void batchDelete(List<String> ids);

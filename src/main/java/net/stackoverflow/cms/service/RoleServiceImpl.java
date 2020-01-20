@@ -63,6 +63,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Integer count() {
+        return roleDAO.selectByCondition(new HashMap<>()).size();
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(Role role) {
         roleDAO.insert(role);

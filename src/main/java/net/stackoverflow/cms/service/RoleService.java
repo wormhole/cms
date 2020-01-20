@@ -22,6 +22,8 @@ public interface RoleService {
 
     List<Role> findByIds(List<String> ids);
 
+    Integer count();
+
     void save(Role role);
 
     void batchDelete(List<String> ids);
