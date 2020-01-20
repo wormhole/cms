@@ -98,6 +98,7 @@ public class PersonalController extends BaseController {
                 user.setEmail(userVO.getEmail());
                 user.setTelephone(userVO.getTelephone());
                 userService.update(user);
+                result.setData(user);
             } else if (userVO.getType() == 1) {
                 if (!validatePassword(userVO.getPassword())) {
                     result.setStatus(Result.Status.FAILURE);
