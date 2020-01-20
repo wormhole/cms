@@ -53,7 +53,7 @@ public class BaseController {
             uploadFile.mkdirs();
         }
         file.transferTo(uploadFile);
-        File filePO = new File(UUID.randomUUID().toString(), filename, "/upload" + path, new Date(), getUserDetails().getId());
+        File filePO = new File(UUID.randomUUID().toString(), filename, path, new Date(), getUserDetails().getId());
         fileService.save(filePO);
         return filePO;
     }

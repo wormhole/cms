@@ -33,6 +33,8 @@ public class ConfigController extends BaseController {
     private ConfigService configService;
     @Value("${application.upload-path}")
     private String uploadPath;
+    @Value("${application.static-prefix}")
+    private String prefix;
     @Autowired
     private FileService fileService;
 
@@ -107,6 +109,7 @@ public class ConfigController extends BaseController {
             configService.update(config);
             ConfigVO configVO = new ConfigVO();
             BeanUtils.copyProperties(config, configVO);
+            configVO.setValue("/upload" + configVO.getValue());
 
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
