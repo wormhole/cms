@@ -61,13 +61,13 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void save(User user) {
         //默认授予访客角色及权限
-        List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+        /*List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
             put("name", "default");
         }});
         if (roles != null && roles.size() == 1) {
             Role guest = roles.get(0);
             grantRole(user.getId(), guest.getId());
-        }
+        }*/
         userDAO.insert(user);
     }
 
