@@ -161,6 +161,7 @@ public class ConfigController extends BaseController {
             configService.batchUpdate(configs);
             result.setStatus(Result.Status.SUCCESS);
             result.setMessage("success");
+            result.setData(configs);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
