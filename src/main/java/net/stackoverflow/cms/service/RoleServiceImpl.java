@@ -91,8 +91,12 @@ public class RoleServiceImpl implements RoleService {
                 }
             }
         }
-        userRoleDAO.batchDelete(userRoleIds);
-        rolePermissionDAO.batchDelete(rolePermissionIds);
+        if (userRoleIds.size() > 0) {
+            userRoleDAO.batchDelete(userRoleIds);
+        }
+        if (rolePermissionIds.size() > 0) {
+            rolePermissionDAO.batchDelete(rolePermissionIds);
+        }
         roleDAO.batchDelete(ids);
     }
 

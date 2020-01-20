@@ -86,7 +86,9 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-        userRoleDAO.batchDelete(userRoleIds);
+        if (userRoleIds.size() > 0) {
+            userRoleDAO.batchDelete(userRoleIds);
+        }
         userDAO.batchDelete(ids);
     }
 
