@@ -11,14 +11,13 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 20/01/2020 10:10:24
+ Date: 20/01/2020 14:08:23
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 CREATE DATABASE cms CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
 USE cms;
 
 -- ----------------------------
@@ -85,7 +84,6 @@ CREATE TABLE `role`  (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES ('32b4573d-b02e-4bd9-a359-7c9c2c9e7d7d', 'default', '注册用户默认角色', 0);
 INSERT INTO `role` VALUES ('ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'admin', '超级管理员角色', 0);
 
 -- ----------------------------
