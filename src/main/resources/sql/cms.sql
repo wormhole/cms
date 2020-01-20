@@ -11,11 +11,42 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 05/01/2020 10:40:23
+ Date: 20/01/2020 10:10:24
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for config
+-- ----------------------------
+DROP TABLE IF EXISTS `config`;
+CREATE TABLE `config`  (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'key',
+  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'value',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of config
+-- ----------------------------
+INSERT INTO `config` VALUES ('5e9cbc50-bb1a-4374-b497-65cdc70b92a1', 'copyright', 'copyright © 2020 by 凉衫薄');
+INSERT INTO `config` VALUES ('9d5fd101-ecb7-484a-a931-a29a5a3bda91', 'head', 'default');
+INSERT INTO `config` VALUES ('ce389eb0-ce61-4df7-8d38-67995ba8368f', 'title', '内容管理系统');
+
+-- ----------------------------
+-- Table structure for file
+-- ----------------------------
+DROP TABLE IF EXISTS `file`;
+CREATE TABLE `file`  (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件名',
+  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '路径',
+  `time` timestamp(0) NOT NULL COMMENT '最后修改时间',
+  `user_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户id',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for permission
@@ -32,7 +63,8 @@ CREATE TABLE `permission`  (
 -- ----------------------------
 -- Records of permission
 -- ----------------------------
-INSERT INTO `permission` VALUES ('7c7f5593-4c92-4a65-bc59-0e11bdf9f22d', 'user', '用户与权限管理模块', 0);
+INSERT INTO `permission` VALUES ('7c7f5593-4c92-4a65-bc59-0e11bdf9f22d', 'user', '认证与授权模块', 0);
+INSERT INTO `permission` VALUES ('f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c', 'config', '系统设置模块', 0);
 
 -- ----------------------------
 -- Table structure for role
@@ -66,7 +98,20 @@ CREATE TABLE `role_permission`  (
 -- ----------------------------
 -- Records of role_permission
 -- ----------------------------
-INSERT INTO `role_permission` VALUES ('6484c067-94ec-4744-92c3-093029e7aa67', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '7c7f5593-4c92-4a65-bc59-0e11bdf9f22d');
+INSERT INTO `role_permission` VALUES ('808a1176-6c48-4194-9a90-d42d697e6ce5', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '7c7f5593-4c92-4a65-bc59-0e11bdf9f22d');
+INSERT INTO `role_permission` VALUES ('bf2a6b4d-5048-44d5-b817-800a5138a1b0', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c');
+
+-- ----------------------------
+-- Table structure for token
+-- ----------------------------
+DROP TABLE IF EXISTS `token`;
+CREATE TABLE `token`  (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'token',
+  `last_used` timestamp(0) NOT NULL COMMENT '上次使用',
+  `user_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户id',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user
