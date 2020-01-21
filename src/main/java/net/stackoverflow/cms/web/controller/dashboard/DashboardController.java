@@ -3,6 +3,7 @@ package net.stackoverflow.cms.web.controller.dashboard;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -123,6 +126,33 @@ public class DashboardController extends BaseController {
             result.setMessage("success");
             result.setData(map);
             result.setStatus(Result.Status.SUCCESS);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
+
+    /**
+     * 获取所有在线用户信息
+     *
+     * @return
+     */
+    @GetMapping(value = "/online")
+    public ResponseEntity online() {
+        Result result = new Result();
+        try {
+            List<Object> users = sessionRegistry.getAllPrincipals();
+            List<String> onlines = new ArrayList<>();
+            for (Object object : users) {
+                CmsUserDetails userDetails = (CmsUserDetails) object;
+                onlines.add(userDetails.getUsername());
+            }
+            result.setStatus(Result.Status.SUCCESS);
+            result.setMessage("success");
+            result.setData(onlines);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             log.error(e.getMessage());
