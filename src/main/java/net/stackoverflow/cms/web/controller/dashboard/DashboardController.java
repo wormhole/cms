@@ -3,8 +3,6 @@ package net.stackoverflow.cms.web.controller.dashboard;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.model.vo.CountVO;
-import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -17,9 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,51 +49,60 @@ public class DashboardController extends BaseController {
             Map<String, Object> map = new HashMap<>(16);
 
             //获取用户,角色,权限数量
+            Map<String, Integer> countMap = new HashMap<>(16);
             Integer userCount = userService.count();
             Integer roleCount = roleService.count();
             Integer permissionCount = permissionService.count();
-            List<CountVO> countVOs = new ArrayList<>();
-            countVOs.add(new CountVO("用户", userCount));
-            countVOs.add(new CountVO("角色", roleCount));
-            countVOs.add(new CountVO("权限", permissionCount));
+            Integer onlineCount = sessionRegistry.getAllPrincipals().size();
+            countMap.put("user", userCount);
+            countMap.put("role", roleCount);
+            countMap.put("permission", permissionCount);
+            countMap.put("online", onlineCount);
 
-            //获取所有在线用户
-            List<Object> principals = sessionRegistry.getAllPrincipals();
-            List<String> users = new ArrayList<>();
-            for (Object object : principals) {
-                CmsUserDetails userDetails = (CmsUserDetails) object;
-                users.add(userDetails.getUsername());
-            }
-
-            Map<String, Object> systemMap = new HashMap<>(16);
             //cpu使用率
             Sigar sigar = new Sigar();
+            Map<String, Object> cpuMap = new HashMap<>(16);
             CpuPerc[] cpuPercs = sigar.getCpuPercList();
             double combined = 0D;
             for (CpuPerc cpuPerc : cpuPercs) {
                 combined += cpuPerc.getCombined();
             }
-            systemMap.put("cpuPercent", doubleFormat(combined / cpuPercs.length * 100) + "%");
+            double used = doubleFormat(combined / cpuPercs.length * 100);
+            double free = 100 - used;
+            cpuMap.put("percent", doubleFormat(combined / cpuPercs.length * 100) + "%");
+            cpuMap.put("count", cpuPercs.length);
+            cpuMap.put("used", used);
+            cpuMap.put("free", free);
+
             //内存信息
+            Map<String, Object> memMap = new HashMap<>(16);
             Mem mem = sigar.getMem();
-            systemMap.put("memTotal", doubleFormat(mem.getTotal() / (1024D * 1024D * 1024D)) + "GB");
-            systemMap.put("memUsed", doubleFormat(mem.getUsed() / (1024D * 1024D * 1024D)) + "GB");
-            systemMap.put("memUsedPercent", doubleFormat(mem.getUsedPercent()) + "%");
+            memMap.put("total", doubleFormat(mem.getTotal() / (1024D * 1024D * 1024D)));
+            memMap.put("used", doubleFormat(mem.getUsed() / (1024D * 1024D * 1024D)));
+            memMap.put("free", doubleFormat(mem.getFree() / (1024D * 1024D * 1024D)));
+            memMap.put("percent", doubleFormat(mem.getUsedPercent()) + "%");
+
             //磁盘信息
+            Map<String, Object> diskMap = new HashMap<>(16);
             FileSystem[] fileSystems = sigar.getFileSystemList();
             FileSystemUsage usage = null;
             double diskTotal = 0D;
             double diskUsed = 0D;
+            double diskFree = 0D;
             for (FileSystem fileSystem : fileSystems) {
                 usage = sigar.getFileSystemUsage(fileSystem.getDirName());
                 diskTotal += usage.getTotal() / (1024D * 1024D);
                 diskUsed += usage.getUsed() / (1024D * 1024D);
+                diskFree += usage.getFree() / (1024 * 1024);
             }
             double diskUsedPercent = diskUsed / diskTotal;
-            systemMap.put("diskTotal", doubleFormat(diskTotal) + "GB");
-            systemMap.put("diskUsed", doubleFormat(diskUsed) + "GB");
-            systemMap.put("diskUsedPercent", doubleFormat(diskUsedPercent * 100) + "%");
-            //流量信息
+            diskMap.put("total", doubleFormat(diskTotal));
+            diskMap.put("used", doubleFormat(diskUsed));
+            diskMap.put("free", doubleFormat(diskFree));
+            diskMap.put("percent", doubleFormat(diskUsedPercent * 100) + "%");
+
+            //网络信息
+            Map<String, Object> netMap = new HashMap<>();
             double upload = 0D;
             double download = 0D;
             String[] ifNames = sigar.getNetInterfaceList();
@@ -106,12 +111,14 @@ public class DashboardController extends BaseController {
                 upload += nfs.getTxBytes() / (1024D * 1024D * 1024D);
                 download += nfs.getRxBytes() / (1024D * 1024D * 1024D);
             }
-            systemMap.put("netSend", doubleFormat(upload) + "GB");
-            systemMap.put("netReceive", doubleFormat(download) + "GB");
+            netMap.put("upload", doubleFormat(upload) + "GB");
+            netMap.put("download", doubleFormat(download) + "GB");
 
-            map.put("count", countVOs);
-            map.put("online", users);
-            map.put("system", systemMap);
+            map.put("count", countMap);
+            map.put("cpu", cpuMap);
+            map.put("mem", memMap);
+            map.put("disk", diskMap);
+            map.put("net", netMap);
 
             result.setMessage("success");
             result.setData(map);
