@@ -59,24 +59,22 @@ public class UserController extends BaseController {
 
         Result result = new Result();
         try {
+            Map<String, Object> resultMap = new HashMap<>(16);
+            Map<String, Object> condition = new HashMap<>(16);
+
             //根据角色过滤
-            List<String> userIds = new ArrayList<>();
-            userIds.add("");
             if (roleIds != null && roleIds.size() > 0) {
+                List<String> userIds = new ArrayList<>();
+                userIds.add("");
                 List<User> users = roleService.findUserByRoleIds(roleIds);
                 if (users != null && users.size() > 0) {
                     for (User user : users) {
                         userIds.add(user.getId());
                     }
                 }
-            }
-
-            Map<String, Object> resultMap = new HashMap<>(16);
-            Map<String, Object> condition = new HashMap<>(16);
-
-            if (roleIds != null && roleIds.size() > 0) {
                 condition.put("ids", userIds);
             }
+
             if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "deletable";
                 order = "asc";
@@ -84,6 +82,7 @@ public class UserController extends BaseController {
             if (StringUtils.isBlank(key)) {
                 key = null;
             }
+
             Page pageParam = new Page(page, limit, sort, order, condition, key);
             List<User> users = userService.findByPage(pageParam);
             pageParam.setLimit(null);
