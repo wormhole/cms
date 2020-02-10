@@ -58,24 +58,22 @@ public class RoleController extends BaseController {
 
         Result result = new Result();
         try {
+            Map<String, Object> resultMap = new HashMap<>(16);
+            Map<String, Object> condition = new HashMap<>(16);
+
             //根据权限过滤
-            List<String> roleIds = new ArrayList<>();
-            roleIds.add("");
             if (permissionIds != null && permissionIds.size() > 0) {
+                List<String> roleIds = new ArrayList<>();
+                roleIds.add("");
                 List<Role> roles = permissionService.findRoleByPermissionIds(permissionIds);
                 if (roles != null && roles.size() > 0) {
                     for (Role role : roles) {
                         roleIds.add(role.getId());
                     }
                 }
-            }
-
-            Map<String, Object> resultMap = new HashMap<>(16);
-            Map<String, Object> condition = new HashMap<>(16);
-
-            if (permissionIds != null && permissionIds.size() > 0) {
                 condition.put("ids", roleIds);
             }
+
             if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
                 sort = "deletable";
                 order = "asc";
@@ -83,6 +81,7 @@ public class RoleController extends BaseController {
             if (StringUtils.isBlank(key)) {
                 key = null;
             }
+
             Page pageParam = new Page(page, limit, sort, order, condition, key);
             List<Role> roles = roleService.findByPage(pageParam);
             pageParam.setLimit(null);
