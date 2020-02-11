@@ -49,44 +49,38 @@ public class PermissionController extends BaseController {
             @RequestParam(value = "key", required = false) String key) {
 
         Result result = new Result();
-        try {
-            Map<String, Object> resultMap = new HashMap<>(16);
-            Map<String, Object> condition = new HashMap<>(16);
 
-            if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
-                sort = "deletable";
-                order = "asc";
-            }
-            if (StringUtils.isBlank(key)) {
-                key = null;
-            }
-            Page pageParam = new Page(page, limit, sort, order, condition, key);
-            List<Permission> permissions = permissionService.findByPage(pageParam);
-            pageParam.setLimit(null);
-            pageParam.setOffset(null);
-            int total = permissionService.findByPage(pageParam).size();
+        Map<String, Object> resultMap = new HashMap<>(16);
+        Map<String, Object> condition = new HashMap<>(16);
 
-            List<PermissionVO> permissionVOs = new ArrayList<>();
-            for (Permission permission : permissions) {
-                PermissionVO permissionVO = new PermissionVO();
-                BeanUtils.copyProperties(permission, permissionVO);
-                permissionVOs.add(permissionVO);
-            }
-
-            resultMap.put("list", permissionVOs);
-            resultMap.put("total", total);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            result.setData(resultMap);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
+            sort = "deletable";
+            order = "asc";
         }
+        if (StringUtils.isBlank(key)) {
+            key = null;
+        }
+        Page pageParam = new Page(page, limit, sort, order, condition, key);
+        List<Permission> permissions = permissionService.findByPage(pageParam);
+        pageParam.setLimit(null);
+        pageParam.setOffset(null);
+        int total = permissionService.findByPage(pageParam).size();
+
+        List<PermissionVO> permissionVOs = new ArrayList<>();
+        for (Permission permission : permissions) {
+            PermissionVO permissionVO = new PermissionVO();
+            BeanUtils.copyProperties(permission, permissionVO);
+            permissionVOs.add(permissionVO);
+        }
+
+        resultMap.put("list", permissionVOs);
+        resultMap.put("total", total);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        result.setData(resultMap);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -98,35 +92,29 @@ public class PermissionController extends BaseController {
     @DeleteMapping(value = "/delete")
     public ResponseEntity delete(@RequestBody IdsVO idsVO) {
         Result result = new Result();
-        try {
-            //校验参数
-            if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
+
+        //校验参数
+        if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("请至少选择一条数据");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        //检查是否有不可被删除的
+        List<Permission> permissions = permissionService.findByIds(idsVO.getIds());
+        for (Permission permission : permissions) {
+            if (permission.getDeletable() == 0) {
                 result.setStatus(Result.Status.FAILURE);
-                result.setMessage("请至少选择一条数据");
+                result.setMessage("包含不允许被删除的权限");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-
-            //检查是否有不可被删除的
-            List<Permission> permissions = permissionService.findByIds(idsVO.getIds());
-            for (Permission permission : permissions) {
-                if (permission.getDeletable() == 0) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("包含不允许被删除的权限");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
-            }
-
-            permissionService.batchDelete(idsVO.getIds());
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
+
+        permissionService.batchDelete(idsVO.getIds());
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -139,43 +127,38 @@ public class PermissionController extends BaseController {
     public ResponseEntity update(@RequestBody PermissionVO permissionVO) {
 
         Result result = new Result();
-        try {
-            //校验参数
-            Permission permission = permissionService.findById(permissionVO.getId());
-            if (permission == null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("不合法的id");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
 
-            if (StringUtils.isBlank(permissionVO.getName())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("名称不能为空");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else {
-                if (!permission.getName().equals(permissionVO.getName())) {
-                    Permission permissions = permissionService.findByName(permission.getName());
-                    if (permissions != null) {
-                        result.setStatus(Result.Status.FAILURE);
-                        result.setMessage("权限名已存在");
-                        return ResponseEntity.status(HttpStatus.OK).body(result);
-                    }
+        //校验参数
+        Permission permission = permissionService.findById(permissionVO.getId());
+        if (permission == null) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("不合法的id");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        if (StringUtils.isBlank(permissionVO.getName())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("名称不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            if (!permission.getName().equals(permissionVO.getName())) {
+                Permission permissions = permissionService.findByName(permission.getName());
+                if (permissions != null) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("权限名已存在");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
-
-            permission.setName(permissionVO.getName());
-            permission.setDescription(permissionVO.getDescription());
-            permissionService.update(permission);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
+
+        permission.setName(permissionVO.getName());
+        permission.setDescription(permissionVO.getDescription());
+        permissionService.update(permission);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -187,35 +170,30 @@ public class PermissionController extends BaseController {
     @PostMapping(value = "/add")
     public ResponseEntity add(@RequestBody PermissionVO permissionVO) {
         Result result = new Result();
-        try {
-            //校验参数
-            if (StringUtils.isBlank(permissionVO.getName())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("名称不能为空");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else {
-                Permission permission = permissionService.findByName(permissionVO.getName());
-                if (permission != null) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("权限名已存在");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
-            }
 
-            Permission permission = new Permission();
-            BeanUtils.copyProperties(permissionVO, permission);
-            permission.setId(UUID.randomUUID().toString());
-            permission.setDeletable(1);
-            permissionService.save(permission);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        //校验参数
+        if (StringUtils.isBlank(permissionVO.getName())) {
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            result.setMessage("名称不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            Permission permission = permissionService.findByName(permissionVO.getName());
+            if (permission != null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("权限名已存在");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
         }
+
+        Permission permission = new Permission();
+        BeanUtils.copyProperties(permissionVO, permission);
+        permission.setId(UUID.randomUUID().toString());
+        permission.setDeletable(1);
+        permissionService.save(permission);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 }

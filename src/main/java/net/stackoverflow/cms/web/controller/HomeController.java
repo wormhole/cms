@@ -49,27 +49,21 @@ public class HomeController extends BaseController {
     @GetMapping(value = "/config")
     public ResponseEntity config() {
         Result result = new Result();
-        try {
-            List<Config> configs = configService.findAll();
-            List<ConfigVO> configVOs = new ArrayList<>();
-            for (Config config : configs) {
-                ConfigVO configVO = new ConfigVO();
-                BeanUtils.copyProperties(config, configVO);
-                if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
-                    configVO.setValue(prefix + configVO.getValue());
-                }
-                configVOs.add(configVO);
+
+        List<Config> configs = configService.findAll();
+        List<ConfigVO> configVOs = new ArrayList<>();
+        for (Config config : configs) {
+            ConfigVO configVO = new ConfigVO();
+            BeanUtils.copyProperties(config, configVO);
+            if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
+                configVO.setValue(prefix + configVO.getValue());
             }
-            result.setMessage("success");
-            result.setStatus(Result.Status.SUCCESS);
-            result.setData(configVOs);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            configVOs.add(configVO);
         }
+        result.setMessage("success");
+        result.setStatus(Result.Status.SUCCESS);
+        result.setData(configVOs);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     /**
@@ -80,36 +74,31 @@ public class HomeController extends BaseController {
     @GetMapping(value = "/authority")
     public ResponseEntity authority() {
         Result result = new Result();
-        try {
-            CmsUserDetails userDetails = getUserDetails();
-            UserAuthorityVO userAuthorityVO = new UserAuthorityVO();
 
-            User user = userService.findById(userDetails.getId());
-            userAuthorityVO.setUsername(user.getUsername());
-            List<Role> roles = userService.findRoleByUserId(user.getId());
-            List<Permission> permissions = userService.findPermissionByUserId(user.getId());
+        CmsUserDetails userDetails = getUserDetails();
+        UserAuthorityVO userAuthorityVO = new UserAuthorityVO();
 
-            List<String> roleStrs = new ArrayList<>();
-            List<String> permissionStrs = new ArrayList<>();
+        User user = userService.findById(userDetails.getId());
+        userAuthorityVO.setUsername(user.getUsername());
+        List<Role> roles = userService.findRoleByUserId(user.getId());
+        List<Permission> permissions = userService.findPermissionByUserId(user.getId());
 
-            for (Role role : roles) {
-                roleStrs.add(role.getName());
-            }
-            for (Permission permission : permissions) {
-                permissionStrs.add(permission.getName());
-            }
-            userAuthorityVO.setRoles(roleStrs);
-            userAuthorityVO.setPermissions(permissionStrs);
+        List<String> roleStrs = new ArrayList<>();
+        List<String> permissionStrs = new ArrayList<>();
 
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            result.setData(userAuthorityVO);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        for (Role role : roles) {
+            roleStrs.add(role.getName());
         }
+        for (Permission permission : permissions) {
+            permissionStrs.add(permission.getName());
+        }
+        userAuthorityVO.setRoles(roleStrs);
+        userAuthorityVO.setPermissions(permissionStrs);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        result.setData(userAuthorityVO);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 }

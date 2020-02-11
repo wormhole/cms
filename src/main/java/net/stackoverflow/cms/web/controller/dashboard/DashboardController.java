@@ -46,93 +46,88 @@ public class DashboardController extends BaseController {
      * @return
      */
     @GetMapping(value = "/info")
-    public ResponseEntity info() {
+    public ResponseEntity info() throws SigarException {
         Result result = new Result();
-        try {
-            Map<String, Object> map = new HashMap<>(16);
 
-            //获取用户,角色,权限数量
-            Map<String, Integer> countMap = new HashMap<>(16);
-            Integer userCount = userService.count();
-            Integer roleCount = roleService.count();
-            Integer permissionCount = permissionService.count();
-            Integer onlineCount = sessionRegistry.getAllPrincipals().size();
-            countMap.put("user", userCount);
-            countMap.put("role", roleCount);
-            countMap.put("permission", permissionCount);
-            countMap.put("online", onlineCount);
+        Map<String, Object> map = new HashMap<>(16);
 
-            //cpu使用率
-            Sigar sigar = new Sigar();
-            Map<String, Object> cpuMap = new HashMap<>(16);
-            CpuPerc[] cpuPercs = sigar.getCpuPercList();
-            double combined = 0D;
-            for (CpuPerc cpuPerc : cpuPercs) {
-                combined += cpuPerc.getCombined();
-            }
-            double used = doubleFormat(combined / cpuPercs.length * 100);
-            double free = 100 - used;
-            cpuMap.put("percent", doubleFormat(combined / cpuPercs.length * 100) + "%");
-            cpuMap.put("count", cpuPercs.length);
-            cpuMap.put("used", used);
-            cpuMap.put("free", free);
+        //获取用户,角色,权限数量
+        Map<String, Integer> countMap = new HashMap<>(16);
+        Integer userCount = userService.count();
+        Integer roleCount = roleService.count();
+        Integer permissionCount = permissionService.count();
+        Integer onlineCount = sessionRegistry.getAllPrincipals().size();
+        countMap.put("user", userCount);
+        countMap.put("role", roleCount);
+        countMap.put("permission", permissionCount);
+        countMap.put("online", onlineCount);
 
-            //内存信息
-            Map<String, Object> memMap = new HashMap<>(16);
-            Mem mem = sigar.getMem();
-            memMap.put("total", doubleFormat(mem.getTotal() / (1024D * 1024D * 1024D)));
-            memMap.put("used", doubleFormat(mem.getUsed() / (1024D * 1024D * 1024D)));
-            memMap.put("free", doubleFormat(mem.getFree() / (1024D * 1024D * 1024D)));
-            memMap.put("percent", doubleFormat(mem.getUsedPercent()) + "%");
-
-            //磁盘信息
-            Map<String, Object> diskMap = new HashMap<>(16);
-            FileSystem[] fileSystems = sigar.getFileSystemList();
-            FileSystemUsage usage = null;
-            double diskTotal = 0D;
-            double diskUsed = 0D;
-            double diskFree = 0D;
-            for (FileSystem fileSystem : fileSystems) {
-                usage = sigar.getFileSystemUsage(fileSystem.getDirName());
-                diskTotal += usage.getTotal() / (1024D * 1024D);
-                diskUsed += usage.getUsed() / (1024D * 1024D);
-                diskFree += usage.getFree() / (1024 * 1024);
-            }
-            double diskUsedPercent = diskUsed / diskTotal;
-            diskMap.put("total", doubleFormat(diskTotal));
-            diskMap.put("used", doubleFormat(diskUsed));
-            diskMap.put("free", doubleFormat(diskFree));
-            diskMap.put("percent", doubleFormat(diskUsedPercent * 100) + "%");
-
-            //网络信息
-            Map<String, Object> netMap = new HashMap<>();
-            double upload = 0D;
-            double download = 0D;
-            String[] ifNames = sigar.getNetInterfaceList();
-            for (String ifName : ifNames) {
-                NetInterfaceStat nfs = sigar.getNetInterfaceStat(ifName);
-                upload += nfs.getTxBytes() / (1024D * 1024D * 1024D);
-                download += nfs.getRxBytes() / (1024D * 1024D * 1024D);
-            }
-            netMap.put("upload", doubleFormat(upload) + "GB");
-            netMap.put("download", doubleFormat(download) + "GB");
-
-            map.put("count", countMap);
-            map.put("cpu", cpuMap);
-            map.put("mem", memMap);
-            map.put("disk", diskMap);
-            map.put("net", netMap);
-
-            result.setMessage("success");
-            result.setData(map);
-            result.setStatus(Result.Status.SUCCESS);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        //cpu使用率
+        Sigar sigar = new Sigar();
+        Map<String, Object> cpuMap = new HashMap<>(16);
+        CpuPerc[] cpuPercs = sigar.getCpuPercList();
+        double combined = 0D;
+        for (CpuPerc cpuPerc : cpuPercs) {
+            combined += cpuPerc.getCombined();
         }
+        double used = doubleFormat(combined / cpuPercs.length * 100);
+        double free = 100 - used;
+        cpuMap.put("percent", doubleFormat(combined / cpuPercs.length * 100) + "%");
+        cpuMap.put("count", cpuPercs.length);
+        cpuMap.put("used", used);
+        cpuMap.put("free", free);
+
+        //内存信息
+        Map<String, Object> memMap = new HashMap<>(16);
+        Mem mem = sigar.getMem();
+        memMap.put("total", doubleFormat(mem.getTotal() / (1024D * 1024D * 1024D)));
+        memMap.put("used", doubleFormat(mem.getUsed() / (1024D * 1024D * 1024D)));
+        memMap.put("free", doubleFormat(mem.getFree() / (1024D * 1024D * 1024D)));
+        memMap.put("percent", doubleFormat(mem.getUsedPercent()) + "%");
+
+        //磁盘信息
+        Map<String, Object> diskMap = new HashMap<>(16);
+        FileSystem[] fileSystems = sigar.getFileSystemList();
+        FileSystemUsage usage = null;
+        double diskTotal = 0D;
+        double diskUsed = 0D;
+        double diskFree = 0D;
+        for (FileSystem fileSystem : fileSystems) {
+            usage = sigar.getFileSystemUsage(fileSystem.getDirName());
+            diskTotal += usage.getTotal() / (1024D * 1024D);
+            diskUsed += usage.getUsed() / (1024D * 1024D);
+            diskFree += usage.getFree() / (1024 * 1024);
+        }
+        double diskUsedPercent = diskUsed / diskTotal;
+        diskMap.put("total", doubleFormat(diskTotal));
+        diskMap.put("used", doubleFormat(diskUsed));
+        diskMap.put("free", doubleFormat(diskFree));
+        diskMap.put("percent", doubleFormat(diskUsedPercent * 100) + "%");
+
+        //网络信息
+        Map<String, Object> netMap = new HashMap<>();
+        double upload = 0D;
+        double download = 0D;
+        String[] ifNames = sigar.getNetInterfaceList();
+        for (String ifName : ifNames) {
+            NetInterfaceStat nfs = sigar.getNetInterfaceStat(ifName);
+            upload += nfs.getTxBytes() / (1024D * 1024D * 1024D);
+            download += nfs.getRxBytes() / (1024D * 1024D * 1024D);
+        }
+        netMap.put("upload", doubleFormat(upload) + "GB");
+        netMap.put("download", doubleFormat(download) + "GB");
+
+        map.put("count", countMap);
+        map.put("cpu", cpuMap);
+        map.put("mem", memMap);
+        map.put("disk", diskMap);
+        map.put("net", netMap);
+
+        result.setMessage("success");
+        result.setData(map);
+        result.setStatus(Result.Status.SUCCESS);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -143,22 +138,16 @@ public class DashboardController extends BaseController {
     @GetMapping(value = "/online")
     public ResponseEntity online() {
         Result result = new Result();
-        try {
-            List<Object> users = sessionRegistry.getAllPrincipals();
-            List<String> onlines = new ArrayList<>();
-            for (Object object : users) {
-                CmsUserDetails userDetails = (CmsUserDetails) object;
-                onlines.add(userDetails.getUsername());
-            }
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            result.setData(onlines);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+
+        List<Object> users = sessionRegistry.getAllPrincipals();
+        List<String> onlines = new ArrayList<>();
+        for (Object object : users) {
+            CmsUserDetails userDetails = (CmsUserDetails) object;
+            onlines.add(userDetails.getUsername());
         }
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        result.setData(onlines);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

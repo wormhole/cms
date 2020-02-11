@@ -57,68 +57,62 @@ public class RoleController extends BaseController {
             @RequestParam(value = "key", required = false) String key) {
 
         Result result = new Result();
-        try {
-            Map<String, Object> resultMap = new HashMap<>(16);
-            Map<String, Object> condition = new HashMap<>(16);
 
-            //根据权限过滤
-            if (permissionIds != null && permissionIds.size() > 0) {
-                List<String> roleIds = new ArrayList<>();
-                roleIds.add("");
-                List<Role> roles = permissionService.findRoleByPermissionIds(permissionIds);
-                if (roles != null && roles.size() > 0) {
-                    for (Role role : roles) {
-                        roleIds.add(role.getId());
-                    }
+        Map<String, Object> resultMap = new HashMap<>(16);
+        Map<String, Object> condition = new HashMap<>(16);
+
+        //根据权限过滤
+        if (permissionIds != null && permissionIds.size() > 0) {
+            List<String> roleIds = new ArrayList<>();
+            roleIds.add("");
+            List<Role> roles = permissionService.findRoleByPermissionIds(permissionIds);
+            if (roles != null && roles.size() > 0) {
+                for (Role role : roles) {
+                    roleIds.add(role.getId());
                 }
-                condition.put("ids", roleIds);
             }
-
-            if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
-                sort = "deletable";
-                order = "asc";
-            }
-            if (StringUtils.isBlank(key)) {
-                key = null;
-            }
-
-            Page pageParam = new Page(page, limit, sort, order, condition, key);
-            List<Role> roles = roleService.findByPage(pageParam);
-            pageParam.setLimit(null);
-            pageParam.setOffset(null);
-            int total = roleService.findByPage(pageParam).size();
-
-            List<RoleVO> roleVOs = new ArrayList<>();
-            for (Role role : roles) {
-                RoleVO roleVO = new RoleVO();
-                BeanUtils.copyProperties(role, roleVO);
-                List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
-                List<PermissionVO> permissionVOs = new ArrayList<>();
-                if (permissions != null && permissions.size() > 0) {
-                    for (Permission permission : permissions) {
-                        PermissionVO permissionVO = new PermissionVO();
-                        BeanUtils.copyProperties(permission, permissionVO);
-                        permissionVOs.add(permissionVO);
-                    }
-                }
-                roleVO.setPermissions(permissionVOs);
-                roleVOs.add(roleVO);
-            }
-
-            resultMap.put("list", roleVOs);
-            resultMap.put("total", total);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            result.setData(resultMap);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            condition.put("ids", roleIds);
         }
+
+        if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
+            sort = "deletable";
+            order = "asc";
+        }
+        if (StringUtils.isBlank(key)) {
+            key = null;
+        }
+
+        Page pageParam = new Page(page, limit, sort, order, condition, key);
+        List<Role> roles = roleService.findByPage(pageParam);
+        pageParam.setLimit(null);
+        pageParam.setOffset(null);
+        int total = roleService.findByPage(pageParam).size();
+
+        List<RoleVO> roleVOs = new ArrayList<>();
+        for (Role role : roles) {
+            RoleVO roleVO = new RoleVO();
+            BeanUtils.copyProperties(role, roleVO);
+            List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
+            List<PermissionVO> permissionVOs = new ArrayList<>();
+            if (permissions != null && permissions.size() > 0) {
+                for (Permission permission : permissions) {
+                    PermissionVO permissionVO = new PermissionVO();
+                    BeanUtils.copyProperties(permission, permissionVO);
+                    permissionVOs.add(permissionVO);
+                }
+            }
+            roleVO.setPermissions(permissionVOs);
+            roleVOs.add(roleVO);
+        }
+
+        resultMap.put("list", roleVOs);
+        resultMap.put("total", total);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        result.setData(resultMap);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -129,29 +123,23 @@ public class RoleController extends BaseController {
     @GetMapping(value = "/filters")
     public ResponseEntity filters() {
         Result result = new Result();
-        try {
-            List<Permission> permissions = permissionService.findAll();
-            List<PermissionVO> permissionVOs = new ArrayList<>();
-            for (Permission permission : permissions) {
-                PermissionVO permissionVO = new PermissionVO();
-                BeanUtils.copyProperties(permission, permissionVO);
-                permissionVOs.add(permissionVO);
-            }
 
-            Map<String, Object> retMap = new HashMap<>(16);
-            retMap.put("permissions", permissionVOs);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            result.setData(retMap);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        List<Permission> permissions = permissionService.findAll();
+        List<PermissionVO> permissionVOs = new ArrayList<>();
+        for (Permission permission : permissions) {
+            PermissionVO permissionVO = new PermissionVO();
+            BeanUtils.copyProperties(permission, permissionVO);
+            permissionVOs.add(permissionVO);
         }
+
+        Map<String, Object> retMap = new HashMap<>(16);
+        retMap.put("permissions", permissionVOs);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        result.setData(retMap);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -163,35 +151,29 @@ public class RoleController extends BaseController {
     @DeleteMapping(value = "/delete")
     public ResponseEntity delete(@RequestBody IdsVO idsVO) {
         Result result = new Result();
-        try {
-            //校验参数
-            if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
+
+        //校验参数
+        if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("请至少选择一条数据");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        //检查是否有不可被删除的
+        List<Role> roles = roleService.findByIds(idsVO.getIds());
+        for (Role role : roles) {
+            if (role.getDeletable() == 0) {
                 result.setStatus(Result.Status.FAILURE);
-                result.setMessage("请至少选择一条数据");
+                result.setMessage("包含不允许被删除的角色");
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-
-            //检查是否有不可被删除的
-            List<Role> roles = roleService.findByIds(idsVO.getIds());
-            for (Role role : roles) {
-                if (role.getDeletable() == 0) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("包含不允许被删除的角色");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
-            }
-
-            roleService.batchDelete(idsVO.getIds());
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
+
+        roleService.batchDelete(idsVO.getIds());
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -203,51 +185,45 @@ public class RoleController extends BaseController {
     @GetMapping(value = "/ref_role_permission")
     public ResponseEntity refRolePermission(@RequestParam(value = "id") String id) {
         Result result = new Result();
-        try {
-            //校验参数
-            if (StringUtils.isBlank(id)) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("id不能为空");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            Role role = roleService.findById(id);
-            if (role == null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("不合法的id");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
 
-            List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
-            List<Permission> allPermissions = permissionService.findAll();
-
-            List<PermissionVO> permissionVOs = new ArrayList<>();
-            List<PermissionVO> allPermissionVOs = new ArrayList<>();
-            for (Permission permission : permissions) {
-                PermissionVO permissionVO = new PermissionVO();
-                BeanUtils.copyProperties(permission, permissionVO);
-                permissionVOs.add(permissionVO);
-            }
-            for (Permission permission : allPermissions) {
-                PermissionVO permissionVO = new PermissionVO();
-                BeanUtils.copyProperties(permission, permissionVO);
-                allPermissionVOs.add(permissionVO);
-            }
-
-            Map<String, Object> retMap = new HashMap<>(16);
-            retMap.put("target", permissionVOs);
-            retMap.put("all", allPermissionVOs);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            result.setData(retMap);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        //校验参数
+        if (StringUtils.isBlank(id)) {
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            result.setMessage("id不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
         }
+        Role role = roleService.findById(id);
+        if (role == null) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("不合法的id");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
+        List<Permission> allPermissions = permissionService.findAll();
+
+        List<PermissionVO> permissionVOs = new ArrayList<>();
+        List<PermissionVO> allPermissionVOs = new ArrayList<>();
+        for (Permission permission : permissions) {
+            PermissionVO permissionVO = new PermissionVO();
+            BeanUtils.copyProperties(permission, permissionVO);
+            permissionVOs.add(permissionVO);
+        }
+        for (Permission permission : allPermissions) {
+            PermissionVO permissionVO = new PermissionVO();
+            BeanUtils.copyProperties(permission, permissionVO);
+            allPermissionVOs.add(permissionVO);
+        }
+
+        Map<String, Object> retMap = new HashMap<>(16);
+        retMap.put("target", permissionVOs);
+        retMap.put("all", allPermissionVOs);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        result.setData(retMap);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -259,31 +235,25 @@ public class RoleController extends BaseController {
     @PutMapping(value = "/grant_permission")
     public ResponseEntity grantPermission(@RequestBody GrantPermissionVO grantPermissionVO) {
         Result result = new Result();
-        try {
-            //校验数据
-            if (StringUtils.isBlank(grantPermissionVO.getRoleId())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("roleId不能为空");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            Role role = roleService.findById(grantPermissionVO.getRoleId());
-            if (role == null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("不合法的id");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
 
-            roleService.reGrantPermission(grantPermissionVO.getRoleId(), grantPermissionVO.getPermissionIds());
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        //校验数据
+        if (StringUtils.isBlank(grantPermissionVO.getRoleId())) {
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            result.setMessage("roleId不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
         }
+        Role role = roleService.findById(grantPermissionVO.getRoleId());
+        if (role == null) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("不合法的id");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        roleService.reGrantPermission(grantPermissionVO.getRoleId(), grantPermissionVO.getPermissionIds());
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -296,43 +266,38 @@ public class RoleController extends BaseController {
     public ResponseEntity update(@RequestBody RoleVO roleVO) {
 
         Result result = new Result();
-        try {
-            //校验参数
-            Role role = roleService.findById(roleVO.getId());
-            if (role == null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("不合法的id");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
 
-            if (StringUtils.isBlank(roleVO.getName())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("名称不能为空");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else {
-                if (!role.getName().equals(roleVO.getName())) {
-                    Role roles = roleService.findByName(roleVO.getName());
-                    if (roles != null) {
-                        result.setStatus(Result.Status.FAILURE);
-                        result.setMessage("角色名已存在");
-                        return ResponseEntity.status(HttpStatus.OK).body(result);
-                    }
+        //校验参数
+        Role role = roleService.findById(roleVO.getId());
+        if (role == null) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("不合法的id");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        if (StringUtils.isBlank(roleVO.getName())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("名称不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            if (!role.getName().equals(roleVO.getName())) {
+                Role roles = roleService.findByName(roleVO.getName());
+                if (roles != null) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("角色名已存在");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
-
-            role.setName(roleVO.getName());
-            role.setDescription(roleVO.getDescription());
-            roleService.update(role);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
+
+        role.setName(roleVO.getName());
+        role.setDescription(roleVO.getDescription());
+        roleService.update(role);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
     }
 
     /**
@@ -344,35 +309,29 @@ public class RoleController extends BaseController {
     @PostMapping(value = "/add")
     public ResponseEntity add(@RequestBody RoleVO roleVO) {
         Result result = new Result();
-        try {
-            //校验参数
-            if (StringUtils.isBlank(roleVO.getName())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("名称不能为空");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else {
-                Role role = roleService.findByName(roleVO.getName());
-                if (role != null) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("角色名已存在");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
-            }
 
-            Role role = new Role();
-            BeanUtils.copyProperties(roleVO, role);
-            role.setId(UUID.randomUUID().toString());
-            role.setDeletable(1);
-            roleService.save(role);
-
-            result.setStatus(Result.Status.SUCCESS);
-            result.setMessage("success");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        //校验参数
+        if (StringUtils.isBlank(roleVO.getName())) {
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+            result.setMessage("名称不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            Role role = roleService.findByName(roleVO.getName());
+            if (role != null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("角色名已存在");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
         }
+
+        Role role = new Role();
+        BeanUtils.copyProperties(roleVO, role);
+        role.setId(UUID.randomUUID().toString());
+        role.setDeletable(1);
+        roleService.save(role);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("success");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
