@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,6 +20,18 @@ public class TimeUtils {
     public static String format(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date);
+    }
+
+    /**
+     * 时间转换日期
+     *
+     * @param time
+     * @return
+     * @throws ParseException
+     */
+    public static Date parse(String time) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.parse(time);
     }
 
     /**
