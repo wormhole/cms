@@ -18,8 +18,8 @@ public class ExceptionController {
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity exception(Exception e) {
+        e.printStackTrace();
         Result result = new Result();
-        log.error(e.getMessage());
         result.setStatus(Result.Status.FAILURE);
         result.setMessage(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);

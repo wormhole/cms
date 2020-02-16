@@ -38,7 +38,7 @@ public class HomeController extends BaseController {
     private UserService userService;
     @Autowired
     private ConfigService configService;
-    @Value("${application.static-prefix}")
+    @Value("${application.upload.prefix}")
     private String prefix;
 
     /**

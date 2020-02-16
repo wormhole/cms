@@ -32,9 +32,9 @@ public class ConfigController extends BaseController {
 
     @Autowired
     private ConfigService configService;
-    @Value("${application.upload-path}")
-    private String uploadPath;
-    @Value("${application.static-prefix}")
+    @Value("${application.upload.path}")
+    private String path;
+    @Value("${application.upload.prefix}")
     private String prefix;
     @Autowired
     private FileService fileService;
@@ -106,7 +106,7 @@ public class ConfigController extends BaseController {
     public ResponseEntity head(@RequestParam("file") MultipartFile file) throws IOException {
         Result result = new Result();
 
-        File filePO = saveFile(file, uploadPath, fileService);
+        File filePO = saveFile(file, path, fileService);
         Config config = configService.findByKey("head");
         config.setValue(filePO.getPath());
         configService.update(config);
