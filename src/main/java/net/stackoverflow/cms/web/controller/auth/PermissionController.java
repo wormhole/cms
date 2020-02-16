@@ -1,6 +1,5 @@
 package net.stackoverflow.cms.web.controller.auth;
 
-import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Page;
@@ -9,6 +8,7 @@ import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.vo.IdsVO;
 import net.stackoverflow.cms.model.vo.PermissionVO;
 import net.stackoverflow.cms.service.PermissionService;
+import net.stackoverflow.cms.util.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

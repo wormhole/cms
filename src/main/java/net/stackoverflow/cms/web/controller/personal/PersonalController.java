@@ -1,6 +1,5 @@
 package net.stackoverflow.cms.web.controller.personal;
 
-import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
@@ -8,6 +7,7 @@ import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.UserService;
+import net.stackoverflow.cms.util.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
