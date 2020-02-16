@@ -13,9 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
-    @Value("${application.upload-path}")
-    private String uploadPath;
-    @Value("${application.static-prefix}")
+    @Value("${application.upload.path}")
+    private String path;
+    @Value("${application.upload.prefix}")
     private String prefix;
 
     /**
@@ -26,7 +26,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         if (!registry.hasMappingForPattern(prefix + "/**")) {
-            registry.addResourceHandler(prefix + "/**").addResourceLocations("file:" + uploadPath);
+            registry.addResourceHandler(prefix + "/**").addResourceLocations("file:" + path);
         }
     }
 }
