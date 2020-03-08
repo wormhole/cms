@@ -93,7 +93,9 @@ public class DashboardController extends BaseController {
         double diskUsed = 0D;
         double diskFree = 0D;
         for (FileSystem fileSystem : fileSystems) {
-            usage = sigar.getFileSystemUsage(fileSystem.getDirName());
+            if (fileSystem.getType() == 2) {
+                usage = sigar.getFileSystemUsage(fileSystem.getDirName());
+            }
             diskTotal += usage.getTotal() / (1024D * 1024D);
             diskUsed += usage.getUsed() / (1024D * 1024D);
             diskFree += usage.getFree() / (1024 * 1024);
