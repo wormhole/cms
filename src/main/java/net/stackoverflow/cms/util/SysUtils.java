@@ -13,6 +13,6 @@ public class SysUtils {
      * @return true：win，false：other
      */
     public static Boolean isWin() {
-        return System.getProperty("os.name").toLowerCase().indexOf("windows") > 0 ? true : false;
+        return System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0 ? true : false;
     }
 }

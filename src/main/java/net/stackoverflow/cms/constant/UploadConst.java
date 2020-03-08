@@ -9,7 +9,7 @@ public class UploadConst {
 
     public static String UPLOAD_PATH_LINUX = "/data/upload";
 
-    public static String UPLOAD_PATH_WINDOWS = "C:\\data\\upload";
+    public static String UPLOAD_PATH_WINDOWS = "C:/data/upload";
 
     public static String PREFIX = "/upload";
 }
