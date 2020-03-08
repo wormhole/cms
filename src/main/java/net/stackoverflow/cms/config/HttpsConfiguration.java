@@ -9,7 +9,7 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class HttpsConfiguration {
     @Bean
     public ServletWebServerFactory serverFactory() {
@@ -27,6 +27,7 @@ public class HttpsConfiguration {
         tomcat.addAdditionalTomcatConnectors(connector());
         return tomcat;
     }
+
     @Bean
     public Connector connector() {
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
