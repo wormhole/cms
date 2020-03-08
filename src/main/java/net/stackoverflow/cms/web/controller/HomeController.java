@@ -3,6 +3,7 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.constant.UploadConst;
 import net.stackoverflow.cms.model.entity.Config;
 import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
@@ -14,7 +15,6 @@ import net.stackoverflow.cms.service.ConfigService;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +38,6 @@ public class HomeController extends BaseController {
     private UserService userService;
     @Autowired
     private ConfigService configService;
-    @Value("${application.upload.prefix}")
-    private String prefix;
 
     /**
      * 获取配置信息
@@ -56,7 +54,7 @@ public class HomeController extends BaseController {
             ConfigVO configVO = new ConfigVO();
             BeanUtils.copyProperties(config, configVO);
             if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
-                configVO.setValue(prefix + configVO.getValue());
+                configVO.setValue(UploadConst.PREFIX + configVO.getValue());
             }
             configVOs.add(configVO);
         }

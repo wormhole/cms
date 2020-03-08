@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import net.stackoverflow.cms.constant.UploadConst;
+import net.stackoverflow.cms.util.SysUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -13,11 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
-    @Value("${application.upload.path}")
-    private String path;
-    @Value("${application.upload.prefix}")
-    private String prefix;
-
     /**
      * 静态文件路径映射
      *
@@ -25,8 +21,14 @@ public class WebConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern(prefix + "/**")) {
-            registry.addResourceHandler(prefix + "/**").addResourceLocations("file:" + path);
+        if (!registry.hasMappingForPattern(UploadConst.PREFIX + "/**")) {
+            String path = null;
+            if (SysUtils.isWin()) {
+                path = UploadConst.UPLOAD_PATH_WINDOWS;
+            } else {
+                path = UploadConst.UPLOAD_PATH_LINUX;
+            }
+            registry.addResourceHandler(UploadConst.PREFIX + "/**").addResourceLocations("file:" + path);
         }
     }
 }

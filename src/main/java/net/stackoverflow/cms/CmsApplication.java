@@ -1,5 +1,6 @@
 package net.stackoverflow.cms;
 
+import net.stackoverflow.cms.constant.DBConst;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.mybatis.spring.annotation.MapperScan;
@@ -34,9 +35,9 @@ public class CmsApplication {
     private static void initDataBase() {
         try {
             Properties props = Resources.getResourceAsProperties("application.properties");
-            String server = props.getProperty("application.db.url");
-            String dbname = props.getProperty("application.db.name");
-            String sqlPath = props.getProperty("application.db.sql");
+            String server = DBConst.DB_URL;
+            String dbname = DBConst.DB_NAME;
+            String sqlPath = DBConst.SQL_PATH;
             String username = props.getProperty("spring.datasource.username");
             String password = props.getProperty("spring.datasource.password");
             String driver = props.getProperty("spring.datasource.driver-class-name");

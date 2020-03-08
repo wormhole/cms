@@ -3,14 +3,15 @@ package net.stackoverflow.cms.web.controller.config;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.constant.UploadConst;
 import net.stackoverflow.cms.model.entity.Config;
 import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.model.vo.ConfigVO;
 import net.stackoverflow.cms.service.ConfigService;
 import net.stackoverflow.cms.service.FileService;
+import net.stackoverflow.cms.util.SysUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,10 +33,6 @@ public class ConfigController extends BaseController {
 
     @Autowired
     private ConfigService configService;
-    @Value("${application.upload.path}")
-    private String path;
-    @Value("${application.upload.prefix}")
-    private String prefix;
     @Autowired
     private FileService fileService;
 
@@ -58,7 +55,7 @@ public class ConfigController extends BaseController {
             ConfigVO configVO = new ConfigVO();
             BeanUtils.copyProperties(config, configVO);
             if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
-                configVO.setValue(prefix + configVO.getValue());
+                configVO.setValue(UploadConst.PREFIX + configVO.getValue());
             }
             configVOs.add(configVO);
         }
@@ -105,6 +102,13 @@ public class ConfigController extends BaseController {
     @PostMapping(value = "/head")
     public ResponseEntity head(@RequestParam("file") MultipartFile file) throws IOException {
         Result result = new Result();
+
+        String path = null;
+        if (SysUtils.isWin()) {
+            path = UploadConst.UPLOAD_PATH_WINDOWS;
+        } else {
+            path = UploadConst.UPLOAD_PATH_LINUX;
+        }
 
         File filePO = saveFile(file, path, fileService);
         Config config = configService.findByKey("head");
