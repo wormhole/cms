@@ -1,4 +1,4 @@
-## 内容管理系统(后端工程)
+# 内容管理系统(后端工程)
 [![downloads](https://img.shields.io/github/downloads/wormhole/cms/total.svg)](https://github.com/wormhole/cms/releases)
 [![forks](https://img.shields.io/github/forks/wormhole/cms.svg)](https://github.com/stdutil/cms/network/members)
 [![stars](https://img.shields.io/github/stars/wormhole/cms.svg)](https://github.com/stdutil/cms/stargazers) 
@@ -8,17 +8,17 @@
 
 [内容管理系统(前端工程)传送门](https://github.com/wormhole/cms-front)
 
-### 一、如何运行
-#### 1、打包
+## 一、如何运行
+### 1、打包
 ```$xslt
 mvn package -Dmaven.javadoc.skip=true
 ```
-#### 2、将`resources/lib`下的动态库放到`java.library.path`路径下面,运行以下代码可查看路径
+### 2、将`resources/lib`下的动态库放到`java.library.path`路径下面,运行以下代码可查看路径
 ```$xslt
 String property = System.getProperty("java.library.path");
 ```
 
-#### 3、运行
+### 3、运行
 * Linux
 ```$xslt
 nohup java -jar CMS.war > /dev/null &
@@ -28,10 +28,10 @@ nohup java -jar CMS.war > /dev/null &
 java -jar CMS.war
 ```
 
-#### 4、使用
+### 4、使用
 打开浏览器,输入`http://localhost`,超级管理员用户和密码为`admin`,`123456`
 
-### 二、项目结构
+## 二、项目结构
 ```$xslt
 ├─java
 │  └─net
@@ -68,7 +68,7 @@ java -jar CMS.war
     └─logback.xml                   (logback日志配置)
 ```
 
-### 三、功能列表
+## 三、功能列表
 - [x] 认证授权
     - [x] 用户注册
     - [x] 用户登录
@@ -94,21 +94,21 @@ java -jar CMS.war
     - [x] 基本信息修改
     - [x] 密码修改
     
-###  四、演示
-#### 1、登录页
+##  四、演示
+### 1、登录页
 ![登录](image/login.png)
 
-#### 2、仪表盘
+### 2、仪表盘
 ![仪表盘](image/dashboard.png)
 
-#### 3、用户管理 (角色管理, 权限管理与之类似)
+### 3、用户管理 (角色管理, 权限管理与之类似)
 ![用户管理](image/user.png)
 
-#### 4、角色分配 (权限分配与之类似)
+### 4、角色分配 (权限分配与之类似)
 ![角色分配](image/grant.png)
 
-#### 5、系统设置
+### 5、系统设置
 ![系统设置](image/setting.png)
 
-#### 6、个人信息
+### 6、个人信息
 ![个人信息](image/personal.png)
