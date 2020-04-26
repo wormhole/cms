@@ -1,11 +1,6 @@
 package net.stackoverflow.cms.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.io.Serializable;
+import lombok.*;
 
 /**
  * 配置信息VO
@@ -16,7 +11,8 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConfigVO implements Serializable {
+@ToString
+public class ConfigVO {
 
     private String id;
     private String key;

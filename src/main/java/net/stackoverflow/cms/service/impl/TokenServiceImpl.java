@@ -1,7 +1,8 @@
-package net.stackoverflow.cms.service;
+package net.stackoverflow.cms.service.impl;
 
 import net.stackoverflow.cms.dao.TokenDAO;
 import net.stackoverflow.cms.model.entity.Token;
+import net.stackoverflow.cms.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -5,7 +5,7 @@ import lombok.*;
 import java.util.List;
 
 /**
- * 分配权限VO类
+ * 用户菜单权限及基础信息
  *
  * @author 凉衫薄
  */
@@ -14,8 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class GrantPermissionVO {
+public class AuthorityVO {
 
-    private String roleId;
-    private List<String> permissionIds;
+    private String username;
+    private List<String> roles;
+    private List<String> permissions;
 }

@@ -1,9 +1,6 @@
 package net.stackoverflow.cms.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -16,8 +13,10 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class User implements Serializable {
 
+    private static final long serialVersionUID = -1176841729258973475L;
     private String id;
     private String username;
     private String password;

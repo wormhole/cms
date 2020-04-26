@@ -1,8 +1,9 @@
-package net.stackoverflow.cms.service;
+package net.stackoverflow.cms.service.impl;
 
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.dao.*;
 import net.stackoverflow.cms.model.entity.*;
+import net.stackoverflow.cms.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

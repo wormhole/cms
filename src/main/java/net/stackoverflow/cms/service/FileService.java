@@ -1,7 +1,9 @@
 package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.model.entity.File;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,4 +21,7 @@ public interface FileService {
 
     void update(File file);
 
+    File saveFile(MultipartFile file, String userId) throws IOException;
+
+    String getFileUrl(String fileId);
 }

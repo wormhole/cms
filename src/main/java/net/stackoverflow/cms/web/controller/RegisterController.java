@@ -32,6 +32,8 @@ public class RegisterController extends BaseController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private CmsMd5PasswordEncoder encoder;
 
     /**
      * 用户注册接口
@@ -90,8 +92,8 @@ public class RegisterController extends BaseController {
         user.setId(UUID.randomUUID().toString());
         user.setEnabled(1);
         user.setDeletable(1);
-        user.setPassword(new CmsMd5PasswordEncoder().encode(user.getPassword()));
-        userService.save(user);
+        user.setPassword(encoder.encode(user.getPassword()));
+        userService.saveWithRole(user, userVO.getRole());
 
         result.setStatus(Result.Status.SUCCESS);
         result.setMessage("注册成功");

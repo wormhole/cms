@@ -1,11 +1,8 @@
 package net.stackoverflow.cms.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -17,7 +14,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdsVO implements Serializable {
+@ToString
+public class IdsVO {
 
+    @NotEmpty(message = "ids不能为空")
     private List<String> ids;
 }

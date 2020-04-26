@@ -3,7 +3,7 @@ package net.stackoverflow.cms.model.vo;
 import lombok.*;
 
 /**
- * 权限VO类
+ * 密码VO类
  *
  * @author 凉衫薄
  */
@@ -12,10 +12,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PermissionVO {
+public class PasswordVO {
 
     private String id;
-    private String name;
-    private String description;
-    private Integer deletable;
+    private String oldPassword;
+    private String newPassword;
+    private String checkPassword;
 }

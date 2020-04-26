@@ -9,7 +9,6 @@ import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.model.vo.ConfigVO;
 import net.stackoverflow.cms.service.ConfigService;
 import net.stackoverflow.cms.service.FileService;
-import net.stackoverflow.cms.util.SysUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -103,14 +102,7 @@ public class ConfigController extends BaseController {
     public ResponseEntity head(@RequestParam("file") MultipartFile file) throws IOException {
         Result result = new Result();
 
-        String path = null;
-        if (SysUtils.isWin()) {
-            path = UploadConst.UPLOAD_PATH_WINDOWS;
-        } else {
-            path = UploadConst.UPLOAD_PATH_LINUX;
-        }
-
-        File filePO = saveFile(file, path, fileService);
+        File filePO = fileService.saveFile(file, getUserDetails().getId());
         Config config = configService.findByKey("head");
         config.setValue(filePO.getPath());
         configService.update(config);

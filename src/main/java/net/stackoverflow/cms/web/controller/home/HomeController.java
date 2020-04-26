@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.web.controller;
+package net.stackoverflow.cms.web.controller.home;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
@@ -8,8 +8,8 @@ import net.stackoverflow.cms.model.entity.Config;
 import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.model.vo.AuthorityVO;
 import net.stackoverflow.cms.model.vo.ConfigVO;
-import net.stackoverflow.cms.model.vo.UserAuthorityVO;
 import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.ConfigService;
 import net.stackoverflow.cms.service.UserService;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 获取菜单权限
+ * 主页控制器
  *
  * @author 凉衫薄
  */
@@ -74,10 +74,10 @@ public class HomeController extends BaseController {
         Result result = new Result();
 
         CmsUserDetails userDetails = getUserDetails();
-        UserAuthorityVO userAuthorityVO = new UserAuthorityVO();
+        AuthorityVO authorityVO = new AuthorityVO();
 
         User user = userService.findById(userDetails.getId());
-        userAuthorityVO.setUsername(user.getUsername());
+        authorityVO.setUsername(user.getUsername());
         List<Role> roles = userService.findRoleByUserId(user.getId());
         List<Permission> permissions = userService.findPermissionByUserId(user.getId());
 
@@ -90,12 +90,12 @@ public class HomeController extends BaseController {
         for (Permission permission : permissions) {
             permissionStrs.add(permission.getName());
         }
-        userAuthorityVO.setRoles(roleStrs);
-        userAuthorityVO.setPermissions(permissionStrs);
+        authorityVO.setRoles(roleStrs);
+        authorityVO.setPermissions(permissionStrs);
 
         result.setStatus(Result.Status.SUCCESS);
         result.setMessage("success");
-        result.setData(userAuthorityVO);
+        result.setData(authorityVO);
         return ResponseEntity.status(HttpStatus.OK).body(result);
 
     }

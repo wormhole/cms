@@ -6,10 +6,7 @@ import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.model.vo.GrantRoleVO;
-import net.stackoverflow.cms.model.vo.IdsVO;
-import net.stackoverflow.cms.model.vo.RoleVO;
-import net.stackoverflow.cms.model.vo.UserVO;
+import net.stackoverflow.cms.model.vo.*;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -36,6 +33,8 @@ public class UserController extends BaseController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private CmsMd5PasswordEncoder encoder;
 
     /**
      * 分页查询用户信息
@@ -226,8 +225,8 @@ public class UserController extends BaseController {
      *
      * @returnfilters
      */
-    @GetMapping(value = "/filters")
-    public ResponseEntity filters() {
+    @GetMapping(value = "/ref_role")
+    public ResponseEntity refRole() {
         Result result = new Result();
 
         List<Role> roles = roleService.findAll();
@@ -339,13 +338,6 @@ public class UserController extends BaseController {
 
         Result result = new Result();
 
-        //校验参数
-        if (userVO.getType() != 0 && userVO.getType() != 1) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("类型错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
-
         User user = userService.findById(userVO.getId());
         if (user == null) {
             result.setStatus(Result.Status.FAILURE);
@@ -353,49 +345,74 @@ public class UserController extends BaseController {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
 
-        if (userVO.getType() == 0) {
-            if (StringUtils.isBlank(userVO.getUsername())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("用户名不能为空");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            } else {
-                if (!user.getUsername().equals(userVO.getUsername())) {
-                    User users = userService.findByUsername(userVO.getUsername());
-                    if (users != null) {
-                        result.setStatus(Result.Status.FAILURE);
-                        result.setMessage("用户名已存在");
-                        return ResponseEntity.status(HttpStatus.OK).body(result);
-                    }
+        if (StringUtils.isBlank(userVO.getUsername())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("用户名不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            if (!user.getUsername().equals(userVO.getUsername())) {
+                User users = userService.findByUsername(userVO.getUsername());
+                if (users != null) {
+                    result.setStatus(Result.Status.FAILURE);
+                    result.setMessage("用户名已存在");
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
-            if (!validateEmail(userVO.getEmail())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("邮箱格式错误");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            if (!validateTelephone(userVO.getTelephone())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("电话号码格式错误");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            user.setUsername(userVO.getUsername());
-            user.setEmail(userVO.getEmail());
-            user.setTelephone(userVO.getTelephone());
-            userService.update(user);
-        } else if (userVO.getType() == 1) {
-            if (!validatePassword(userVO.getPassword())) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("密码长度不能小于6");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            String password = new CmsMd5PasswordEncoder().encode(userVO.getPassword());
-            user.setPassword(password);
-            userService.update(user);
         }
+        if (!validateEmail(userVO.getEmail())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("邮箱格式错误");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        if (!validateTelephone(userVO.getTelephone())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("电话号码格式错误");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        user.setUsername(userVO.getUsername());
+        user.setEmail(userVO.getEmail());
+        user.setTelephone(userVO.getTelephone());
+        userService.update(user);
+
         result.setStatus(Result.Status.SUCCESS);
         result.setMessage("success");
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
+    /**
+     * 修改密码
+     *
+     * @param passwordVO
+     * @return
+     */
+    @PutMapping(value = "/password")
+    public ResponseEntity password(@RequestBody PasswordVO passwordVO) {
+        Result result = new Result();
+
+        if (StringUtils.isBlank(passwordVO.getId()) || StringUtils.isBlank(passwordVO.getNewPassword()) || StringUtils.isBlank(passwordVO.getCheckPassword())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("字段不能为空");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        if (!passwordVO.getNewPassword().equals(passwordVO.getCheckPassword())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("两次密码不一致");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        if (!validatePassword(passwordVO.getNewPassword())) {
+            result.setStatus(Result.Status.FAILURE);
+            result.setMessage("新密码长度不能小于6");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        User user = userService.findById(passwordVO.getId());
+
+        String password = encoder.encode(passwordVO.getNewPassword());
+        user.setPassword(password);
+        userService.update(user);
+
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage("修改成功");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     /**

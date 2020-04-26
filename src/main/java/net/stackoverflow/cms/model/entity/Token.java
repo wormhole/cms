@@ -1,9 +1,6 @@
 package net.stackoverflow.cms.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,8 +14,10 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Token implements Serializable {
 
+    private static final long serialVersionUID = 8827053391043133931L;
     private String id;
     private String token;
     private Date lastUsed;

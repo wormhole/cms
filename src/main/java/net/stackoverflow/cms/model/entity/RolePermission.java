@@ -1,9 +1,6 @@
 package net.stackoverflow.cms.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -16,8 +13,10 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class RolePermission implements Serializable {
 
+    private static final long serialVersionUID = 5191984276531767559L;
     private String id;
     private String roleId;
     private String permissionId;

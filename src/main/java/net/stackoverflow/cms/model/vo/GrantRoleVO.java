@@ -1,11 +1,7 @@
 package net.stackoverflow.cms.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,7 +13,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GrantRoleVO implements Serializable {
+@ToString
+public class GrantRoleVO {
 
     private String userId;
     private List<String> roleIds;

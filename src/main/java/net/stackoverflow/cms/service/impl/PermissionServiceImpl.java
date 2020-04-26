@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.service;
+package net.stackoverflow.cms.service.impl;
 
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.dao.PermissionDAO;
@@ -7,6 +7,7 @@ import net.stackoverflow.cms.dao.RolePermissionDAO;
 import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.RolePermission;
+import net.stackoverflow.cms.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

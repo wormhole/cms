@@ -37,4 +37,6 @@ public interface UserService {
     List<Role> findRoleByUserId(String userId);
 
     List<Permission> findPermissionByUserId(String userId);
+
+    void saveWithRole(User user, String role);
 }

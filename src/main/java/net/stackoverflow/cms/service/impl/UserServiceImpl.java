@@ -1,8 +1,9 @@
-package net.stackoverflow.cms.service;
+package net.stackoverflow.cms.service.impl;
 
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.dao.*;
 import net.stackoverflow.cms.model.entity.*;
+import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,14 +66,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(User user) {
-        //默认授予访客角色及权限
-        /*List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
-            put("name", "default");
-        }});
-        if (roles != null && roles.size() == 1) {
-            Role guest = roles.get(0);
-            grantRole(user.getId(), guest.getId());
-        }*/
         userDAO.insert(user);
     }
 
@@ -187,5 +180,18 @@ public class UserServiceImpl implements UserService {
             permissions = new ArrayList<>(permissionMap.values());
         }
         return permissions;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveWithRole(User user, String role) {
+        userDAO.insert(user);
+        List<Role> roles = roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
+            put("name", role);
+        }});
+        if (roles != null && roles.size() == 1) {
+            Role guest = roles.get(0);
+            grantRole(user.getId(), guest.getId());
+        }
     }
 }

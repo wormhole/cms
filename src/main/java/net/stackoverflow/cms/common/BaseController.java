@@ -1,18 +1,11 @@
 package net.stackoverflow.cms.common;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.security.CmsUserDetails;
-import net.stackoverflow.cms.service.FileService;
-import net.stackoverflow.cms.util.TimeUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,35 +32,15 @@ public class BaseController {
     }
 
     /**
-     * 文件上传公共服务
-     *
-     * @param file
-     * @return
-     */
-    protected File saveFile(MultipartFile file, String uploadPath, FileService fileService) throws IOException {
-        String filename = file.getOriginalFilename();
-        String ext = filename.substring(filename.lastIndexOf("."));
-        String path = TimeUtils.pathWithDate() + UUID.randomUUID().toString() + ext;
-        String absolutePath = uploadPath + path;
-        java.io.File uploadFile = new java.io.File(absolutePath);
-        if (!uploadFile.getParentFile().exists()) {
-            uploadFile.mkdirs();
-        }
-        file.transferTo(uploadFile);
-        File filePO = new File(UUID.randomUUID().toString(), filename, path, new Date(), getUserDetails().getId());
-        fileService.save(filePO);
-        return filePO;
-    }
-
-    /**
-     * double保留两位小数输出
+     * double保留n位小数输出
      *
      * @param num
+     * @param n
      * @return
      */
-    protected double doubleFormat(double num) {
+    protected double doubleFormat(double num, int n) {
         BigDecimal b = new BigDecimal(num);
-        return b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return b.setScale(n, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**

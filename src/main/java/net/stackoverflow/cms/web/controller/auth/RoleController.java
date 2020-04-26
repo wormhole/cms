@@ -120,8 +120,8 @@ public class RoleController extends BaseController {
      *
      * @returnfilters
      */
-    @GetMapping(value = "/filters")
-    public ResponseEntity filters() {
+    @GetMapping(value = "/ref_permission")
+    public ResponseEntity refPermission() {
         Result result = new Result();
 
         List<Permission> permissions = permissionService.findAll();

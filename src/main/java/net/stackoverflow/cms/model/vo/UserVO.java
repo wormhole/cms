@@ -1,11 +1,7 @@
 package net.stackoverflow.cms.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,7 +13,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVO implements Serializable {
+@ToString
+public class UserVO {
 
     private String id;
     private String username;
@@ -28,8 +25,5 @@ public class UserVO implements Serializable {
     private String password;
     private List<RoleVO> roles;
     private String vcode;
-    /**
-     * 操作类型：0-更新基本信息，1-更新密码
-     */
-    private Integer type;
+    private String role;
 }
