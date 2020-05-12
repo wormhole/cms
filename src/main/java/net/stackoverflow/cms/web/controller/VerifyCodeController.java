@@ -24,22 +24,22 @@ import java.util.Random;
  */
 @Controller
 @Slf4j
-public class VCodeController {
+public class VerifyCodeController {
 
     /**
-     * 获取验证码 /vcode
+     * 获取验证码
      *
      * @param response http响应对象
      * @param session  会话对象
      */
-    @RequestMapping(value = "/vcode", method = RequestMethod.GET)
-    public void vcode(HttpServletResponse response, HttpSession session) throws IOException {
+    @RequestMapping(value = "/code", method = RequestMethod.GET)
+    public void code(HttpServletResponse response, HttpSession session) throws IOException {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String verifyCode = drawImg(output);
-        log.info("sessionId:" + session.getId() + ",验证码:" + verifyCode);
+        log.info("sessionId:{},验证码:{}", session.getId(), verifyCode);
 
-        session.setAttribute("vcode", verifyCode);
+        session.setAttribute("code", verifyCode);
 
         ServletOutputStream out = response.getOutputStream();
         output.writeTo(out);

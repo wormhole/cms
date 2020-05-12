@@ -32,12 +32,12 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         if ("POST".equalsIgnoreCase(request.getMethod()) && pathMatcher.match("/login", request.getServletPath())) {
-            String vcode = request.getParameter("vcode");
-            String realVcode = (String) request.getSession().getAttribute("vcode");
-            if (StringUtils.isBlank(vcode)) {
+            String code = request.getParameter("code");
+            String realCode = (String) request.getSession().getAttribute("code");
+            if (StringUtils.isBlank(code)) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码不能为空"));
                 return;
-            } else if (!realVcode.equalsIgnoreCase(vcode)) {
+            } else if (!realCode.equalsIgnoreCase(code)) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码错误"));
                 return;
             }
