@@ -28,7 +28,7 @@ public class CmsAuthenticationSuccessHandler implements AuthenticationSuccessHan
         HttpSession session = request.getSession();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         session.setAttribute("user", userDetails);
-        log.info(userDetails.getUsername() + ":登录成功");
+        log.info("{}:登录成功", userDetails.getUsername());
 
         Result result = new Result();
         result.setStatus(Result.Status.SUCCESS);

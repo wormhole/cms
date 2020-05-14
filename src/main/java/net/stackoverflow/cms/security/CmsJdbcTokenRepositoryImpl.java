@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.security;
 
+import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.model.entity.Token;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.TokenService;
@@ -12,6 +13,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * JdbcToken实现类
+ *
+ * @author 凉衫薄
+ */
+@Slf4j
 public class CmsJdbcTokenRepositoryImpl implements PersistentTokenRepository {
 
     private TokenService tokenService;
@@ -24,6 +31,7 @@ public class CmsJdbcTokenRepositoryImpl implements PersistentTokenRepository {
 
     @Override
     public void createNewToken(PersistentRememberMeToken token) {
+        log.info("创建token:{}", token.getUsername());
         Token tk = new Token();
         tk.setId(token.getSeries());
         tk.setToken(token.getTokenValue());
@@ -35,6 +43,7 @@ public class CmsJdbcTokenRepositoryImpl implements PersistentTokenRepository {
 
     @Override
     public void updateToken(String series, String tokenValue, Date lastUsed) {
+        log.info("更新token:{}", series);
         Token tk = tokenService.findById(series);
         tk.setToken(tokenValue);
         tk.setLastUsed(lastUsed);
@@ -54,6 +63,7 @@ public class CmsJdbcTokenRepositoryImpl implements PersistentTokenRepository {
 
     @Override
     public void removeUserTokens(String username) {
+        log.info("移除token:{}", username);
         User user = userService.findByUsername(username);
 
         List<Token> tokens = new ArrayList<>();

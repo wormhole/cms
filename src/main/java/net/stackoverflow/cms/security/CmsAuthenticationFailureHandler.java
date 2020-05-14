@@ -9,7 +9,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,17 +22,17 @@ import java.io.PrintWriter;
 @Slf4j
 public class CmsAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter out = response.getWriter();
         Result result = new Result();
         result.setStatus(Result.Status.FAILURE);
         if (exception instanceof VerifyCodeException) {
-            log.error(exception.getMessage());
+            log.error("验证码错误", exception);
             result.setMessage(exception.getMessage());
         } else if (exception instanceof DisabledException) {
-            log.error("该用户被禁用");
+            log.error("用户被禁用", exception);
             result.setMessage("该用户被禁用");
         } else {
             log.error("用户名或密码错误");

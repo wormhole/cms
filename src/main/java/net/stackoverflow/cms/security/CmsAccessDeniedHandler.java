@@ -27,7 +27,7 @@ public class CmsAccessDeniedHandler implements AccessDeniedHandler {
 
         HttpSession session = request.getSession();
         UserDetails userDetails = (UserDetails) session.getAttribute("user");
-        log.error("权限不足:" + userDetails.getUsername() + "->" + request.getRequestURI());
+        log.error("权限不足:{} -> {}", userDetails.getUsername(), request.getRequestURI());
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

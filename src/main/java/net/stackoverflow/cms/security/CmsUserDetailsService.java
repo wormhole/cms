@@ -43,10 +43,10 @@ public class CmsUserDetailsService implements UserDetailsService {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority(permission.getName());
                 authorities.add(sga);
             }
-            log.info("加载完用户信息:" + username);
+            log.info("加载完用户信息:{}", username);
             return new CmsUserDetails(user.getId(), user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), user.getDeletable(), authorities);
         } else {
-            log.error("找不到对应的用户:" + username);
+            log.error("找不到对应的用户:{}", username);
             throw new UsernameNotFoundException(username);
         }
     }
