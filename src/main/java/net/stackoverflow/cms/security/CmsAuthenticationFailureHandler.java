@@ -29,10 +29,10 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
         Result result = new Result();
         result.setStatus(Result.Status.FAILURE);
         if (exception instanceof VerifyCodeException) {
-            log.error("验证码错误", exception);
+            log.error(exception.getMessage(), exception);
             result.setMessage(exception.getMessage());
         } else if (exception instanceof DisabledException) {
-            log.error("用户被禁用", exception);
+            log.error("该用户被禁用", exception);
             result.setMessage("该用户被禁用");
         } else {
             log.error("用户名或密码错误");
