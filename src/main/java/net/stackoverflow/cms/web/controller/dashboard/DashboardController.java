@@ -3,7 +3,6 @@ package net.stackoverflow.cms.web.controller.dashboard;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -11,14 +10,11 @@ import org.hyperic.sigar.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,8 +27,6 @@ import java.util.Map;
 @Slf4j
 public class DashboardController extends BaseController {
 
-    @Autowired
-    private SessionRegistry sessionRegistry;
     @Autowired
     private UserService userService;
     @Autowired
@@ -56,11 +50,9 @@ public class DashboardController extends BaseController {
         Integer userCount = userService.count();
         Integer roleCount = roleService.count();
         Integer permissionCount = permissionService.count();
-        Integer onlineCount = sessionRegistry.getAllPrincipals().size();
         countMap.put("user", userCount);
         countMap.put("role", roleCount);
         countMap.put("permission", permissionCount);
-        countMap.put("online", onlineCount);
 
         //cpu使用率
         Sigar sigar = new Sigar();
@@ -130,26 +122,5 @@ public class DashboardController extends BaseController {
         result.setStatus(Result.Status.SUCCESS);
         return ResponseEntity.status(HttpStatus.OK).body(result);
 
-    }
-
-    /**
-     * 获取所有在线用户信息
-     *
-     * @return
-     */
-    @GetMapping(value = "/online")
-    public ResponseEntity online() {
-        Result result = new Result();
-
-        List<Object> users = sessionRegistry.getAllPrincipals();
-        List<String> onlines = new ArrayList<>();
-        for (Object object : users) {
-            CmsUserDetails userDetails = (CmsUserDetails) object;
-            onlines.add(userDetails.getUsername());
-        }
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(onlines);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
