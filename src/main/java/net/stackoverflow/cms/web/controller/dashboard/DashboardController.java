@@ -108,8 +108,8 @@ public class DashboardController extends BaseController {
             upload += nfs.getTxBytes() / (1024D * 1024D * 1024D);
             download += nfs.getRxBytes() / (1024D * 1024D * 1024D);
         }
-        netMap.put("upload", doubleFormat(upload, 2) + "GB");
-        netMap.put("download", doubleFormat(download, 2) + "GB");
+        netMap.put("upload", doubleFormat(upload, 2));
+        netMap.put("download", doubleFormat(download, 2));
 
         map.put("count", countMap);
         map.put("cpu", cpuMap);
