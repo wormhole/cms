@@ -8,11 +8,11 @@ import net.stackoverflow.cms.model.vo.PasswordVO;
 import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.UserService;
-import net.stackoverflow.cms.util.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -53,36 +53,21 @@ public class PersonalController extends BaseController {
      * @return
      */
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody UserVO userVO) {
+    public ResponseEntity update(@RequestBody @Validated(UserVO.Update.class) UserVO userVO) {
 
         Result result = new Result();
 
-        User user = userService.findById(getUserDetails().getId());
+        User user = userService.findById(userVO.getId());
 
-        if (StringUtils.isBlank(userVO.getUsername())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("用户名不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } else {
-            if (!user.getUsername().equals(userVO.getUsername())) {
-                User users = userService.findByUsername(userVO.getUsername());
-                if (users != null) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("用户名已存在");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
+        if (!user.getUsername().equals(userVO.getUsername())) {
+            User users = userService.findByUsername(userVO.getUsername());
+            if (users != null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("用户名已存在");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
-        if (!validateEmail(userVO.getEmail())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("邮箱格式错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
-        if (!validateTelephone(userVO.getTelephone())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("电话号码格式错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
+
         user.setUsername(userVO.getUsername());
         user.setEmail(userVO.getEmail());
         user.setTelephone(userVO.getTelephone());
@@ -102,24 +87,15 @@ public class PersonalController extends BaseController {
      * @return
      */
     @PutMapping(value = "/password")
-    public ResponseEntity password(@RequestBody PasswordVO passwordVO) {
+    public ResponseEntity password(@RequestBody @Validated(PasswordVO.Personal.class) PasswordVO passwordVO) {
         Result result = new Result();
 
-        if (StringUtils.isBlank(passwordVO.getOldPassword()) || StringUtils.isBlank(passwordVO.getNewPassword()) || StringUtils.isBlank(passwordVO.getCheckPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("字段不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
         if (!passwordVO.getNewPassword().equals(passwordVO.getCheckPassword())) {
             result.setStatus(Result.Status.FAILURE);
             result.setMessage("两次密码不一致");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
-        if (!validatePassword(passwordVO.getNewPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("新密码长度不能小于6");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
+
         User user = userService.findById(getUserDetails().getId());
         if (!encoder.encode(passwordVO.getOldPassword()).equals(user.getPassword())) {
             result.setStatus(Result.Status.FAILURE);

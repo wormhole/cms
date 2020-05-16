@@ -15,8 +15,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -27,6 +30,7 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/auth/user")
 @Slf4j
+@Validated
 public class UserController extends BaseController {
 
     @Autowired
@@ -49,8 +53,8 @@ public class UserController extends BaseController {
      */
     @GetMapping(value = "/list")
     public ResponseEntity list(
-            @RequestParam(value = "page") Integer page,
-            @RequestParam(value = "limit") Integer limit,
+            @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
+            @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "roleIds[]", required = false) List<String> roleIds,
@@ -123,15 +127,8 @@ public class UserController extends BaseController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public ResponseEntity delete(@RequestBody IdsVO idsVO) {
+    public ResponseEntity delete(@RequestBody @Validated IdsVO idsVO) {
         Result result = new Result();
-
-        //校验参数
-        if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("请至少选择一条数据");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
 
         //检查是否有不可被删除的
         List<User> users = userService.findByIds(idsVO.getIds());
@@ -157,15 +154,8 @@ public class UserController extends BaseController {
      * @return
      */
     @PutMapping(value = "/enabled")
-    public ResponseEntity enabled(@RequestBody IdsVO idsVO) {
+    public ResponseEntity enabled(@RequestBody @Validated IdsVO idsVO) {
         Result result = new Result();
-
-        //校验参数
-        if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("请至少选择一条数据");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
 
         List<User> users = userService.findByIds(idsVO.getIds());
         for (User user : users) {
@@ -192,15 +182,8 @@ public class UserController extends BaseController {
      * @return
      */
     @PutMapping(value = "/disabled")
-    public ResponseEntity disabled(@RequestBody IdsVO idsVO) {
+    public ResponseEntity disabled(@RequestBody @Validated IdsVO idsVO) {
         Result result = new Result();
-
-        //校验参数
-        if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("请至少选择一条数据");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
 
         List<User> users = userService.findByIds(idsVO.getIds());
         for (User user : users) {
@@ -254,15 +237,9 @@ public class UserController extends BaseController {
      * @return
      */
     @GetMapping(value = "/ref_user_role")
-    public ResponseEntity refUserRole(@RequestParam(value = "id") String id) {
+    public ResponseEntity refUserRole(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
         Result result = new Result();
 
-        //校验参数
-        if (StringUtils.isBlank(id)) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("id不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
         User user = userService.findById(id);
         if (user == null) {
             result.setStatus(Result.Status.FAILURE);
@@ -304,15 +281,9 @@ public class UserController extends BaseController {
      * @return
      */
     @PutMapping(value = "/grant_role")
-    public ResponseEntity grantRole(@RequestBody GrantRoleVO grantRoleVO) {
+    public ResponseEntity grantRole(@RequestBody @Validated GrantRoleVO grantRoleVO) {
         Result result = new Result();
 
-        //校验数据
-        if (StringUtils.isBlank(grantRoleVO.getUserId())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("userId不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
         User user = userService.findById(grantRoleVO.getUserId());
         if (user == null) {
             result.setStatus(Result.Status.FAILURE);
@@ -334,7 +305,7 @@ public class UserController extends BaseController {
      * @return
      */
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody UserVO userVO) {
+    public ResponseEntity update(@RequestBody @Validated(UserVO.Update.class) UserVO userVO) {
 
         Result result = new Result();
 
@@ -345,29 +316,13 @@ public class UserController extends BaseController {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
 
-        if (StringUtils.isBlank(userVO.getUsername())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("用户名不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } else {
-            if (!user.getUsername().equals(userVO.getUsername())) {
-                User users = userService.findByUsername(userVO.getUsername());
-                if (users != null) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("用户名已存在");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
+        if (!user.getUsername().equals(userVO.getUsername())) {
+            User users = userService.findByUsername(userVO.getUsername());
+            if (users != null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("用户名已存在");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
-        }
-        if (!validateEmail(userVO.getEmail())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("邮箱格式错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
-        if (!validateTelephone(userVO.getTelephone())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("电话号码格式错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
         }
         user.setUsername(userVO.getUsername());
         user.setEmail(userVO.getEmail());
@@ -386,24 +341,15 @@ public class UserController extends BaseController {
      * @return
      */
     @PutMapping(value = "/password")
-    public ResponseEntity password(@RequestBody PasswordVO passwordVO) {
+    public ResponseEntity password(@RequestBody @Validated(PasswordVO.Admin.class) PasswordVO passwordVO) {
         Result result = new Result();
 
-        if (StringUtils.isBlank(passwordVO.getId()) || StringUtils.isBlank(passwordVO.getNewPassword()) || StringUtils.isBlank(passwordVO.getCheckPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("字段不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
         if (!passwordVO.getNewPassword().equals(passwordVO.getCheckPassword())) {
             result.setStatus(Result.Status.FAILURE);
             result.setMessage("两次密码不一致");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
-        if (!validatePassword(passwordVO.getNewPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("新密码长度不能小于6");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
+
         User user = userService.findById(passwordVO.getId());
 
         String password = encoder.encode(passwordVO.getNewPassword());
@@ -422,37 +368,18 @@ public class UserController extends BaseController {
      * @return
      */
     @PostMapping(value = "/add")
-    public ResponseEntity add(@RequestBody UserVO userVO) {
+    public ResponseEntity add(@RequestBody @Validated(UserVO.Insert.class) UserVO userVO) {
         Result result = new Result();
 
         //参数校验
-        if (StringUtils.isBlank(userVO.getUsername())) {
+
+        User u = userService.findByUsername(userVO.getUsername());
+        if (u != null) {
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage("用户名不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } else {
-            User user = userService.findByUsername(userVO.getUsername());
-            if (user != null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("用户名已存在");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-        }
-        if (!validateEmail(userVO.getEmail())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("邮箱格式错误");
+            result.setMessage("用户名已存在");
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
-        if (!validateTelephone(userVO.getTelephone())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("电话号码格式错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
-        if (!validatePassword(userVO.getPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("密码长度不能小于6");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
+
         String password = new CmsMd5PasswordEncoder().encode(userVO.getPassword());
         User user = new User();
         BeanUtils.copyProperties(userVO, user);

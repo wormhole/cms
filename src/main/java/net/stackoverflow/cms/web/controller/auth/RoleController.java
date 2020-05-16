@@ -224,7 +224,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @PutMapping(value = "/grant_permission")
-    public ResponseEntity grantPermission(@RequestBody GrantPermissionVO grantPermissionVO) {
+    public ResponseEntity grantPermission(@RequestBody @Validated GrantPermissionVO grantPermissionVO) {
         Result result = new Result();
 
         //校验数据

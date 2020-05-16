@@ -2,6 +2,8 @@ package net.stackoverflow.cms.model.vo;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -16,6 +18,8 @@ import java.util.List;
 @ToString
 public class GrantRoleVO {
 
+    @NotBlank(message = "userId不能为空")
     private String userId;
+    @NotNull(message = "roleIds不能为null")
     private List<String> roleIds;
 }
