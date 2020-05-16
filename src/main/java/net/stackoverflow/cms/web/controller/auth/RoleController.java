@@ -17,8 +17,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -29,6 +32,7 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/auth/role")
 @Slf4j
+@Validated
 public class RoleController extends BaseController {
 
     @Autowired
@@ -49,8 +53,8 @@ public class RoleController extends BaseController {
      */
     @GetMapping(value = "/list")
     public ResponseEntity list(
-            @RequestParam(value = "page") Integer page,
-            @RequestParam(value = "limit") Integer limit,
+            @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
+            @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "permissionIds[]", required = false) List<String> permissionIds,
@@ -149,15 +153,8 @@ public class RoleController extends BaseController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public ResponseEntity delete(@RequestBody IdsVO idsVO) {
+    public ResponseEntity delete(@RequestBody @Validated IdsVO idsVO) {
         Result result = new Result();
-
-        //校验参数
-        if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("请至少选择一条数据");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
 
         //检查是否有不可被删除的
         List<Role> roles = roleService.findByIds(idsVO.getIds());
@@ -183,15 +180,9 @@ public class RoleController extends BaseController {
      * @return
      */
     @GetMapping(value = "/ref_role_permission")
-    public ResponseEntity refRolePermission(@RequestParam(value = "id") String id) {
+    public ResponseEntity refRolePermission(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
         Result result = new Result();
 
-        //校验参数
-        if (StringUtils.isBlank(id)) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("id不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
         Role role = roleService.findById(id);
         if (role == null) {
             result.setStatus(Result.Status.FAILURE);
@@ -263,7 +254,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody RoleVO roleVO) {
+    public ResponseEntity update(@RequestBody @Validated(RoleVO.Update.class) RoleVO roleVO) {
 
         Result result = new Result();
 
@@ -275,18 +266,12 @@ public class RoleController extends BaseController {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
 
-        if (StringUtils.isBlank(roleVO.getName())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("名称不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } else {
-            if (!role.getName().equals(roleVO.getName())) {
-                Role roles = roleService.findByName(roleVO.getName());
-                if (roles != null) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("角色名已存在");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
+        if (!role.getName().equals(roleVO.getName())) {
+            Role roles = roleService.findByName(roleVO.getName());
+            if (roles != null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("角色名已存在");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
 
@@ -307,21 +292,14 @@ public class RoleController extends BaseController {
      * @return
      */
     @PostMapping(value = "/add")
-    public ResponseEntity add(@RequestBody RoleVO roleVO) {
+    public ResponseEntity add(@RequestBody @Validated(RoleVO.Insert.class) RoleVO roleVO) {
         Result result = new Result();
 
-        //校验参数
-        if (StringUtils.isBlank(roleVO.getName())) {
+        Role r = roleService.findByName(roleVO.getName());
+        if (r != null) {
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage("名称不能为空");
+            result.setMessage("角色名已存在");
             return ResponseEntity.status(HttpStatus.OK).body(result);
-        } else {
-            Role role = roleService.findByName(roleVO.getName());
-            if (role != null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("角色名已存在");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
         }
 
         Role role = new Role();
