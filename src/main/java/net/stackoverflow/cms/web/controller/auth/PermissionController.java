@@ -13,8 +13,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.*;
 
 /**
@@ -25,6 +27,7 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/auth/permission")
 @Slf4j
+@Validated
 public class PermissionController extends BaseController {
 
     @Autowired
@@ -42,8 +45,8 @@ public class PermissionController extends BaseController {
      */
     @GetMapping(value = "/list")
     public ResponseEntity list(
-            @RequestParam(value = "page") Integer page,
-            @RequestParam(value = "limit") Integer limit,
+            @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
+            @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "key", required = false) String key) {
@@ -90,15 +93,8 @@ public class PermissionController extends BaseController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public ResponseEntity delete(@RequestBody IdsVO idsVO) {
+    public ResponseEntity delete(@RequestBody @Validated IdsVO idsVO) {
         Result result = new Result();
-
-        //校验参数
-        if (idsVO.getIds() == null || idsVO.getIds().size() == 0) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("请至少选择一条数据");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
 
         //检查是否有不可被删除的
         List<Permission> permissions = permissionService.findByIds(idsVO.getIds());
@@ -124,7 +120,7 @@ public class PermissionController extends BaseController {
      * @return
      */
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody PermissionVO permissionVO) {
+    public ResponseEntity update(@RequestBody @Validated(PermissionVO.Update.class) PermissionVO permissionVO) {
 
         Result result = new Result();
 
@@ -136,18 +132,12 @@ public class PermissionController extends BaseController {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
 
-        if (StringUtils.isBlank(permissionVO.getName())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("名称不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } else {
-            if (!permission.getName().equals(permissionVO.getName())) {
-                Permission permissions = permissionService.findByName(permission.getName());
-                if (permissions != null) {
-                    result.setStatus(Result.Status.FAILURE);
-                    result.setMessage("权限名已存在");
-                    return ResponseEntity.status(HttpStatus.OK).body(result);
-                }
+        if (!permission.getName().equals(permissionVO.getName())) {
+            Permission permissions = permissionService.findByName(permission.getName());
+            if (permissions != null) {
+                result.setStatus(Result.Status.FAILURE);
+                result.setMessage("权限名已存在");
+                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
 
@@ -168,21 +158,14 @@ public class PermissionController extends BaseController {
      * @return
      */
     @PostMapping(value = "/add")
-    public ResponseEntity add(@RequestBody PermissionVO permissionVO) {
+    public ResponseEntity add(@RequestBody @Validated(PermissionVO.Insert.class) PermissionVO permissionVO) {
         Result result = new Result();
 
-        //校验参数
-        if (StringUtils.isBlank(permissionVO.getName())) {
+        Permission perm = permissionService.findByName(permissionVO.getName());
+        if (perm != null) {
             result.setStatus(Result.Status.FAILURE);
-            result.setMessage("名称不能为空");
+            result.setMessage("权限名已存在");
             return ResponseEntity.status(HttpStatus.OK).body(result);
-        } else {
-            Permission permission = permissionService.findByName(permissionVO.getName());
-            if (permission != null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("权限名已存在");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
         }
 
         Permission permission = new Permission();
