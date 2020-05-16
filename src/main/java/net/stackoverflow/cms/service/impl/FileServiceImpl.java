@@ -5,8 +5,8 @@ import net.stackoverflow.cms.constant.UploadConst;
 import net.stackoverflow.cms.dao.FileDAO;
 import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.service.FileService;
+import net.stackoverflow.cms.util.FileUtils;
 import net.stackoverflow.cms.util.SysUtils;
-import net.stackoverflow.cms.util.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,15 +62,15 @@ public class FileServiceImpl implements FileService {
     public File saveFile(MultipartFile file, String userId) throws IOException {
         String filename = file.getOriginalFilename();
         String ext = filename.substring(filename.lastIndexOf("."));
-        String path = TimeUtils.pathWithDate() + UUID.randomUUID().toString() + ext;
-        String uploadPath = SysUtils.isWin() ? UploadConst.UPLOAD_PATH_WINDOWS : UploadConst.UPLOAD_PATH_LINUX;
-        String absolutePath = uploadPath + path;
+        String filePath = FileUtils.pathWithDate() + UUID.randomUUID().toString() + ext;
+        String uploadPath = SysUtils.pwd() + UploadConst.UPLOAD_PATH;
+        String absolutePath = uploadPath + filePath;
         java.io.File uploadFile = new java.io.File(absolutePath);
         if (!uploadFile.getParentFile().exists()) {
             uploadFile.mkdirs();
         }
         file.transferTo(uploadFile);
-        File filePO = new File(UUID.randomUUID().toString(), filename, path, new Date(), userId);
+        File filePO = new File(UUID.randomUUID().toString(), filename, filePath, new Date(), userId);
         fileDAO.insert(filePO);
         return filePO;
     }

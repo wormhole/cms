@@ -15,4 +15,14 @@ public class SysUtils {
     public static Boolean isWin() {
         return System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0 ? true : false;
     }
+
+    /**
+     * 当前路径
+     *
+     * @return
+     */
+    public static String pwd() {
+        return System.getProperty("user.dir");
+    }
+
 }

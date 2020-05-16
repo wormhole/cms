@@ -22,12 +22,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         if (!registry.hasMappingForPattern(UploadConst.PREFIX + "/**")) {
-            String path = null;
-            if (SysUtils.isWin()) {
-                path = UploadConst.UPLOAD_PATH_WINDOWS;
-            } else {
-                path = UploadConst.UPLOAD_PATH_LINUX;
-            }
+            String path = SysUtils.pwd() + UploadConst.UPLOAD_PATH;
             registry.addResourceHandler(UploadConst.PREFIX + "/**").addResourceLocations("file:" + path);
         }
     }

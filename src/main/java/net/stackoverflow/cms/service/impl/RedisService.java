@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.service;
+package net.stackoverflow.cms.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

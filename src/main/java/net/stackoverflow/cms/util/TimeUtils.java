@@ -33,14 +33,4 @@ public class TimeUtils {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.parse(time);
     }
-
-    /**
-     * 获取日期格式路径
-     *
-     * @return
-     */
-    public static String pathWithDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/");
-        return sdf.format(new Date());
-    }
 }
