@@ -9,11 +9,9 @@ import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.AuthorityVO;
-import net.stackoverflow.cms.model.vo.ConfigVO;
 import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.ConfigService;
 import net.stackoverflow.cms.service.UserService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 主页控制器
@@ -49,18 +49,21 @@ public class HomeController extends BaseController {
         Result result = new Result();
 
         List<Config> configs = configService.findAll();
-        List<ConfigVO> configVOs = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
         for (Config config : configs) {
-            ConfigVO configVO = new ConfigVO();
-            BeanUtils.copyProperties(config, configVO);
-            if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
-                configVO.setValue(UploadConst.PREFIX + configVO.getValue());
+            if (config.getKey().equals("head")) {
+                if (config.getValue().equals("default"))
+                    map.put(config.getKey(), "/head.jpg");
+                else
+                    map.put(config.getKey(), UploadConst.PREFIX + config.getValue());
+            } else {
+                map.put(config.getKey(), config.getValue());
             }
-            configVOs.add(configVO);
         }
+
         result.setMessage("success");
         result.setStatus(Result.Status.SUCCESS);
-        result.setData(configVOs);
+        result.setData(map);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
