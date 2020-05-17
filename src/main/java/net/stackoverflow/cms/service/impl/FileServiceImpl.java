@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.constant.UploadConst;
 import net.stackoverflow.cms.dao.FileDAO;
 import net.stackoverflow.cms.model.entity.File;
@@ -21,6 +22,11 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     private FileDAO fileDAO;
+
+    @Override
+    public List<File> findByPage(Page page) {
+        return fileDAO.selectByPage(page);
+    }
 
     @Override
     public List<File> findByCondition(Map<String, Object> condition) {
@@ -48,6 +54,11 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void batchDelete(List<String> ids) {
+        List<File> files = findByIds(ids);
+        for (File file : files) {
+            java.io.File f = new java.io.File(SysUtils.pwd() + UploadConst.UPLOAD_PATH + file.getPath());
+            f.delete();
+        }
         fileDAO.batchDelete(ids);
     }
 
@@ -70,7 +81,7 @@ public class FileServiceImpl implements FileService {
             uploadFile.mkdirs();
         }
         file.transferTo(uploadFile);
-        File filePO = new File(UUID.randomUUID().toString(), filename, filePath, new Date(), userId, FileUtils.getType(ext));
+        File filePO = new File(UUID.randomUUID().toString(), filename, filePath, new Date(), userId, FileUtils.getType(ext.substring(1)));
         fileDAO.insert(filePO);
         return filePO;
     }

@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.service;
 
+import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.model.entity.File;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface FileService {
+
+    List<File> findByPage(Page page);
 
     List<File> findByCondition(Map<String, Object> condition);
 
