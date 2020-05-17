@@ -51,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMeParameter("rememberMe")
                 .tokenRepository(tokenRepository());
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/vcode").permitAll()
+                .antMatchers("/login", "/register", "/code").permitAll()
                 .antMatchers("/home/**").authenticated()
                 .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/personal/**").authenticated()
