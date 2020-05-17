@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 20/01/2020 14:08:23
+ Date: 17/05/2020 14:39:12
 */
 
 SET NAMES utf8mb4;
@@ -48,6 +48,7 @@ CREATE TABLE `file`  (
   `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '路径',
   `time` timestamp(0) NOT NULL COMMENT '最后修改时间',
   `user_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户id',
+  `type` int(11) NULL DEFAULT NULL COMMENT '类型：1-图片，2-视频，3-音频，0-其他',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -66,8 +67,9 @@ CREATE TABLE `permission`  (
 -- ----------------------------
 -- Records of permission
 -- ----------------------------
+INSERT INTO `permission` VALUES ('2c57feb7-3319-4e19-8621-97d4be0e2237', 'file', '文件管理模块', 1);
 INSERT INTO `permission` VALUES ('7c7f5593-4c92-4a65-bc59-0e11bdf9f22d', 'auth', '认证与授权模块', 0);
-INSERT INTO `permission` VALUES ('f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c', 'config', '系统设置模块', 0);
+INSERT INTO `permission` VALUES ('f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c', 'config', '系统设置模块', 1);
 
 -- ----------------------------
 -- Table structure for role
@@ -100,8 +102,9 @@ CREATE TABLE `role_permission`  (
 -- ----------------------------
 -- Records of role_permission
 -- ----------------------------
-INSERT INTO `role_permission` VALUES ('808a1176-6c48-4194-9a90-d42d697e6ce5', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '7c7f5593-4c92-4a65-bc59-0e11bdf9f22d');
-INSERT INTO `role_permission` VALUES ('bf2a6b4d-5048-44d5-b817-800a5138a1b0', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c');
+INSERT INTO `role_permission` VALUES ('616af381-cccd-4ef5-af65-82907adc81ab', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c');
+INSERT INTO `role_permission` VALUES ('b2d84440-f131-4d87-b587-e2aaf9917b7e', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '7c7f5593-4c92-4a65-bc59-0e11bdf9f22d');
+INSERT INTO `role_permission` VALUES ('be82eb3b-0cc8-42f5-80a3-d23ba3dbba6a', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '2c57feb7-3319-4e19-8621-97d4be0e2237');
 
 -- ----------------------------
 -- Table structure for token
