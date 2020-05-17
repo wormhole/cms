@@ -131,4 +131,26 @@
         </foreach>
     </update>
 
+    <update id="updateByKey" parameterType="net.stackoverflow.cms.model.entity.Config">
+        update config
+        <set>
+            <if test="value != null">
+                `value` = #{value}
+            </if>
+        </set>
+        where `key` = #{key}
+    </update>
+
+    <update id="batchUpdateByKey" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update config
+            <set>
+                <if test="item.value != null">
+                    `value` = #{item.value}
+                </if>
+            </set>
+            where `key` = #{item.key}
+        </foreach>
+    </update>
+
 </mapper>

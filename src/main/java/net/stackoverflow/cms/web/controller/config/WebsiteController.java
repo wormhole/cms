@@ -13,12 +13,16 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统设置接口
@@ -26,9 +30,10 @@ import java.util.List;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/config")
+@RequestMapping(value = "/config/website")
 @Slf4j
-public class ConfigController extends BaseController {
+@Validated
+public class WebsiteController extends BaseController {
 
     @Autowired
     private ConfigService configService;
@@ -49,18 +54,20 @@ public class ConfigController extends BaseController {
         Result result = new Result();
 
         List<Config> configs = configService.findAll();
-        List<ConfigVO> configVOs = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
         for (Config config : configs) {
-            ConfigVO configVO = new ConfigVO();
-            BeanUtils.copyProperties(config, configVO);
-            if (configVO.getKey().equals("head") && !configVO.getValue().equals("default")) {
-                configVO.setValue(UploadConst.PREFIX + configVO.getValue());
+            if (config.getKey().equals("head")) {
+                if (config.getValue().equals("default"))
+                    map.put(config.getKey(), "/head.jpg");
+                else
+                    map.put(config.getKey(), UploadConst.PREFIX + config.getValue());
+            } else {
+                map.put(config.getKey(), config.getValue());
             }
-            configVOs.add(configVO);
         }
         result.setMessage("success");
         result.setStatus(Result.Status.SUCCESS);
-        result.setData(configVOs);
+        result.setData(map);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
@@ -71,21 +78,16 @@ public class ConfigController extends BaseController {
      * @return
      */
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody List<ConfigVO> configVOs) {
+    public ResponseEntity update(@RequestBody @NotEmpty(message = "参数不能为空") List<ConfigVO> configVOs) {
         Result result = new Result();
 
-        if (configVOs == null || configVOs.size() == 0) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("参数不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
         List<Config> configs = new ArrayList<>();
         for (ConfigVO configVO : configVOs) {
             Config config = new Config();
             BeanUtils.copyProperties(configVO, config);
             configs.add(config);
         }
-        configService.batchUpdate(configs);
+        configService.batchUpdateByKey(configs);
         result.setStatus(Result.Status.SUCCESS);
         result.setMessage("success");
         return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -103,9 +105,10 @@ public class ConfigController extends BaseController {
         Result result = new Result();
 
         File filePO = fileService.saveFile(file, getUserDetails().getId());
-        Config config = configService.findByKey("head");
+        Config config = new Config();
+        config.setKey("head");
         config.setValue(filePO.getPath());
-        configService.update(config);
+        configService.updateByKey(config);
 
         result.setStatus(Result.Status.SUCCESS);
         result.setMessage("success");
@@ -121,26 +124,40 @@ public class ConfigController extends BaseController {
     public ResponseEntity restore() {
         Result result = new Result();
 
-        List<Config> configs = configService.findAll();
+        List<Config> configs = new ArrayList<>();
+
+        Config title = new Config();
+        title.setKey("title");
+        title.setValue(TITLE);
+
+        Config copyright = new Config();
+        copyright.setKey("copyright");
+        copyright.setValue(COPYRIGHT);
+
+        Config head = new Config();
+        head.setKey("head");
+        head.setValue(HEAD);
+
+        configs.add(title);
+        configs.add(copyright);
+        configs.add(head);
+
+        Map<String, Object> map = new HashMap<>();
         for (Config config : configs) {
-            switch (config.getKey()) {
-                case "title":
-                    config.setValue(TITLE);
-                    break;
-                case "copyright":
-                    config.setValue(COPYRIGHT);
-                    break;
-                case "head":
-                    config.setValue(HEAD);
-                    break;
-                default:
-                    break;
+            if (config.getKey().equals("head")) {
+                if (config.getValue().equals("default"))
+                    map.put(config.getKey(), "/head.jpg");
+                else
+                    map.put(config.getKey(), UploadConst.PREFIX + config.getValue());
+            } else {
+                map.put(config.getKey(), config.getValue());
             }
         }
-        configService.batchUpdate(configs);
+
+        configService.batchUpdateByKey(configs);
         result.setStatus(Result.Status.SUCCESS);
         result.setMessage("success");
-        result.setData(configs);
+        result.setData(map);
         return ResponseEntity.status(HttpStatus.OK).body(result);
 
     }

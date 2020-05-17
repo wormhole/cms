@@ -28,4 +28,8 @@ public interface ConfigDAO {
 
     int batchUpdate(List<Config> configs);
 
+    int updateByKey(Config config);
+
+    int batchUpdateByKey(List<Config> configs);
+
 }

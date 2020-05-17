@@ -16,4 +16,8 @@ public interface ConfigService {
     void update(Config config);
 
     void batchUpdate(List<Config> configs);
+
+    void updateByKey(Config config);
+
+    void batchUpdateByKey(List<Config> configs);
 }

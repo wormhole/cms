@@ -51,4 +51,16 @@ public class ConfigServiceImpl implements ConfigService {
         configDAO.batchUpdate(configs);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateByKey(Config config) {
+        configDAO.updateByKey(config);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchUpdateByKey(List<Config> configs) {
+        configDAO.batchUpdateByKey(configs);
+    }
+
 }

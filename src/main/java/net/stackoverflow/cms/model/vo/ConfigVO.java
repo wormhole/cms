@@ -2,6 +2,8 @@ package net.stackoverflow.cms.model.vo;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 配置信息VO
  *
@@ -14,7 +16,8 @@ import lombok.*;
 @ToString
 public class ConfigVO {
 
-    private String id;
+    @NotBlank(message = "key不能为空")
     private String key;
+    @NotBlank(message = "value不能为空")
     private String value;
 }
