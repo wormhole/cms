@@ -70,7 +70,7 @@ public class FileServiceImpl implements FileService {
             uploadFile.mkdirs();
         }
         file.transferTo(uploadFile);
-        File filePO = new File(UUID.randomUUID().toString(), filename, filePath, new Date(), userId);
+        File filePO = new File(UUID.randomUUID().toString(), filename, filePath, new Date(), userId, FileUtils.getType(ext));
         fileDAO.insert(filePO);
         return filePO;
     }
