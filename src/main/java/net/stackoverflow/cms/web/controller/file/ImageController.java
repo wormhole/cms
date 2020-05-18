@@ -86,7 +86,11 @@ public class ImageController extends BaseController {
             vo.setUrl(UploadConst.PREFIX + vo.getPath());
             vo.setUsername(userService.findById(vo.getUserId()).getUsername());
             String path = SysUtils.pwd() + vo.getPath();
-            vo.setPath(path.replace("\\", "/"));
+            if (SysUtils.isWin())
+                path = path.replace("/", "\\");
+            else
+                path = path.replace("\\", "/");
+            vo.setPath(path);
             vos.add(vo);
         }
 
