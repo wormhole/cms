@@ -46,6 +46,7 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
+        log.info("tokenFilter:{}", path);
         if (pathMatcher.match("/api/**", path)) {
             if (!(pathMatcher.match("/api/code", path) || pathMatcher.match("/api/login", path) || pathMatcher.match("/api/register", path))) {
                 String token = TokenUtils.obtainToken(request);
