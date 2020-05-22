@@ -22,6 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * token认证过滤器
+ *
+ * @author 凉衫薄
+ */
 @Slf4j
 public class TokenFilter extends OncePerRequestFilter {
 
