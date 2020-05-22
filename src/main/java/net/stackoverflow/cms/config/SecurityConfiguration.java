@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 /**
  * Spring Security配置类
@@ -63,7 +64,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
         http.addFilterBefore(verifyCodeFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(tokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenFilter(), LogoutFilter.class);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CmsLogoutSuccessHandler logoutSuccessHandler() {
-        return new CmsLogoutSuccessHandler();
+        return new CmsLogoutSuccessHandler(redisTemplate);
     }
 
     @Bean

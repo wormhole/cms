@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.UserService;
-import net.stackoverflow.cms.util.StringUtils;
+import net.stackoverflow.cms.util.TokenUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,9 +47,9 @@ public class TokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
         if (pathMatcher.match("/api/**", path)) {
-            if (!(pathMatcher.match("/api/code", path) || pathMatcher.match("/api/login", path) || pathMatcher.match("/api/logout", path) || pathMatcher.match("/api/register", path))) {
-                String token = request.getHeader("Authorization");
-                if (StringUtils.isNotEmpty(token)) {
+            if (!(pathMatcher.match("/api/code", path) || pathMatcher.match("/api/login", path) || pathMatcher.match("/api/register", path))) {
+                String token = TokenUtils.obtainToken(request);
+                if (token != null) {
                     String id = (String) redisTemplate.opsForValue().get(token);
                     User user = userService.findById(id);
                     if (user != null) {

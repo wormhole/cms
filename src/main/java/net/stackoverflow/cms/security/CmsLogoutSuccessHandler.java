@@ -3,6 +3,8 @@ package net.stackoverflow.cms.security;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.util.JsonUtils;
+import net.stackoverflow.cms.util.TokenUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -20,8 +22,19 @@ import java.io.PrintWriter;
 @Slf4j
 public class CmsLogoutSuccessHandler implements LogoutSuccessHandler {
 
+    private RedisTemplate redisTemplate;
+
+    public CmsLogoutSuccessHandler(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+
+        String token = TokenUtils.obtainToken(request);
+        if (token != null) {
+            redisTemplate.delete(token);
+        }
 
         Result result = new Result();
         result.setStatus(Result.Status.SUCCESS);

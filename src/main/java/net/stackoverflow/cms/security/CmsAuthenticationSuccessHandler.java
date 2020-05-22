@@ -3,11 +3,11 @@ package net.stackoverflow.cms.security;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.util.JsonUtils;
+import net.stackoverflow.cms.util.TokenUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.util.DigestUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class CmsAuthenticationSuccessHandler implements AuthenticationSuccessHan
         session.setAttribute("user", userDetails);
         log.info("{}:登录成功", userDetails.getUsername());
 
-        String token = DigestUtils.md5DigestAsHex((userDetails.getId() + System.currentTimeMillis()).getBytes());
+        String token = TokenUtils.generateToken(userDetails.getId());
         redisTemplate.opsForValue().set(token, userDetails.getId(), 30, TimeUnit.MINUTES);
 
         Result result = new Result();
