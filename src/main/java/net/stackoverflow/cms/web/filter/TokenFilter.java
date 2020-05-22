@@ -61,13 +61,7 @@ public class TokenFilter extends OncePerRequestFilter {
                         log.info("token认证成功:{}", userDetails.getUsername());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         redisTemplate.expire(token, 30, TimeUnit.MINUTES);
-                    } else {
-                        authenticationEntryPoint.commence(request, response, null);
-                        return;
                     }
-                } else {
-                    authenticationEntryPoint.commence(request, response, null);
-                    return;
                 }
             }
         }
