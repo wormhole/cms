@@ -24,6 +24,7 @@ import java.util.Random;
  */
 @Controller
 @Slf4j
+@RequestMapping("/api")
 public class VerifyCodeController {
 
     /**

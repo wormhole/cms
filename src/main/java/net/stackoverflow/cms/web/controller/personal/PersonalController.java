@@ -16,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/personal")
+@RequestMapping(value = "/api/personal")
 @Slf4j
 public class PersonalController extends BaseController {
 

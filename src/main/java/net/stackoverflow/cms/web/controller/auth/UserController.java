@@ -28,7 +28,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/auth/user")
+@RequestMapping(value = "/api/auth/user")
 @Slf4j
 @Validated
 public class UserController extends BaseController {

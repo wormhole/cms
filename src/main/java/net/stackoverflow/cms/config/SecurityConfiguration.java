@@ -33,11 +33,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().disable();
         http.headers().frameOptions().sameOrigin();
 
-        http.logout().logoutSuccessHandler(logoutSuccessHandler());
+        http.logout().logoutSuccessHandler(logoutSuccessHandler()).logoutUrl("/api/logout");
         http.formLogin()
                 .successHandler(authenticationSuccessHandler())
                 .failureHandler(authenticationFailureHandler())
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/api/login")
                 .usernameParameter("username")
                 .passwordParameter("password");
         http.rememberMe()
@@ -46,13 +46,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMeParameter("rememberMe")
                 .tokenRepository(tokenRepository());
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/code").permitAll()
-                .antMatchers("/home/**").authenticated()
-                .antMatchers("/dashboard/**").authenticated()
-                .antMatchers("/personal/**").authenticated()
-                .antMatchers("/auth/**").hasAuthority("auth")
-                .antMatchers("/file/**").hasAuthority("file")
-                .antMatchers("/config/**").hasAuthority("config")
+                .antMatchers("/api/login", "/api/register", "/api/code").permitAll()
+                .antMatchers("/api/home/**").authenticated()
+                .antMatchers("/api/dashboard/**").authenticated()
+                .antMatchers("/api/personal/**").authenticated()
+                .antMatchers("/api/auth/**").hasAuthority("auth")
+                .antMatchers("/api/file/**").hasAuthority("file")
+                .antMatchers("/api/config/**").hasAuthority("config")
                 .anyRequest().permitAll();
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());

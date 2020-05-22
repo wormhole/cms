@@ -31,7 +31,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/file/image")
+@RequestMapping(value = "/api/file/image")
 @Slf4j
 @Validated
 public class ImageController extends BaseController {

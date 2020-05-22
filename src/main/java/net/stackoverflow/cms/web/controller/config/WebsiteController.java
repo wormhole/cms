@@ -30,7 +30,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/config/website")
+@RequestMapping(value = "/api/config/website")
 @Slf4j
 @Validated
 public class WebsiteController extends BaseController {

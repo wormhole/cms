@@ -30,7 +30,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/home")
+@RequestMapping(value = "/api/home")
 @Slf4j
 public class HomeController extends BaseController {
 
