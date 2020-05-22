@@ -1,7 +1,6 @@
 package net.stackoverflow.cms.web.filter;
 
 import io.micrometer.core.instrument.util.StringUtils;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.exception.VerifyCodeException;
 import net.stackoverflow.cms.security.CmsAuthenticationFailureHandler;
@@ -25,8 +24,11 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
 
     private static final PathMatcher pathMatcher = new AntPathMatcher();
 
-    @Setter
     private CmsAuthenticationFailureHandler authenticationFailureHandler;
+
+    public VerifyCodeFilter(CmsAuthenticationFailureHandler authenticationFailureHandler) {
+        this.authenticationFailureHandler = authenticationFailureHandler;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
