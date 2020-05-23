@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TokenUtils {
 
+    private static final String TOKEN_PREFIX = "Bearer";
     private static final String TOKEN_HEADER = "Authorization";
 
     /**
@@ -22,10 +23,11 @@ public class TokenUtils {
     public static String obtainToken(HttpServletRequest request) {
         String token = request.getHeader(TOKEN_HEADER);
         if (StringUtils.isNotEmpty(token)) {
-            return token;
-        } else {
-            return null;
+            if (token.startsWith(TOKEN_PREFIX)) {
+                return token.substring(7);
+            }
         }
+        return null;
     }
 
     /**

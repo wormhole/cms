@@ -34,7 +34,7 @@ public class CmsApplication {
      */
     private static void initDataBase() {
         try {
-            Properties props = Resources.getResourceAsProperties("application.properties");
+            Properties props = Resources.getResourceAsProperties("application-prod.properties");
             String server = DBConst.DB_URL;
             String dbname = DBConst.DB_NAME;
             String sqlPath = DBConst.SQL_PATH;
