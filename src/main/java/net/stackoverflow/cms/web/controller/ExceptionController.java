@@ -2,6 +2,7 @@ package net.stackoverflow.cms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -63,6 +64,23 @@ public class ExceptionController {
         result.setStatus(Result.Status.FAILURE);
         result.setMessage("字段校验失败");
         result.setData(map);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    /**
+     * 业务异常处理
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BusinessException.class)
+    public ResponseEntity businessException(BusinessException e) {
+        log.error(e.getMessage());
+
+        Result result = new Result();
+        result.setStatus(Result.Status.SUCCESS);
+        result.setMessage(e.getMessage());
+        result.setData(e.getData());
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
