@@ -9,10 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -31,14 +28,11 @@ import java.util.concurrent.TimeUnit;
 public class TokenFilter extends OncePerRequestFilter {
 
     private RedisTemplate redisTemplate;
-    private AuthenticationEntryPoint authenticationEntryPoint;
     private UserDetailsService userDetailsService;
     private UserService userService;
-    private static final PathMatcher pathMatcher = new AntPathMatcher();
 
-    public TokenFilter(RedisTemplate redisTemplate, AuthenticationEntryPoint authenticationEntryPoint, UserDetailsService userDetailsService, UserService userService) {
+    public TokenFilter(RedisTemplate redisTemplate, UserDetailsService userDetailsService, UserService userService) {
         this.redisTemplate = redisTemplate;
-        this.authenticationEntryPoint = authenticationEntryPoint;
         this.userDetailsService = userDetailsService;
         this.userService = userService;
     }

@@ -25,7 +25,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/api/auth/permission")
+@RequestMapping(value = "/auth/permission")
 @Slf4j
 @Validated
 public class PermissionController extends BaseController {

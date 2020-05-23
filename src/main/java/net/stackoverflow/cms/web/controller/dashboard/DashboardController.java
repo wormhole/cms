@@ -23,7 +23,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/api/dashboard")
+@RequestMapping(value = "/dashboard")
 @Slf4j
 public class DashboardController extends BaseController {
 

@@ -30,7 +30,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/api/auth/role")
+@RequestMapping(value = "/auth/role")
 @Slf4j
 @Validated
 public class RoleController extends BaseController {

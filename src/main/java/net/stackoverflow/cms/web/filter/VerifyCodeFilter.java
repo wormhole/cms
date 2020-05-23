@@ -33,7 +33,7 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if ("POST".equalsIgnoreCase(request.getMethod()) && pathMatcher.match("/api/login", request.getServletPath())) {
+        if ("POST".equalsIgnoreCase(request.getMethod()) && pathMatcher.match("/login", request.getServletPath())) {
             String code = request.getParameter("code");
             String realCode = (String) request.getSession().getAttribute("code");
             if (StringUtils.isBlank(code)) {
