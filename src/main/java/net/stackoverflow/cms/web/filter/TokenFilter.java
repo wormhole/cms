@@ -48,7 +48,6 @@ public class TokenFilter extends OncePerRequestFilter {
         if (token != null) {
             Authentication authentication = (Authentication) redisTemplate.opsForValue().get(RedisPrefixConst.TOKEN_PREFIX + token);
             CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
-            log.info(authentication.getDetails().toString());
             User user = userService.findById(userDetails.getId());
             if (user != null) {
                 CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
