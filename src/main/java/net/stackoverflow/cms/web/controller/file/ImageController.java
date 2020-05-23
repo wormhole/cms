@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.constant.UploadConst;
+import net.stackoverflow.cms.constant.UploadPathConst;
 import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.model.vo.FileVO;
 import net.stackoverflow.cms.model.vo.IdsVO;
@@ -83,7 +83,7 @@ public class ImageController extends BaseController {
         for (File file : files) {
             FileVO vo = new FileVO();
             BeanUtils.copyProperties(file, vo);
-            vo.setUrl(UploadConst.PREFIX + vo.getPath());
+            vo.setUrl(UploadPathConst.PREFIX + vo.getPath());
             vo.setUsername(userService.findById(vo.getUserId()).getUsername());
             String path = SysUtils.pwd() + vo.getPath();
             if (SysUtils.isWin())

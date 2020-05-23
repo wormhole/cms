@@ -1,12 +1,14 @@
 package net.stackoverflow.cms.web.filter;
 
 import lombok.extern.slf4j.Slf4j;
+import net.stackoverflow.cms.constant.RedisPrefixConst;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.security.CmsUserDetails;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.TokenUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -44,16 +46,20 @@ public class TokenFilter extends OncePerRequestFilter {
 
         String token = TokenUtils.obtainToken(request);
         if (token != null) {
-            String id = (String) redisTemplate.opsForValue().get(token);
-            User user = userService.findById(id);
+            Authentication authentication = (Authentication) redisTemplate.opsForValue().get(RedisPrefixConst.TOKEN_PREFIX + token);
+            CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
+            log.info(authentication.getDetails().toString());
+            User user = userService.findById(userDetails.getId());
             if (user != null) {
-                CmsUserDetails userDetails = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                log.info("token认证成功:{}", userDetails.getUsername());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                redisTemplate.expire(token, 30, TimeUnit.MINUTES);
+                CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        details, null, details.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                log.info("token认证成功:{}", details.getUsername());
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                redisTemplate.expire(RedisPrefixConst.TOKEN_PREFIX + token, 30, TimeUnit.MINUTES);
+            } else {
+                log.error("token认证失败:{}", token);
             }
         }
         doFilter(request, response, filterChain);

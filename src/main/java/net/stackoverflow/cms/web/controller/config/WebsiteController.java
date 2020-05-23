@@ -3,7 +3,7 @@ package net.stackoverflow.cms.web.controller.config;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.constant.UploadConst;
+import net.stackoverflow.cms.constant.UploadPathConst;
 import net.stackoverflow.cms.model.entity.Config;
 import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.model.vo.ConfigVO;
@@ -61,7 +61,7 @@ public class WebsiteController extends BaseController {
                 if (config.getValue().equals("default"))
                     map.put(config.getKey(), "/head.jpg");
                 else
-                    map.put(config.getKey(), UploadConst.PREFIX + config.getValue());
+                    map.put(config.getKey(), UploadPathConst.PREFIX + config.getValue());
             } else {
                 map.put(config.getKey(), config.getValue());
             }
@@ -154,7 +154,7 @@ public class WebsiteController extends BaseController {
                 if (config.getValue().equals("default"))
                     map.put(config.getKey(), "/head.jpg");
                 else
-                    map.put(config.getKey(), UploadConst.PREFIX + config.getValue());
+                    map.put(config.getKey(), UploadPathConst.PREFIX + config.getValue());
             } else {
                 map.put(config.getKey(), config.getValue());
             }

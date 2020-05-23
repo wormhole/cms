@@ -1,6 +1,6 @@
 package net.stackoverflow.cms.config;
 
-import net.stackoverflow.cms.constant.UploadConst;
+import net.stackoverflow.cms.constant.UploadPathConst;
 import net.stackoverflow.cms.util.SysUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -21,9 +21,9 @@ public class WebConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern(UploadConst.PREFIX + "/**")) {
-            String path = SysUtils.pwd() + UploadConst.UPLOAD_PATH;
-            registry.addResourceHandler(UploadConst.PREFIX + "/**").addResourceLocations("file:" + path);
+        if (!registry.hasMappingForPattern(UploadPathConst.PREFIX + "/**")) {
+            String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH;
+            registry.addResourceHandler(UploadPathConst.PREFIX + "/**").addResourceLocations("file:" + path);
         }
     }
 }

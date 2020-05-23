@@ -5,7 +5,7 @@ package net.stackoverflow.cms.constant;
  *
  * @author 凉衫薄
  */
-public class DBConst {
+public class DataBaseConst {
 
     public static String DB_NAME = "cms";
 

@@ -2,7 +2,7 @@ package net.stackoverflow.cms.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Page;
-import net.stackoverflow.cms.constant.UploadConst;
+import net.stackoverflow.cms.constant.UploadPathConst;
 import net.stackoverflow.cms.dao.FileDAO;
 import net.stackoverflow.cms.model.entity.File;
 import net.stackoverflow.cms.service.FileService;
@@ -56,7 +56,7 @@ public class FileServiceImpl implements FileService {
     public void batchDelete(List<String> ids) {
         List<File> files = findByIds(ids);
         for (File file : files) {
-            java.io.File f = new java.io.File(SysUtils.pwd() + UploadConst.UPLOAD_PATH + file.getPath());
+            java.io.File f = new java.io.File(SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + file.getPath());
             f.delete();
         }
         fileDAO.batchDelete(ids);
@@ -74,7 +74,7 @@ public class FileServiceImpl implements FileService {
         String filename = file.getOriginalFilename();
         String ext = filename.substring(filename.lastIndexOf("."));
         String filePath = FileUtils.pathWithDate() + UUID.randomUUID().toString() + ext;
-        String uploadPath = SysUtils.pwd() + UploadConst.UPLOAD_PATH;
+        String uploadPath = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH;
         String absolutePath = uploadPath + filePath;
         java.io.File uploadFile = new java.io.File(absolutePath);
         if (!uploadFile.getParentFile().exists()) {
@@ -89,7 +89,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public String getFileUrl(String fileId) {
         File file = fileDAO.select(fileId);
-        return UploadConst.PREFIX + file.getPath();
+        return UploadPathConst.PREFIX + file.getPath();
     }
 
 }

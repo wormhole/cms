@@ -5,7 +5,7 @@ package net.stackoverflow.cms.constant;
  *
  * @author 凉衫薄
  */
-public class UploadConst {
+public class UploadPathConst {
 
     public static String UPLOAD_PATH = "/data/upload/";
 

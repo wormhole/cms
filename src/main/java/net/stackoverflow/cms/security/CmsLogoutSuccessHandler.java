@@ -2,6 +2,7 @@ package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.constant.RedisPrefixConst;
 import net.stackoverflow.cms.util.JsonUtils;
 import net.stackoverflow.cms.util.TokenUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -33,7 +34,7 @@ public class CmsLogoutSuccessHandler implements LogoutSuccessHandler {
 
         String token = TokenUtils.obtainToken(request);
         if (token != null) {
-            redisTemplate.delete(token);
+            redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + token);
         }
 
         Result result = new Result();

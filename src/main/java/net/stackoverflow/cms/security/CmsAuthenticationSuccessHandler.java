@@ -2,6 +2,7 @@ package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.constant.RedisPrefixConst;
 import net.stackoverflow.cms.util.JsonUtils;
 import net.stackoverflow.cms.util.TokenUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,7 +36,7 @@ public class CmsAuthenticationSuccessHandler implements AuthenticationSuccessHan
         log.info("登录成功:{}", userDetails.getUsername());
 
         String token = TokenUtils.generateToken(userDetails.getId());
-        redisTemplate.opsForValue().set(token, userDetails.getId(), 30, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(RedisPrefixConst.TOKEN_PREFIX + token, authentication, 30, TimeUnit.MINUTES);
 
         Result result = new Result();
         result.setStatus(Result.Status.SUCCESS);

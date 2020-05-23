@@ -3,8 +3,7 @@ package net.stackoverflow.cms.common;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.security.CmsUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.math.BigDecimal;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 /**
  * Controller基类
@@ -24,14 +23,11 @@ public class BaseController {
     }
 
     /**
-     * double保留n位小数输出
+     * 获取WebAuthenticationDetails
      *
-     * @param num
-     * @param n
      * @return
      */
-    protected double doubleFormat(double num, int n) {
-        BigDecimal b = new BigDecimal(num);
-        return b.setScale(n, BigDecimal.ROUND_HALF_UP).doubleValue();
+    protected WebAuthenticationDetails getDetails() {
+        return (WebAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
     }
 }

@@ -6,6 +6,7 @@ import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
+import net.stackoverflow.cms.util.FormatUtils;
 import org.hyperic.sigar.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,9 +63,9 @@ public class DashboardController extends BaseController {
         for (CpuPerc cpuPerc : cpuPercs) {
             combined += cpuPerc.getCombined();
         }
-        double used = doubleFormat(combined / cpuPercs.length * 100, 2);
+        double used = FormatUtils.doubleFormat(combined / cpuPercs.length * 100, 2);
         double free = 100 - used;
-        cpuMap.put("percent", doubleFormat(combined / cpuPercs.length * 100, 2) + "%");
+        cpuMap.put("percent", FormatUtils.doubleFormat(combined / cpuPercs.length * 100, 2) + "%");
         cpuMap.put("count", cpuPercs.length);
         cpuMap.put("used", used);
         cpuMap.put("free", free);
@@ -72,10 +73,10 @@ public class DashboardController extends BaseController {
         //内存信息
         Map<String, Object> memMap = new HashMap<>(16);
         Mem mem = sigar.getMem();
-        memMap.put("total", doubleFormat(mem.getTotal() / (1024D * 1024D * 1024D), 2));
-        memMap.put("used", doubleFormat(mem.getUsed() / (1024D * 1024D * 1024D), 2));
-        memMap.put("free", doubleFormat(mem.getFree() / (1024D * 1024D * 1024D), 2));
-        memMap.put("percent", doubleFormat(mem.getUsedPercent(), 2) + "%");
+        memMap.put("total", FormatUtils.doubleFormat(mem.getTotal() / (1024D * 1024D * 1024D), 2));
+        memMap.put("used", FormatUtils.doubleFormat(mem.getUsed() / (1024D * 1024D * 1024D), 2));
+        memMap.put("free", FormatUtils.doubleFormat(mem.getFree() / (1024D * 1024D * 1024D), 2));
+        memMap.put("percent", FormatUtils.doubleFormat(mem.getUsedPercent(), 2) + "%");
 
         //磁盘信息
         Map<String, Object> diskMap = new HashMap<>(16);
@@ -93,10 +94,10 @@ public class DashboardController extends BaseController {
             }
         }
         double diskUsedPercent = diskUsed / diskTotal;
-        diskMap.put("total", doubleFormat(diskTotal, 2));
-        diskMap.put("used", doubleFormat(diskUsed, 2));
-        diskMap.put("free", doubleFormat(diskFree, 2));
-        diskMap.put("percent", doubleFormat(diskUsedPercent * 100, 2) + "%");
+        diskMap.put("total", FormatUtils.doubleFormat(diskTotal, 2));
+        diskMap.put("used", FormatUtils.doubleFormat(diskUsed, 2));
+        diskMap.put("free", FormatUtils.doubleFormat(diskFree, 2));
+        diskMap.put("percent", FormatUtils.doubleFormat(diskUsedPercent * 100, 2) + "%");
 
         //网络信息
         Map<String, Object> netMap = new HashMap<>();
@@ -108,8 +109,8 @@ public class DashboardController extends BaseController {
             upload += nfs.getTxBytes() / (1024D * 1024D * 1024D);
             download += nfs.getRxBytes() / (1024D * 1024D * 1024D);
         }
-        netMap.put("upload", doubleFormat(upload, 2));
-        netMap.put("download", doubleFormat(download, 2));
+        netMap.put("upload", FormatUtils.doubleFormat(upload, 2));
+        netMap.put("download", FormatUtils.doubleFormat(download, 2));
 
         map.put("count", countMap);
         map.put("cpu", cpuMap);
