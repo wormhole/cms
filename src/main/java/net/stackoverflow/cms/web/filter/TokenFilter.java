@@ -47,22 +47,19 @@ public class TokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
         log.info("tokenFilter:{}", path);
-        if (pathMatcher.match("/api/**", path)) {
-            if (!(pathMatcher.match("/api/code", path) || pathMatcher.match("/api/login", path) || pathMatcher.match("/api/register", path))) {
-                String token = TokenUtils.obtainToken(request);
-                if (token != null) {
-                    String id = (String) redisTemplate.opsForValue().get(token);
-                    User user = userService.findById(id);
-                    if (user != null) {
-                        CmsUserDetails userDetails = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        log.info("token认证成功:{}", userDetails.getUsername());
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                        redisTemplate.expire(token, 30, TimeUnit.MINUTES);
-                    }
-                }
+
+        String token = TokenUtils.obtainToken(request);
+        if (token != null) {
+            String id = (String) redisTemplate.opsForValue().get(token);
+            User user = userService.findById(id);
+            if (user != null) {
+                CmsUserDetails userDetails = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                log.info("token认证成功:{}", userDetails.getUsername());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                redisTemplate.expire(token, 30, TimeUnit.MINUTES);
             }
         }
         doFilter(request, response, filterChain);
