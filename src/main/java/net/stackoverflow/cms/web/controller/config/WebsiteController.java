@@ -43,6 +43,7 @@ public class WebsiteController extends BaseController {
     private final String TITLE = "内容管理系统";
     private final String COPYRIGHT = "copyright © 2020 by 凉衫薄";
     private final String HEAD = "default";
+    private final String REMEMBER_ME = "false";
 
     /**
      * 获取配置信息
@@ -138,9 +139,14 @@ public class WebsiteController extends BaseController {
         head.setKey("head");
         head.setValue(HEAD);
 
+        Config rememberMe = new Config();
+        rememberMe.setKey("rememberMe");
+        rememberMe.setValue(REMEMBER_ME);
+
         configs.add(title);
         configs.add(copyright);
         configs.add(head);
+        configs.add(rememberMe);
 
         Map<String, Object> map = new HashMap<>();
         for (Config config : configs) {
