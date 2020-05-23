@@ -32,7 +32,7 @@ public class CmsAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
-        log.info("{}:登录成功", userDetails.getUsername());
+        log.info("登录成功:{}", userDetails.getUsername());
 
         String token = TokenUtils.generateToken(userDetails.getId());
         redisTemplate.opsForValue().set(token, userDetails.getId(), 30, TimeUnit.MINUTES);
