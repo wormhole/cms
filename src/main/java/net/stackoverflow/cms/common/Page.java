@@ -1,9 +1,9 @@
 package net.stackoverflow.cms.common;
 
-import io.micrometer.core.instrument.util.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.stackoverflow.cms.util.StringUtils;
 
 import java.util.Map;
 
@@ -37,14 +37,14 @@ public class Page {
         if (page != null && limit != null) {
             this.offset = (page - 1) * limit;
         }
-        if (StringUtils.isNotBlank(order)) {
+        if (StringUtils.isNotEmpty(order)) {
             this.order = order;
         }
-        if (StringUtils.isNotBlank(sort)) {
+        if (StringUtils.isNotEmpty(sort)) {
             this.sort = sort;
         }
         this.condition = condition;
-        if (StringUtils.isNotBlank(key)) {
+        if (StringUtils.isNotEmpty(key)) {
             this.key = key;
         }
     }
