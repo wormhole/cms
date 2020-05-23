@@ -3,6 +3,7 @@ package net.stackoverflow.cms.web.controller.personal;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.PasswordVO;
 import net.stackoverflow.cms.model.vo.UserVO;
@@ -62,9 +63,7 @@ public class PersonalController extends BaseController {
         if (!user.getUsername().equals(userVO.getUsername())) {
             User users = userService.findByUsername(userVO.getUsername());
             if (users != null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("用户名已存在");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("用户名已存在");
             }
         }
 

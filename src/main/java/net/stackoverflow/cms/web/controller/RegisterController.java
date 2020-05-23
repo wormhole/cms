@@ -3,6 +3,7 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.UserVO;
 import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
@@ -47,17 +48,13 @@ public class RegisterController extends BaseController {
         //校验验证码
         String code = (String) session.getAttribute("code");
         if (!code.equalsIgnoreCase(userVO.getCode())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("验证码错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("验证码错误");
         }
 
         //校验数据
         User u = userService.findByUsername(userVO.getUsername());
         if (u != null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("用户名重复");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("用户名重复");
         }
 
         //保存至数据库

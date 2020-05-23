@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.vo.*;
@@ -134,9 +135,7 @@ public class UserController extends BaseController {
         List<User> users = userService.findByIds(idsVO.getIds());
         for (User user : users) {
             if (user.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("超级管理员不允许被删除");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("超级管理员不允许被删除");
             }
         }
 
@@ -160,9 +159,7 @@ public class UserController extends BaseController {
         List<User> users = userService.findByIds(idsVO.getIds());
         for (User user : users) {
             if (user.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("超级管理员不允许被操作");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("超级管理员不允许被操作");
             }
             user.setEnabled(1);
         }
@@ -188,9 +185,7 @@ public class UserController extends BaseController {
         List<User> users = userService.findByIds(idsVO.getIds());
         for (User user : users) {
             if (user.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("超级管理员不允许被操作");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("超级管理员不允许被操作");
             }
             user.setEnabled(0);
         }
@@ -242,9 +237,7 @@ public class UserController extends BaseController {
 
         User user = userService.findById(id);
         if (user == null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("不合法的id");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("不合法的id");
         }
 
         List<Role> roles = userService.findRoleByUserId(id);
@@ -286,9 +279,7 @@ public class UserController extends BaseController {
 
         User user = userService.findById(grantRoleVO.getUserId());
         if (user == null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("不合法的id");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("不合法的id");
         }
 
         userService.reGrantRole(grantRoleVO.getUserId(), grantRoleVO.getRoleIds());
@@ -311,17 +302,13 @@ public class UserController extends BaseController {
 
         User user = userService.findById(userVO.getId());
         if (user == null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("不合法的id");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("不合法的id");
         }
 
         if (!user.getUsername().equals(userVO.getUsername())) {
             User users = userService.findByUsername(userVO.getUsername());
             if (users != null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("用户名已存在");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("用户名已存在");
             }
         }
         user.setUsername(userVO.getUsername());
@@ -345,9 +332,7 @@ public class UserController extends BaseController {
         Result result = new Result();
 
         if (!passwordVO.getNewPassword().equals(passwordVO.getCheckPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("两次密码不一致");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("两次密码不一致");
         }
 
         User user = userService.findById(passwordVO.getId());
@@ -375,9 +360,7 @@ public class UserController extends BaseController {
 
         User u = userService.findByUsername(userVO.getUsername());
         if (u != null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("用户名已存在");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("用户名已存在");
         }
 
         String password = new CmsMd5PasswordEncoder().encode(userVO.getPassword());

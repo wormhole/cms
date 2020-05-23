@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.vo.GrantPermissionVO;
@@ -160,9 +161,7 @@ public class RoleController extends BaseController {
         List<Role> roles = roleService.findByIds(idsVO.getIds());
         for (Role role : roles) {
             if (role.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("包含不允许被删除的角色");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("包含不允许被删除的角色");
             }
         }
 
@@ -185,9 +184,7 @@ public class RoleController extends BaseController {
 
         Role role = roleService.findById(id);
         if (role == null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("不合法的id");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("不合法的id");
         }
 
         List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
@@ -227,17 +224,9 @@ public class RoleController extends BaseController {
     public ResponseEntity grantPermission(@RequestBody @Validated GrantPermissionVO grantPermissionVO) {
         Result result = new Result();
 
-        //校验数据
-        if (StringUtils.isBlank(grantPermissionVO.getRoleId())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("roleId不能为空");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
         Role role = roleService.findById(grantPermissionVO.getRoleId());
         if (role == null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("不合法的id");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("不合法的id");
         }
 
         roleService.reGrantPermission(grantPermissionVO.getRoleId(), grantPermissionVO.getPermissionIds());

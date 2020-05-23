@@ -78,7 +78,7 @@ public class ExceptionController {
         log.error(e.getMessage());
 
         Result result = new Result();
-        result.setStatus(Result.Status.SUCCESS);
+        result.setStatus(Result.Status.FAILURE);
         result.setMessage(e.getMessage());
         result.setData(e.getData());
         return ResponseEntity.status(HttpStatus.OK).body(result);

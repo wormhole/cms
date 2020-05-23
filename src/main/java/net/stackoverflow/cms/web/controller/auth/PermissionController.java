@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Page;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.vo.IdsVO;
 import net.stackoverflow.cms.model.vo.PermissionVO;
@@ -100,9 +101,7 @@ public class PermissionController extends BaseController {
         List<Permission> permissions = permissionService.findByIds(idsVO.getIds());
         for (Permission permission : permissions) {
             if (permission.getDeletable() == 0) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("包含不允许被删除的权限");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("包含不允许被删除的权限");
             }
         }
 
@@ -127,17 +126,13 @@ public class PermissionController extends BaseController {
         //校验参数
         Permission permission = permissionService.findById(permissionVO.getId());
         if (permission == null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("不合法的id");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("不合法的id");
         }
 
         if (!permission.getName().equals(permissionVO.getName())) {
             Permission permissions = permissionService.findByName(permission.getName());
             if (permissions != null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("权限名已存在");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                throw new BusinessException("权限名已存在");
             }
         }
 
@@ -163,9 +158,7 @@ public class PermissionController extends BaseController {
 
         Permission perm = permissionService.findByName(permissionVO.getName());
         if (perm != null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("权限名已存在");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            throw new BusinessException("权限名已存在");
         }
 
         Permission permission = new Permission();
