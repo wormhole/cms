@@ -1,6 +1,5 @@
 package net.stackoverflow.cms;
 
-import net.stackoverflow.cms.constant.DataBaseConst;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.mybatis.spring.annotation.MapperScan;
@@ -35,16 +34,15 @@ public class CmsApplication {
     private static void initDataBase() {
         try {
             Properties props = Resources.getResourceAsProperties("application-prod.properties");
-            String server = DataBaseConst.DB_URL;
-            String dbname = DataBaseConst.DB_NAME;
-            String sqlPath = DataBaseConst.SQL_PATH;
+            String url = props.getProperty("cms.database.url");
+            String name = props.getProperty("cms.database.name");
             String username = props.getProperty("spring.datasource.username");
             String password = props.getProperty("spring.datasource.password");
             String driver = props.getProperty("spring.datasource.driver-class-name");
-            String isExistSQL = "SELECT count(SCHEMA_NAME) as COUNT FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='" + dbname + "'";
+            String isExistSQL = "SELECT count(SCHEMA_NAME) as COUNT FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='" + name + "'";
 
             Class.forName(driver);
-            Connection conn = DriverManager.getConnection(server, username, password);
+            Connection conn = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = conn.prepareStatement(isExistSQL);
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("COUNT") == 0) {
@@ -52,7 +50,7 @@ public class CmsApplication {
                 runner.setErrorLogWriter(null);
                 runner.setLogWriter(null);
                 Resources.setCharset(StandardCharsets.UTF_8);
-                runner.runScript(Resources.getResourceAsReader(sqlPath));
+                runner.runScript(Resources.getResourceAsReader("sql/cms.sql"));
             }
             ps.close();
             conn.close();
