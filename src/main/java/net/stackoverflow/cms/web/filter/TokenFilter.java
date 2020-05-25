@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,6 +34,8 @@ public class TokenFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
     private UserService userService;
 
+    private AuthenticationFailureHandler authenticationFailureHandler;
+
     public TokenFilter(RedisTemplate redisTemplate, UserDetailsService userDetailsService, UserService userService) {
         this.redisTemplate = redisTemplate;
         this.userDetailsService = userDetailsService;
@@ -47,18 +50,23 @@ public class TokenFilter extends OncePerRequestFilter {
         String token = TokenUtils.obtainToken(request);
         if (token != null) {
             Authentication authentication = (Authentication) redisTemplate.opsForValue().get(RedisPrefixConst.TOKEN_PREFIX + token);
-            CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
-            User user = userService.findById(userDetails.getId());
-            if (user != null) {
-                CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        details, null, details.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                log.info("token认证成功:{}", details.getUsername());
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                redisTemplate.expire(RedisPrefixConst.TOKEN_PREFIX + token, 30, TimeUnit.MINUTES);
+            if (authentication != null) {
+                CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
+                User user = userService.findById(userDetails.getId());
+                if (user != null) {
+                    CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            details, null, details.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    log.info("token认证成功:{}", details.getUsername());
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    redisTemplate.expire(RedisPrefixConst.TOKEN_PREFIX + token, 30, TimeUnit.MINUTES);
+                } else {
+                    log.error("token认证失败:{}", token);
+                    redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + token);
+                }
             } else {
-                log.error("token认证失败:{}", token);
+                log.error("token不存在:{}", token);
             }
         }
         doFilter(request, response, filterChain);

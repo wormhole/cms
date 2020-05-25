@@ -5,6 +5,7 @@ import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.exception.VerifyCodeException;
 import net.stackoverflow.cms.util.JsonUtils;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -29,13 +30,10 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
         Result result = new Result();
         result.setStatus(Result.Status.FAILURE);
         if (exception instanceof VerifyCodeException) {
-            log.error(exception.getMessage(), exception);
             result.setMessage(exception.getMessage());
         } else if (exception instanceof DisabledException) {
-            log.error("该用户被禁用", exception);
             result.setMessage("该用户被禁用");
-        } else {
-            log.error("用户名或密码错误");
+        } else if (exception instanceof BadCredentialsException) {
             result.setMessage("用户名或密码错误");
         }
         out.write(JsonUtils.bean2json(result));

@@ -39,6 +39,9 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
             if (StringUtils.isBlank(code)) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码不能为空"));
                 return;
+            } else if (StringUtils.isBlank(realCode)) {
+                authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码失效"));
+                return;
             } else if (!realCode.equalsIgnoreCase(code)) {
                 authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码错误"));
                 return;
