@@ -18,11 +18,11 @@ public class MailServiceImpl implements MailService {
     private JavaMailSender jms;
 
     @Override
-    public void send(String sender, String receiver, String title, String text) {
+    public void send(String sender, String receiver, String subject, String text) {
         SimpleMailMessage mainMessage = new SimpleMailMessage();
         mainMessage.setFrom(sender);
         mainMessage.setTo(receiver);
-        mainMessage.setSubject(title);
+        mainMessage.setSubject(subject);
         mainMessage.setText(text);
         jms.send(mainMessage);
     }

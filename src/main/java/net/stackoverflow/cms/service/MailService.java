@@ -7,5 +7,5 @@ package net.stackoverflow.cms.service;
  */
 public interface MailService {
 
-    void send(String sender, String receiver, String title, String text);
+    void send(String sender, String receiver, String subject, String text);
 }
