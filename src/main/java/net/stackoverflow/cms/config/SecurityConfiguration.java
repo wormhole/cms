@@ -48,6 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .usernameParameter("username")
                 .passwordParameter("password");
         http.rememberMe()
+                .key("rememberMe")
                 .userDetailsService(userDetailsService())
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
                 .rememberMeParameter("rememberMe");
