@@ -35,7 +35,7 @@ CREATE TABLE `config`  (
 -- Records of config
 -- ----------------------------
 INSERT INTO `config` VALUES ('5e9cbc50-bb1a-4374-b497-65cdc70b92a1', 'copyright', 'copyright © 2020 by 凉衫薄');
-INSERT INTO `config` VALUES ('75c99112-99ca-4ed5-9e96-829937c91dcf', 'rememberMe', 'false');
+INSERT INTO `config` VALUES ('75c99112-99ca-4ed5-9e96-829937c91dcf', 'rememberMe', 'true');
 INSERT INTO `config` VALUES ('9d5fd101-ecb7-484a-a931-a29a5a3bda91', 'head', 'default');
 INSERT INTO `config` VALUES ('ce389eb0-ce61-4df7-8d38-67995ba8368f', 'title', '内容管理系统');
 

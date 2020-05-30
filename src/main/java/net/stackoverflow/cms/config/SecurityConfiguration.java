@@ -50,8 +50,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.rememberMe()
                 .userDetailsService(userDetailsService())
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
-                .rememberMeParameter("rememberMe")
-                .tokenRepository(tokenRepository());
+                .rememberMeParameter("rememberMe");
+        //.tokenRepository(tokenRepository());
         http.authorizeRequests()
                 .antMatchers("/login/**", "/register", "/code").permitAll()
                 .antMatchers("/home/**").authenticated()
