@@ -1,110 +1,131 @@
 package net.stackoverflow.cms.service.impl;
 
-import net.stackoverflow.cms.common.Page;
+import lombok.extern.slf4j.Slf4j;
+import net.stackoverflow.cms.common.PageResponse;
+import net.stackoverflow.cms.common.QueryWrapper;
+import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.dao.PermissionDAO;
-import net.stackoverflow.cms.dao.RoleDAO;
-import net.stackoverflow.cms.dao.RolePermissionDAO;
+import net.stackoverflow.cms.exception.BusinessException;
+import net.stackoverflow.cms.model.dto.PermissionDTO;
 import net.stackoverflow.cms.model.entity.Permission;
-import net.stackoverflow.cms.model.entity.Role;
-import net.stackoverflow.cms.model.entity.RolePermission;
 import net.stackoverflow.cms.service.PermissionService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
+/**
+ * 权限服务实现类
+ *
+ * @author 凉衫薄
+ */
 @Service
+@Slf4j
 public class PermissionServiceImpl implements PermissionService {
 
     @Autowired
     private PermissionDAO permissionDAO;
-    @Autowired
-    private RolePermissionDAO rolePermissionDAO;
-    @Autowired
-    private RoleDAO roleDAO;
 
     @Override
-    public List<Permission> findByPage(Page page) {
-        return permissionDAO.selectByPage(page);
+    @Transactional(rollbackFor = Exception.class)
+    public List<PermissionDTO> findAll() {
+        List<Permission> permissions = permissionDAO.selectByCondition(new QueryWrapper());
+        List<PermissionDTO> permissionDTOS = new ArrayList<>();
+        permissions.forEach(permission -> {
+            PermissionDTO permissionDTO = new PermissionDTO();
+            BeanUtils.copyProperties(permission, permissionDTO);
+            permissionDTOS.add(permissionDTO);
+        });
+        return permissionDTOS;
     }
 
     @Override
-    public List<Permission> findByCondition(Map<String, Object> condition) {
-        return permissionDAO.selectByCondition(condition);
-    }
-
-    @Override
-    public Permission findByName(String name) {
-        Map<String, Object> condition = new HashMap<>();
-        condition.put("name", name);
-        List<Permission> permissions = permissionDAO.selectByCondition(condition);
-        if (permissions != null && permissions.size() > 0) {
-            return permissions.get(0);
+    @Transactional(rollbackFor = Exception.class)
+    public PageResponse<PermissionDTO> findByPage(Integer page, Integer limit, String sort, String order, String key) {
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.sort("builtin", "desc");
+        if (StringUtils.isEmpty(sort) || StringUtils.isEmpty(order)) {
+            builder.sort("name", "asc");
         } else {
-            return null;
+            builder.sort(sort, order);
         }
-    }
+        builder.like(!StringUtils.isEmpty(key), key, Arrays.asList("name", "note"));
+        builder.page((page - 1) * limit, limit);
+        QueryWrapper wrapper = builder.build();
 
-    @Override
-    public List<Permission> findAll() {
-        return permissionDAO.selectByCondition(new HashMap<>());
-    }
+        List<Permission> permissions = permissionDAO.selectByCondition(wrapper);
+        Integer total = permissionDAO.countByCondition(wrapper);
 
-    @Override
-    public Permission findById(String id) {
-        return permissionDAO.select(id);
-    }
+        List<PermissionDTO> permissionDTOS = new ArrayList<>();
+        for (Permission permission : permissions) {
+            PermissionDTO permissionDTO = new PermissionDTO();
+            BeanUtils.copyProperties(permission, permissionDTO);
+            permissionDTOS.add(permissionDTO);
+        }
 
-    @Override
-    public List<Permission> findByIds(List<String> ids) {
-        Map<String, Object> condition = new HashMap<>();
-        condition.put("ids", ids);
-        return permissionDAO.selectByCondition(condition);
-    }
-
-    @Override
-    public Integer count() {
-        return permissionDAO.selectByCondition(new HashMap<>()).size();
+        return new PageResponse<>(total, permissionDTOS);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void save(Permission permission) {
-        permissionDAO.insert(permission);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void batchDelete(List<String> ids) {
+    public void deleteByIds(List<String> ids) {
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.in("id", ids.toArray());
+        List<Permission> permissions = permissionDAO.selectByCondition(builder.build());
+        for (Permission permission : permissions) {
+            if (permission.getBuiltin().equals(1)) {
+                throw new BusinessException("内建权限不允许被删除");
+            }
+        }
         permissionDAO.batchDelete(ids);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(Permission permission) {
+    public void update(PermissionDTO permissionDTO) {
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.neq("id", permissionDTO.getId());
+        builder.eq("name", permissionDTO.getName());
+        List<Permission> permissions = permissionDAO.selectByCondition(builder.build());
+        if (!CollectionUtils.isEmpty(permissions)) {
+            throw new BusinessException("权限名不能重复");
+        }
+        Permission permission = permissionDAO.select(permissionDTO.getId());
+        if (permission.getBuiltin().equals(1)) {
+            throw new BusinessException("内建权限不允许被修改");
+        }
+
+        BeanUtils.copyProperties(permissionDTO, permission);
+        permission.setTs(new Date());
         permissionDAO.update(permission);
     }
 
     @Override
-    public List<Role> findRoleByPermissionIds(List<String> permissionIds) {
-        Set<String> roleIds = new HashSet<>();
-        for (String permissionId : permissionIds) {
-            List<RolePermission> rolePermissions = rolePermissionDAO.selectByCondition(new HashMap<String, Object>(16) {{
-                put("permissionId", permissionId);
-            }});
-            if (rolePermissions != null && rolePermissions.size() > 0) {
-                for (RolePermission rolePermission : rolePermissions) {
-                    roleIds.add(rolePermission.getRoleId());
-                }
-            }
+    @Transactional(rollbackFor = Exception.class)
+    public void save(PermissionDTO permissionDTO) {
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.eq("name", permissionDTO.getName());
+        List<Permission> permissions = permissionDAO.selectByCondition(builder.build());
+        if (!CollectionUtils.isEmpty(permissions)) {
+            throw new BusinessException("权限名不能重复");
         }
-        if (roleIds.size() > 0) {
-            return roleDAO.selectByCondition(new HashMap<String, Object>(16) {{
-                put("ids", roleIds);
-            }});
-        } else {
-            return null;
-        }
+
+        Permission permission = new Permission();
+        BeanUtils.copyProperties(permissionDTO, permission);
+        permission.setId(UUID.randomUUID().toString());
+        permission.setBuiltin(0);
+        permission.setTs(new Date());
+        permissionDAO.insert(permission);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer count() {
+        return permissionDAO.countByCondition(new QueryWrapper());
+    }
+
 }

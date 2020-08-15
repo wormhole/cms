@@ -1,21 +1,24 @@
 package net.stackoverflow.cms.config;
 
-import net.stackoverflow.cms.security.*;
-import net.stackoverflow.cms.service.TokenService;
-import net.stackoverflow.cms.service.UserService;
-import net.stackoverflow.cms.web.filter.TokenFilter;
-import net.stackoverflow.cms.web.filter.VerifyCodeFilter;
+import net.stackoverflow.cms.security.CmsTokenFilter;
+import net.stackoverflow.cms.security.CmsVerifyCodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 /**
  * Spring Security配置类
@@ -27,11 +30,22 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserService userService;
+    private AccessDeniedHandler accessDeniedHandler;
     @Autowired
-    private TokenService tokenService;
+    private AuthenticationEntryPoint authenticationEntryPoint;
     @Autowired
-    private RedisTemplate redisTemplate;
+    private AuthenticationFailureHandler authenticationFailureHandler;
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
+    @Autowired
+    @Qualifier("cmsUserDetailsService")
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private CmsTokenFilter tokenFilter;
+    @Autowired
+    private CmsVerifyCodeFilter verifyCodeFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -40,10 +54,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().sameOrigin();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.logout().logoutSuccessHandler(logoutSuccessHandler()).logoutUrl("/logout");
+        http.logout().logoutSuccessHandler(logoutSuccessHandler).logoutUrl("/logout");
         http.formLogin()
-                .successHandler(authenticationSuccessHandler())
-                .failureHandler(authenticationFailureHandler())
+                .successHandler(authenticationSuccessHandler)
+                .failureHandler(authenticationFailureHandler)
                 .loginProcessingUrl("/login")
                 .usernameParameter("username")
                 .passwordParameter("password");
@@ -52,7 +66,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService())
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
                 .rememberMeParameter("rememberMe");
-        //.tokenRepository(tokenRepository());
         http.authorizeRequests()
                 .antMatchers("/login/**", "/register", "/code").permitAll()
                 .antMatchers("/home/**").authenticated()
@@ -63,65 +76,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/config/**").hasAuthority("config")
                 .anyRequest().permitAll();
         http.exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationEntryPoint());
-        http.addFilterBefore(verifyCodeFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(tokenFilter(), LogoutFilter.class);
+                .accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint);
+        http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenFilter, LogoutFilter.class);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public CmsMd5PasswordEncoder passwordEncoder() {
-        return new CmsMd5PasswordEncoder();
-    }
-
-    @Bean
-    public CmsAuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new CmsAuthenticationSuccessHandler(redisTemplate);
-    }
-
-    @Bean
-    public CmsAuthenticationFailureHandler authenticationFailureHandler() {
-        return new CmsAuthenticationFailureHandler();
-    }
-
-    @Bean
-    public CmsLogoutSuccessHandler logoutSuccessHandler() {
-        return new CmsLogoutSuccessHandler(redisTemplate);
-    }
-
-    @Bean
-    public CmsAccessDeniedHandler accessDeniedHandler() {
-        return new CmsAccessDeniedHandler();
-    }
-
-    @Bean
-    public CmsAuthenticationEntryPoint authenticationEntryPoint() {
-        return new CmsAuthenticationEntryPoint();
-    }
-
-    @Bean
-    public VerifyCodeFilter verifyCodeFilter() {
-        VerifyCodeFilter verifyCodeFilter = new VerifyCodeFilter(authenticationFailureHandler());
-        return verifyCodeFilter;
-    }
-
-    @Bean
-    public TokenFilter tokenFilter() {
-        TokenFilter tokenFilter = new TokenFilter(redisTemplate, userDetailsService(), userService);
-        return tokenFilter;
-    }
-
-    @Bean
-    public CmsUserDetailsService userDetailsService() {
-        return new CmsUserDetailsService(userService);
-    }
-
-    @Bean
-    public CmsJdbcTokenRepositoryImpl tokenRepository() {
-        return new CmsJdbcTokenRepositoryImpl(tokenService, userService);
+        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 }

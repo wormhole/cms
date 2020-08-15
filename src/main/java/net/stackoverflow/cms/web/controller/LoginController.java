@@ -3,8 +3,8 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.model.entity.Config;
-import net.stackoverflow.cms.service.ConfigService;
+import net.stackoverflow.cms.model.entity.Property;
+import net.stackoverflow.cms.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController extends BaseController {
 
     @Autowired
-    private ConfigService configService;
+    private PropertyService propertyService;
 
     /**
      * 是否开启记住我功能
@@ -31,14 +31,8 @@ public class LoginController extends BaseController {
      * @return
      */
     @GetMapping("/remember")
-    public ResponseEntity isRememberMe() {
-        Result result = new Result();
-
-        Config config = configService.findByKey("rememberMe");
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(config.getValue());
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<Result<String>> isRememberMe() {
+        Property property = propertyService.findByKey("rememberMe");
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", property.getValue()));
     }
 }

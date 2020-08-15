@@ -1,38 +1,31 @@
 package net.stackoverflow.cms.service;
 
-import net.stackoverflow.cms.common.Page;
-import net.stackoverflow.cms.model.entity.Permission;
-import net.stackoverflow.cms.model.entity.Role;
-import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.common.PageResponse;
+import net.stackoverflow.cms.model.dto.PermissionDTO;
+import net.stackoverflow.cms.model.dto.RoleDTO;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * 角色服务接口
+ *
+ * @author 凉衫薄
+ */
 public interface RoleService {
 
-    List<Role> findByPage(Page page);
+    List<RoleDTO> findAll();
 
-    List<Role> findByCondition(Map<String, Object> condition);
+    PageResponse<RoleDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> permissionIds);
 
-    Role findByName(String name);
+    List<PermissionDTO> findPermissionByRoleId(String roleId);
 
-    List<Role> findAll();
-
-    Role findById(String id);
-
-    List<Role> findByIds(List<String> ids);
-
-    Integer count();
-
-    void save(Role role);
-
-    void batchDelete(List<String> ids);
-
-    void update(Role role);
+    void deleteByIds(List<String> ids);
 
     void reGrantPermission(String roleId, List<String> permissionIds);
 
-    List<Permission> findPermissionByRoleId(String roleId);
+    void update(RoleDTO roleDTO);
 
-    List<User> findUserByRoleIds(List<String> roleIds);
+    void save(RoleDTO roleDTO);
+
+    Integer count();
 }

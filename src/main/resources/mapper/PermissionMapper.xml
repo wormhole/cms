@@ -1,98 +1,173 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC
-        "-//mybtis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.stackoverflow.cms.dao.PermissionDAO">
 
-    <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.Permission">
-        <id property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="description" column="description"/>
-        <result property="deletable" column="deletable"/>
+    <resultMap type="net.stackoverflow.cms.model.entity.Permission" id="baseMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="note" column="note" jdbcType="VARCHAR"/>
+        <result property="builtin" column="builtin" jdbcType="INTEGER"/>
+        <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="columns">
-        id, name, description, deletable
+        `id`, `name`, `note`, `builtin`, `ts`        
     </sql>
 
     <sql id="columns_value">
-        #{id}, #{name}, #{description}, #{deletable}
+        #{id}, #{name}, #{note}, #{builtin}, #{ts}        
     </sql>
 
     <sql id="columns_item_value">
-        #{item.id}, #{item.name}, #{item.description}, #{item.deletable}
+        #{item.id}, #{item.name}, #{item.note}, #{item.builtin}, #{item.ts}        
     </sql>
 
-    <select id="selectByPage" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Permission">
-        select * from permission
+    <sql id="where">
         <where>
-            <if test="condition != null">
-                <if test="condition.id != null">
-                    id = #{condition.id}
+            <if test="eqWrapper != null">
+                <if test="eqWrapper.id != null">
+                    and `id` = #{eqWrapper.id}
                 </if>
-                <if test="condition.name != null">
-                    and name = #{condition.name}
+                <if test="eqWrapper.name != null">
+                    and `name` = #{eqWrapper.name}
                 </if>
-                <if test="condition.description != null">
-                    and description = #{condition.description}
+                <if test="eqWrapper.note != null">
+                    and `note` = #{eqWrapper.note}
                 </if>
-                <if test="condition.deletable != null">
-                    and deletable = #{condition.deletable}
+                <if test="eqWrapper.builtin != null">
+                    and `builtin` = #{eqWrapper.builtin}
                 </if>
-                <if test="condition.ids != null">
-                    and id in
-                    <foreach collection="condition.ids" item="id" open="(" separator="," close=")">
+                <if test="eqWrapper.ts != null">
+                    and `ts` = #{eqWrapper.ts}
+                </if>
+            </if>
+            <if test="neqWrapper != null">
+                <if test="neqWrapper.id != null">
+                    and `id` != #{neqWrapper.id}
+                </if>
+                <if test="neqWrapper.name != null">
+                    and `name` != #{neqWrapper.name}
+                </if>
+                <if test="neqWrapper.note != null">
+                    and `note` != #{neqWrapper.note}
+                </if>
+                <if test="neqWrapper.builtin != null">
+                    and `builtin` != #{neqWrapper.builtin}
+                </if>
+                <if test="neqWrapper.ts != null">
+                    and `ts` != #{neqWrapper.ts}
+                </if>
+            </if>
+            <if test="inWrapper != null">
+                <if test="inWrapper.id != null and inWrapper.id.size() > 0">
+                    and `id` in
+                    <foreach collection="inWrapper.id" item="id" open="(" separator="," close=")">
                         #{id}
                     </foreach>
                 </if>
+                <if test="inWrapper.name != null and inWrapper.name.size() > 0">
+                    and `name` in
+                    <foreach collection="inWrapper.name" item="name" open="(" separator="," close=")">
+                        #{name}
+                    </foreach>
+                </if>
+                <if test="inWrapper.note != null and inWrapper.note.size() > 0">
+                    and `note` in
+                    <foreach collection="inWrapper.note" item="note" open="(" separator="," close=")">
+                        #{note}
+                    </foreach>
+                </if>
+                <if test="inWrapper.builtin != null and inWrapper.builtin.size() > 0">
+                    and `builtin` in
+                    <foreach collection="inWrapper.builtin" item="builtin" open="(" separator="," close=")">
+                        #{builtin}
+                    </foreach>
+                </if>
+                <if test="inWrapper.ts != null and inWrapper.ts.size() > 0">
+                    and `ts` in
+                    <foreach collection="inWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
             </if>
-            <if test="key != null">
-                and (name like CONCAT('%',#{key},'%') or description like CONCAT('%',#{key},'%'))
+            <if test="ninWrapper != null">
+                <if test="ninWrapper.id != null and ninWrapper.id.size() > 0">
+                    and `id` not in
+                    <foreach collection="ninWrapper.id" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.name != null and ninWrapper.name.size() > 0">
+                    and `name` not in
+                    <foreach collection="ninWrapper.name" item="name" open="(" separator="," close=")">
+                        #{name}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.note != null and ninWrapper.note.size() > 0">
+                    and `note` not in
+                    <foreach collection="ninWrapper.note" item="note" open="(" separator="," close=")">
+                        #{note}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.builtin != null and ninWrapper.builtin.size() > 0">
+                    and `builtin` not in
+                    <foreach collection="ninWrapper.builtin" item="builtin" open="(" separator="," close=")">
+                        #{builtin}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.ts != null and ninWrapper.ts.size() > 0">
+                    and `ts` not in
+                    <foreach collection="ninWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
+            </if>
+            <if test="keyWrapper != null and keyWrapper.size() > 0">
+                <foreach collection="keyWrapper.entrySet()" index="k" item="columns">
+                    <if test="columns != null and columns.size()> 0">
+                        and
+                        <foreach collection="columns" item="column" open="(" separator=" or " close=")">
+                            `${column}` like CONCAT('%',#{k},'%')
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
         </where>
-        <if test="order != null and sort != null">
-            order by ${sort} ${order}
+    </sql>
+
+    <select id="countByCondition" resultType="int">
+        select COUNT(*) from `permission`
+        <include refid="where"/>
+    </select>
+
+    <select id="select" resultMap="baseMap">
+        select * from `permission` where `id` = #{id}
+    </select>
+
+    <select id="selectByCondition" resultMap="baseMap">
+        select * from `permission`
+        <include refid="where"/>
+        <if test="sortWrapper != null and sortWrapper.size() > 0">
+            order by
+            <foreach collection="sortWrapper.entrySet()" index="k" item="v" separator=",">
+                `${k}` ${v}
+            </foreach>
         </if>
         <if test="offset != null and limit != null">
             limit ${offset}, ${limit}
         </if>
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Permission">
-        select * from permission
-        <where>
-            <if test="id != null">
-                id = #{id}
-            </if>
-            <if test="name != null">
-                and name = #{name}
-            </if>
-            <if test="description != null">
-                and description = #{condition.description}
-            </if>
-            <if test="deletable != null">
-                and deletable = #{condition.deletable}
-            </if>
-            <if test="ids != null">
-                and id in
-                <foreach collection="ids" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
-            </if>
-        </where>
-    </select>
-
-    <select id="select" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.Permission">
-        select * from permission where id = #{id}
-    </select>
-
-    <insert id="insert" parameterType="net.stackoverflow.cms.model.entity.Permission">
-        insert into permission (<include refid="columns"/>) values (<include refid="columns_value"/>)
+    <insert id="insert">
+        insert into `permission`
+        (<include refid="columns"/>)
+        values
+        (<include refid="columns_value"/>)
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into permission (<include refid="columns"/>)
+        insert into `permission`
+        (<include refid="columns"/>)
         values
         <foreach collection="list" item="item" separator=",">
             (<include refid="columns_item_value"/>)
@@ -100,48 +175,83 @@
     </insert>
 
     <delete id="delete" parameterType="string">
-        delete from permission where id = #{id}
+        delete from `permission` where `id` = #{id}
     </delete>
 
     <delete id="batchDelete" parameterType="list">
-        delete from permission where id in
+        delete from `permission` where `id` in
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
+    <delete id="deleteByCondition">
+        delete from `permission`
+        <include refid="where"/>
+    </delete>
+
     <update id="update" parameterType="net.stackoverflow.cms.model.entity.Permission">
-        update permission
+        update `permission`
         <set>
             <if test="name != null">
-                name = #{name},
+                `name` = #{name},
             </if>
-            <if test="description != null">
-                description = #{description},
+            <if test="note != null">
+                `note` = #{note},
             </if>
-            <if test="deletable != null">
-                deletable = #{deletable}
+            <if test="builtin != null">
+                `builtin` = #{builtin},
+            </if>
+            <if test="ts != null">
+                `ts` = #{ts},
             </if>
         </set>
-        where id = #{id}
+        where `id` = #{id}
     </update>
 
     <update id="batchUpdate" parameterType="list">
         <foreach collection="list" item="item" open="" close="" separator=";">
-            update permission
+            update `permission`
             <set>
                 <if test="item.name != null">
-                    name = #{item.name},
+                    `name` = #{item.name},
                 </if>
-                <if test="item.description != null">
-                    description = #{item.description},
+                <if test="item.note != null">
+                    `note` = #{item.note},
                 </if>
-                <if test="item.deletable != null">
-                    deletable = #{item.deletable}
+                <if test="item.builtin != null">
+                    `builtin` = #{item.builtin},
+                </if>
+                <if test="item.ts != null">
+                    `ts` = #{item.ts},
                 </if>
             </set>
-            where id = #{item.id}
+            where `id` = #{item.id}
         </foreach>
+    </update>
+
+    <update id="updateByCondition">
+        update `permission`
+        <set>
+            <if test="upWrapper != null">
+                <if test="upWrapper.id != null">
+                    `id` = #{upWrapper.id},
+                </if>
+                <if test="upWrapper.name != null">
+                    `name` = #{upWrapper.name},
+                </if>
+                <if test="upWrapper.note != null">
+                    `note` = #{upWrapper.note},
+                </if>
+                <if test="upWrapper.builtin != null">
+                    `builtin` = #{upWrapper.builtin},
+                </if>
+                <if test="upWrapper.ts != null">
+                    `ts` = #{upWrapper.ts},
+                </if>
+            </if>
+        </set>
+        <include refid="where"/>
     </update>
 
 </mapper>

@@ -1,114 +1,306 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC
-        "-//mybtis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.stackoverflow.cms.dao.UserDAO">
 
-    <resultMap id="baseMap" type="net.stackoverflow.cms.model.entity.User">
-        <id property="id" column="id"/>
-        <result property="username" column="username"/>
-        <result property="password" column="password"/>
-        <result property="enabled" column="enabled"/>
-        <result property="email" column="email"/>
-        <result property="telephone" column="telephone"/>
-        <result property="deletable" column="deletable"/>
+    <resultMap type="net.stackoverflow.cms.model.entity.User" id="baseMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
+        <result property="enable" column="enable" jdbcType="INTEGER"/>
+        <result property="builtin" column="builtin" jdbcType="INTEGER"/>
+        <result property="ttl" column="ttl" jdbcType="INTEGER"/>
+        <result property="limit" column="limit" jdbcType="INTEGER"/>
+        <result property="lock" column="lock" jdbcType="INTEGER"/>
+        <result property="failure" column="failure" jdbcType="INTEGER"/>
+        <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="columns">
-        id, username, password, email, telephone, enabled, deletable
+        `id`, `username`, `password`, `email`, `telephone`, `enable`, `builtin`, `ttl`, `limit`, `lock`, `failure`, `ts`        
     </sql>
 
     <sql id="columns_value">
-        #{id}, #{username}, #{password}, #{email}, #{telephone}, #{enabled}, #{deletable}
+        #{id}, #{username}, #{password}, #{email}, #{telephone}, #{enable}, #{builtin}, #{ttl}, #{limit}, #{lock}, #{failure}, #{ts}        
     </sql>
 
     <sql id="columns_item_value">
-        #{item.id},#{item.username},#{item.password},#{item.email},#{item.telephone},#{item.enabled},#{item.deletable}
+        #{item.id}, #{item.username}, #{item.password}, #{item.email}, #{item.telephone}, #{item.enable}, #{item.builtin}, #{item.ttl}, #{item.limit}, #{item.lock}, #{item.failure}, #{item.ts}        
     </sql>
 
-    <select id="selectByPage" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.User">
-        select * from user
+    <sql id="where">
         <where>
-            <if test="condition != null">
-                <if test="condition.id != null">
-                    id = #{condition.id}
+            <if test="eqWrapper != null">
+                <if test="eqWrapper.id != null">
+                    and `id` = #{eqWrapper.id}
                 </if>
-                <if test="condition.username != null">
-                    and username = #{condition.username}
+                <if test="eqWrapper.username != null">
+                    and `username` = #{eqWrapper.username}
                 </if>
-                <if test="condition.enabled != null">
-                    and enabled = #{condition.enabled}
+                <if test="eqWrapper.password != null">
+                    and `password` = #{eqWrapper.password}
                 </if>
-                <if test="condition.email != null">
-                    and email = #{condition.email}
+                <if test="eqWrapper.email != null">
+                    and `email` = #{eqWrapper.email}
                 </if>
-                <if test="condition.telephone != null">
-                    and telephone = #{condition.telephone}
+                <if test="eqWrapper.telephone != null">
+                    and `telephone` = #{eqWrapper.telephone}
                 </if>
-                <if test="condition.deletable != null">
-                    and deletable = #{condition.deletable}
+                <if test="eqWrapper.enable != null">
+                    and `enable` = #{eqWrapper.enable}
                 </if>
-                <if test="condition.ids != null">
-                    and id in
-                    <foreach collection="condition.ids" item="id" open="(" separator="," close=")">
+                <if test="eqWrapper.builtin != null">
+                    and `builtin` = #{eqWrapper.builtin}
+                </if>
+                <if test="eqWrapper.ttl != null">
+                    and `ttl` = #{eqWrapper.ttl}
+                </if>
+                <if test="eqWrapper.limit != null">
+                    and `limit` = #{eqWrapper.limit}
+                </if>
+                <if test="eqWrapper.lock != null">
+                    and `lock` = #{eqWrapper.lock}
+                </if>
+                <if test="eqWrapper.failure != null">
+                    and `failure` = #{eqWrapper.failure}
+                </if>
+                <if test="eqWrapper.ts != null">
+                    and `ts` = #{eqWrapper.ts}
+                </if>
+            </if>
+            <if test="neqWrapper != null">
+                <if test="neqWrapper.id != null">
+                    and `id` != #{neqWrapper.id}
+                </if>
+                <if test="neqWrapper.username != null">
+                    and `username` != #{neqWrapper.username}
+                </if>
+                <if test="neqWrapper.password != null">
+                    and `password` != #{neqWrapper.password}
+                </if>
+                <if test="neqWrapper.email != null">
+                    and `email` != #{neqWrapper.email}
+                </if>
+                <if test="neqWrapper.telephone != null">
+                    and `telephone` != #{neqWrapper.telephone}
+                </if>
+                <if test="neqWrapper.enable != null">
+                    and `enable` != #{neqWrapper.enable}
+                </if>
+                <if test="neqWrapper.builtin != null">
+                    and `builtin` != #{neqWrapper.builtin}
+                </if>
+                <if test="neqWrapper.ttl != null">
+                    and `ttl` != #{neqWrapper.ttl}
+                </if>
+                <if test="neqWrapper.limit != null">
+                    and `limit` != #{neqWrapper.limit}
+                </if>
+                <if test="neqWrapper.lock != null">
+                    and `lock` != #{neqWrapper.lock}
+                </if>
+                <if test="neqWrapper.failure != null">
+                    and `failure` != #{neqWrapper.failure}
+                </if>
+                <if test="neqWrapper.ts != null">
+                    and `ts` != #{neqWrapper.ts}
+                </if>
+            </if>
+            <if test="inWrapper != null">
+                <if test="inWrapper.id != null and inWrapper.id.size() > 0">
+                    and `id` in
+                    <foreach collection="inWrapper.id" item="id" open="(" separator="," close=")">
                         #{id}
                     </foreach>
                 </if>
+                <if test="inWrapper.username != null and inWrapper.username.size() > 0">
+                    and `username` in
+                    <foreach collection="inWrapper.username" item="username" open="(" separator="," close=")">
+                        #{username}
+                    </foreach>
+                </if>
+                <if test="inWrapper.password != null and inWrapper.password.size() > 0">
+                    and `password` in
+                    <foreach collection="inWrapper.password" item="password" open="(" separator="," close=")">
+                        #{password}
+                    </foreach>
+                </if>
+                <if test="inWrapper.email != null and inWrapper.email.size() > 0">
+                    and `email` in
+                    <foreach collection="inWrapper.email" item="email" open="(" separator="," close=")">
+                        #{email}
+                    </foreach>
+                </if>
+                <if test="inWrapper.telephone != null and inWrapper.telephone.size() > 0">
+                    and `telephone` in
+                    <foreach collection="inWrapper.telephone" item="telephone" open="(" separator="," close=")">
+                        #{telephone}
+                    </foreach>
+                </if>
+                <if test="inWrapper.enable != null and inWrapper.enable.size() > 0">
+                    and `enable` in
+                    <foreach collection="inWrapper.enable" item="enable" open="(" separator="," close=")">
+                        #{enable}
+                    </foreach>
+                </if>
+                <if test="inWrapper.builtin != null and inWrapper.builtin.size() > 0">
+                    and `builtin` in
+                    <foreach collection="inWrapper.builtin" item="builtin" open="(" separator="," close=")">
+                        #{builtin}
+                    </foreach>
+                </if>
+                <if test="inWrapper.ttl != null and inWrapper.ttl.size() > 0">
+                    and `ttl` in
+                    <foreach collection="inWrapper.ttl" item="ttl" open="(" separator="," close=")">
+                        #{ttl}
+                    </foreach>
+                </if>
+                <if test="inWrapper.limit != null and inWrapper.limit.size() > 0">
+                    and `limit` in
+                    <foreach collection="inWrapper.limit" item="limit" open="(" separator="," close=")">
+                        #{limit}
+                    </foreach>
+                </if>
+                <if test="inWrapper.lock != null and inWrapper.lock.size() > 0">
+                    and `lock` in
+                    <foreach collection="inWrapper.lock" item="lock" open="(" separator="," close=")">
+                        #{lock}
+                    </foreach>
+                </if>
+                <if test="inWrapper.failure != null and inWrapper.failure.size() > 0">
+                    and `failure` in
+                    <foreach collection="inWrapper.failure" item="failure" open="(" separator="," close=")">
+                        #{failure}
+                    </foreach>
+                </if>
+                <if test="inWrapper.ts != null and inWrapper.ts.size() > 0">
+                    and `ts` in
+                    <foreach collection="inWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
             </if>
-            <if test="key != null">
-                and (username like CONCAT('%',#{key},'%') or email like CONCAT('%',#{key},'%') or telephone like
-                CONCAT('%',#{key},'%'))
+            <if test="ninWrapper != null">
+                <if test="ninWrapper.id != null and ninWrapper.id.size() > 0">
+                    and `id` not in
+                    <foreach collection="ninWrapper.id" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.username != null and ninWrapper.username.size() > 0">
+                    and `username` not in
+                    <foreach collection="ninWrapper.username" item="username" open="(" separator="," close=")">
+                        #{username}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.password != null and ninWrapper.password.size() > 0">
+                    and `password` not in
+                    <foreach collection="ninWrapper.password" item="password" open="(" separator="," close=")">
+                        #{password}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.email != null and ninWrapper.email.size() > 0">
+                    and `email` not in
+                    <foreach collection="ninWrapper.email" item="email" open="(" separator="," close=")">
+                        #{email}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.telephone != null and ninWrapper.telephone.size() > 0">
+                    and `telephone` not in
+                    <foreach collection="ninWrapper.telephone" item="telephone" open="(" separator="," close=")">
+                        #{telephone}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.enable != null and ninWrapper.enable.size() > 0">
+                    and `enable` not in
+                    <foreach collection="ninWrapper.enable" item="enable" open="(" separator="," close=")">
+                        #{enable}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.builtin != null and ninWrapper.builtin.size() > 0">
+                    and `builtin` not in
+                    <foreach collection="ninWrapper.builtin" item="builtin" open="(" separator="," close=")">
+                        #{builtin}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.ttl != null and ninWrapper.ttl.size() > 0">
+                    and `ttl` not in
+                    <foreach collection="ninWrapper.ttl" item="ttl" open="(" separator="," close=")">
+                        #{ttl}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.limit != null and ninWrapper.limit.size() > 0">
+                    and `limit` not in
+                    <foreach collection="ninWrapper.limit" item="limit" open="(" separator="," close=")">
+                        #{limit}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.lock != null and ninWrapper.lock.size() > 0">
+                    and `lock` not in
+                    <foreach collection="ninWrapper.lock" item="lock" open="(" separator="," close=")">
+                        #{lock}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.failure != null and ninWrapper.failure.size() > 0">
+                    and `failure` not in
+                    <foreach collection="ninWrapper.failure" item="failure" open="(" separator="," close=")">
+                        #{failure}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.ts != null and ninWrapper.ts.size() > 0">
+                    and `ts` not in
+                    <foreach collection="ninWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
+            </if>
+            <if test="keyWrapper != null and keyWrapper.size() > 0">
+                <foreach collection="keyWrapper.entrySet()" index="k" item="columns">
+                    <if test="columns != null and columns.size()> 0">
+                        and
+                        <foreach collection="columns" item="column" open="(" separator=" or " close=")">
+                            `${column}` like CONCAT('%',#{k},'%')
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
         </where>
-        <if test="order != null and sort != null">
-            order by ${sort} ${order}
+    </sql>
+
+    <select id="countByCondition" resultType="int">
+        select COUNT(*) from `user`
+        <include refid="where"/>
+    </select>
+
+    <select id="select" resultMap="baseMap">
+        select * from `user` where `id` = #{id}
+    </select>
+
+    <select id="selectByCondition" resultMap="baseMap">
+        select * from `user`
+        <include refid="where"/>
+        <if test="sortWrapper != null and sortWrapper.size() > 0">
+            order by
+            <foreach collection="sortWrapper.entrySet()" index="k" item="v" separator=",">
+                `${k}` ${v}
+            </foreach>
         </if>
         <if test="offset != null and limit != null">
             limit ${offset}, ${limit}
         </if>
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.User">
-        select * from user
-        <where>
-            <if test="id != null">
-                id = #{id}
-            </if>
-            <if test="username != null">
-                and username = #{username}
-            </if>
-            <if test="enabled != null">
-                and enabled = #{enabled}
-            </if>
-            <if test="email != null">
-                and email = #{email}
-            </if>
-            <if test="telephone != null">
-                and telephone = #{telephone}
-            </if>
-            <if test="deletable != null">
-                and deletable = #{deletable}
-            </if>
-            <if test="ids != null">
-                and id in
-                <foreach collection="ids" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
-            </if>
-        </where>
-    </select>
-
-    <select id="select" resultMap="baseMap" resultType="net.stackoverflow.cms.model.entity.User">
-        select * from user where id = #{id}
-    </select>
-
-    <insert id="insert" parameterType="net.stackoverflow.cms.model.entity.User">
-        insert into user (<include refid="columns"/>) values (<include refid="columns_value"/>)
+    <insert id="insert">
+        insert into `user`
+        (<include refid="columns"/>)
+        values
+        (<include refid="columns_value"/>)
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user (<include refid="columns"/>)
+        insert into `user`
+        (<include refid="columns"/>)
         values
         <foreach collection="list" item="item" separator=",">
             (<include refid="columns_item_value"/>)
@@ -116,66 +308,146 @@
     </insert>
 
     <delete id="delete" parameterType="string">
-        delete from user where id = #{id}
+        delete from `user` where `id` = #{id}
     </delete>
 
     <delete id="batchDelete" parameterType="list">
-        delete from user where id in
+        delete from `user` where `id` in
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
+    <delete id="deleteByCondition">
+        delete from `user`
+        <include refid="where"/>
+    </delete>
+
     <update id="update" parameterType="net.stackoverflow.cms.model.entity.User">
-        update user
+        update `user`
         <set>
             <if test="username != null">
-                username = #{username},
+                `username` = #{username},
             </if>
             <if test="password != null">
-                password = #{password},
+                `password` = #{password},
             </if>
             <if test="email != null">
-                email = #{email},
+                `email` = #{email},
             </if>
             <if test="telephone != null">
-                telephone = #{telephone},
+                `telephone` = #{telephone},
             </if>
-            <if test="enabled != null">
-                enabled = #{enabled},
+            <if test="enable != null">
+                `enable` = #{enable},
             </if>
-            <if test="deletable != null">
-                deletable = #{deletable}
+            <if test="builtin != null">
+                `builtin` = #{builtin},
+            </if>
+            <if test="ttl != null">
+                `ttl` = #{ttl},
+            </if>
+            <if test="limit != null">
+                `limit` = #{limit},
+            </if>
+            <if test="lock != null">
+                `lock` = #{lock},
+            </if>
+            <if test="failure != null">
+                `failure` = #{failure},
+            </if>
+            <if test="ts != null">
+                `ts` = #{ts},
             </if>
         </set>
-        where id = #{id}
+        where `id` = #{id}
     </update>
 
     <update id="batchUpdate" parameterType="list">
         <foreach collection="list" item="item" open="" close="" separator=";">
-            update user
+            update `user`
             <set>
                 <if test="item.username != null">
-                    username = #{item.username},
+                    `username` = #{item.username},
                 </if>
                 <if test="item.password != null">
-                    password = #{item.password},
+                    `password` = #{item.password},
                 </if>
                 <if test="item.email != null">
-                    email = #{item.email},
+                    `email` = #{item.email},
                 </if>
                 <if test="item.telephone != null">
-                    telephone = #{item.telephone},
+                    `telephone` = #{item.telephone},
                 </if>
-                <if test="item.enabled != null">
-                    enabled = #{item.enabled},
+                <if test="item.enable != null">
+                    `enable` = #{item.enable},
                 </if>
-                <if test="item.deletable != null">
-                    deletable = #{item.deletable}
+                <if test="item.builtin != null">
+                    `builtin` = #{item.builtin},
+                </if>
+                <if test="item.ttl != null">
+                    `ttl` = #{item.ttl},
+                </if>
+                <if test="item.limit != null">
+                    `limit` = #{item.limit},
+                </if>
+                <if test="item.lock != null">
+                    `lock` = #{item.lock},
+                </if>
+                <if test="item.failure != null">
+                    `failure` = #{item.failure},
+                </if>
+                <if test="item.ts != null">
+                    `ts` = #{item.ts},
                 </if>
             </set>
-            where id = #{item.id}
+            where `id` = #{item.id}
         </foreach>
+    </update>
+
+    <update id="updateByCondition">
+        update `user`
+        <set>
+            <if test="upWrapper != null">
+                <if test="upWrapper.id != null">
+                    `id` = #{upWrapper.id},
+                </if>
+                <if test="upWrapper.username != null">
+                    `username` = #{upWrapper.username},
+                </if>
+                <if test="upWrapper.password != null">
+                    `password` = #{upWrapper.password},
+                </if>
+                <if test="upWrapper.email != null">
+                    `email` = #{upWrapper.email},
+                </if>
+                <if test="upWrapper.telephone != null">
+                    `telephone` = #{upWrapper.telephone},
+                </if>
+                <if test="upWrapper.enable != null">
+                    `enable` = #{upWrapper.enable},
+                </if>
+                <if test="upWrapper.builtin != null">
+                    `builtin` = #{upWrapper.builtin},
+                </if>
+                <if test="upWrapper.ttl != null">
+                    `ttl` = #{upWrapper.ttl},
+                </if>
+                <if test="upWrapper.limit != null">
+                    `limit` = #{upWrapper.limit},
+                </if>
+                <if test="upWrapper.lock != null">
+                    `lock` = #{upWrapper.lock},
+                </if>
+                <if test="upWrapper.failure != null">
+                    `failure` = #{upWrapper.failure},
+                </if>
+                <if test="upWrapper.ts != null">
+                    `ts` = #{upWrapper.ts},
+                </if>
+            </if>
+        </set>
+        <include refid="where"/>
     </update>
 
 </mapper>

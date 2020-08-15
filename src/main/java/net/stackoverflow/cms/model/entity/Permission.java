@@ -3,11 +3,13 @@ package net.stackoverflow.cms.model.entity;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * 权限实体类
+ * (Permission)实体类
  *
  * @author 凉衫薄
+ * @since 2020-08-15 10:27:44
  */
 @Setter
 @Getter
@@ -15,10 +17,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ToString
 public class Permission implements Serializable {
+    private static final long serialVersionUID = -69757427172985506L;
 
-    private static final long serialVersionUID = -7269492718613757063L;
     private String id;
     private String name;
-    private String description;
-    private Integer deletable;
+    private String note;
+    private Integer builtin;
+    private Date ts;
 }

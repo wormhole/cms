@@ -1,20 +1,25 @@
 package net.stackoverflow.cms.dao;
 
-import net.stackoverflow.cms.common.Page;
+import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.model.entity.Permission;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * (Permission)表数据库访问层
+ *
+ * @author 凉衫薄
+ * @since 2020-08-15 11:12:26
+ */
 @Mapper
 public interface PermissionDAO {
 
-    List<Permission> selectByPage(Page page);
-
-    List<Permission> selectByCondition(Map<String, Object> condition);
+    int countByCondition(QueryWrapper wrapper);
 
     Permission select(String id);
+
+    List<Permission> selectByCondition(QueryWrapper wrapper);
 
     int insert(Permission permission);
 
@@ -24,8 +29,11 @@ public interface PermissionDAO {
 
     int batchDelete(List<String> ids);
 
+    int deleteByCondition(QueryWrapper wrapper);
+
     int update(Permission permission);
 
     int batchUpdate(List<Permission> permissions);
 
+    int updateByCondition(QueryWrapper wrapper);
 }

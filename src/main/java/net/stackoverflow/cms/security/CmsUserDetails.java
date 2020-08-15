@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.security;
 
+import net.stackoverflow.cms.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,44 +15,14 @@ import java.util.List;
  */
 public class CmsUserDetails implements UserDetails {
 
-    private final String id;
-    private final String username;
-    private final String password;
-    private final Integer enabled;
-    private final String email;
-    private final String telephone;
-    private final Integer deletable;
+    private Boolean lock;
+    private User user;
     private final List<GrantedAuthority> authorities;
 
-    public CmsUserDetails(String id, String username, String password, Integer enabled, String email, String telephone, Integer deletable, List<GrantedAuthority> authorities) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.enabled = enabled;
-        this.email = email;
-        this.telephone = telephone;
+    public CmsUserDetails(Boolean lock, User user, List<GrantedAuthority> authorities) {
+        this.lock = lock;
+        this.user = user;
         this.authorities = authorities;
-        this.deletable = deletable;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Integer getEnabled() {
-        return enabled;
-    }
-
-    public Integer getDeletable() {
-        return deletable;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getTelephone() {
-        return this.telephone;
     }
 
     @Override
@@ -61,12 +32,12 @@ public class CmsUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.username;
+        return user.getUsername();
     }
 
     @Override
@@ -76,7 +47,7 @@ public class CmsUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !lock;
     }
 
     @Override
@@ -86,10 +57,10 @@ public class CmsUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        if (enabled == null) {
-            return false;
-        } else {
-            return enabled == 1;
-        }
+        return user.getEnable().equals(1);
+    }
+
+    public User getUser() {
+        return user;
     }
 }

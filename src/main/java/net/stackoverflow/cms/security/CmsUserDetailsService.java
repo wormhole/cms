@@ -1,15 +1,19 @@
 package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.model.entity.Permission;
-import net.stackoverflow.cms.model.entity.Role;
+import net.stackoverflow.cms.constant.RedisPrefixConst;
+import net.stackoverflow.cms.model.dto.PermissionDTO;
+import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,31 +23,32 @@ import java.util.List;
  *
  * @author 凉衫薄
  */
+@Component
 @Slf4j
 public class CmsUserDetailsService implements UserDetailsService {
 
+    @Autowired
     private UserService userService;
-
-    public CmsUserDetailsService(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findByUsername(username);
         if (user != null) {
-            List<Role> roles = userService.findRoleByUserId(user.getId());
-            List<Permission> permissions = userService.findPermissionByUserId(user.getId());
+            List<RoleDTO> roleDTOS = userService.findRoleByUserId(user.getId());
+            List<PermissionDTO> permissionDTOS = userService.findPermissionByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
-            for (Role role : roles) {
-                SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + role.getName());
+            for (RoleDTO roleDTO : roleDTOS) {
+                SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + roleDTO.getName());
                 authorities.add(sga);
             }
-            for (Permission permission : permissions) {
-                SimpleGrantedAuthority sga = new SimpleGrantedAuthority(permission.getName());
+            for (PermissionDTO permissionDTO : permissionDTOS) {
+                SimpleGrantedAuthority sga = new SimpleGrantedAuthority(permissionDTO.getName());
                 authorities.add(sga);
             }
-            return new CmsUserDetails(user.getId(), user.getUsername(), user.getPassword(), user.getEnabled(), user.getEmail(), user.getTelephone(), user.getDeletable(), authorities);
+            Boolean lock = (Boolean) redisTemplate.opsForValue().get(RedisPrefixConst.LOCK_PREFIX + user.getId());
+            return new CmsUserDetails(lock != null, user, authorities);
         } else {
             log.error("找不到对应的用户:{}", username);
             throw new UsernameNotFoundException(username);

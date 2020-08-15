@@ -2,19 +2,14 @@ package net.stackoverflow.cms.web.controller.auth;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
-import net.stackoverflow.cms.common.Page;
+import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.exception.BusinessException;
-import net.stackoverflow.cms.model.entity.Permission;
-import net.stackoverflow.cms.model.entity.Role;
-import net.stackoverflow.cms.model.vo.GrantPermissionVO;
-import net.stackoverflow.cms.model.vo.IdsVO;
-import net.stackoverflow.cms.model.vo.PermissionVO;
-import net.stackoverflow.cms.model.vo.RoleVO;
+import net.stackoverflow.cms.model.dto.GrantPermissionDTO;
+import net.stackoverflow.cms.model.dto.IdsDTO;
+import net.stackoverflow.cms.model.dto.PermissionDTO;
+import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
-import net.stackoverflow.cms.util.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 角色管理模块
@@ -53,70 +50,15 @@ public class RoleController extends BaseController {
      * @return
      */
     @GetMapping(value = "/list")
-    public ResponseEntity list(
+    public ResponseEntity<Result<PageResponse<RoleDTO>>> list(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "permissionIds[]", required = false) List<String> permissionIds,
             @RequestParam(value = "key", required = false) String key) {
-
-        Result result = new Result();
-
-        Map<String, Object> resultMap = new HashMap<>(16);
-        Map<String, Object> condition = new HashMap<>(16);
-
-        //根据权限过滤
-        if (permissionIds != null && permissionIds.size() > 0) {
-            List<String> roleIds = new ArrayList<>();
-            roleIds.add("");
-            List<Role> roles = permissionService.findRoleByPermissionIds(permissionIds);
-            if (roles != null && roles.size() > 0) {
-                for (Role role : roles) {
-                    roleIds.add(role.getId());
-                }
-            }
-            condition.put("ids", roleIds);
-        }
-
-        if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
-            sort = "deletable";
-            order = "asc";
-        }
-        if (StringUtils.isBlank(key)) {
-            key = null;
-        }
-
-        Page pageParam = new Page(page, limit, sort, order, condition, key);
-        List<Role> roles = roleService.findByPage(pageParam);
-        pageParam.setLimit(null);
-        pageParam.setOffset(null);
-        int total = roleService.findByPage(pageParam).size();
-
-        List<RoleVO> roleVOs = new ArrayList<>();
-        for (Role role : roles) {
-            RoleVO roleVO = new RoleVO();
-            BeanUtils.copyProperties(role, roleVO);
-            List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
-            List<PermissionVO> permissionVOs = new ArrayList<>();
-            if (permissions != null && permissions.size() > 0) {
-                for (Permission permission : permissions) {
-                    PermissionVO permissionVO = new PermissionVO();
-                    BeanUtils.copyProperties(permission, permissionVO);
-                    permissionVOs.add(permissionVO);
-                }
-            }
-            roleVO.setPermissions(permissionVOs);
-            roleVOs.add(roleVO);
-        }
-
-        resultMap.put("list", roleVOs);
-        resultMap.put("total", total);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(resultMap);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        PageResponse<RoleDTO> response = roleService.findByPage(page, limit, sort, order, key, permissionIds);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", response));
 
     }
 
@@ -126,49 +68,22 @@ public class RoleController extends BaseController {
      * @returnfilters
      */
     @GetMapping(value = "/ref_permission")
-    public ResponseEntity refPermission() {
-        Result result = new Result();
-
-        List<Permission> permissions = permissionService.findAll();
-        List<PermissionVO> permissionVOs = new ArrayList<>();
-        for (Permission permission : permissions) {
-            PermissionVO permissionVO = new PermissionVO();
-            BeanUtils.copyProperties(permission, permissionVO);
-            permissionVOs.add(permissionVO);
-        }
-
-        Map<String, Object> retMap = new HashMap<>(16);
-        retMap.put("permissions", permissionVOs);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(retMap);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<Result<List<PermissionDTO>>> refPermission() {
+        List<PermissionDTO> permissionDTOS = permissionService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", permissionDTOS));
 
     }
 
     /**
      * 删除角色
      *
-     * @param idsVO
+     * @param idsDTO
      * @return
      */
-    @DeleteMapping(value = "/delete")
-    public ResponseEntity delete(@RequestBody @Validated IdsVO idsVO) {
-        Result result = new Result();
-
-        //检查是否有不可被删除的
-        List<Role> roles = roleService.findByIds(idsVO.getIds());
-        for (Role role : roles) {
-            if (role.getDeletable() == 0) {
-                throw new BusinessException("包含不允许被删除的角色");
-            }
-        }
-
-        roleService.batchDelete(idsVO.getIds());
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    @DeleteMapping
+    public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
+        roleService.deleteByIds(idsDTO.getIds());
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
 
     }
 
@@ -179,126 +94,56 @@ public class RoleController extends BaseController {
      * @return
      */
     @GetMapping(value = "/ref_role_permission")
-    public ResponseEntity refRolePermission(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
-        Result result = new Result();
+    public ResponseEntity<Result<Map<String, List<PermissionDTO>>>> refRolePermission(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
 
-        Role role = roleService.findById(id);
-        if (role == null) {
-            throw new BusinessException("不合法的id");
-        }
+        List<PermissionDTO> targetPermissions = roleService.findPermissionByRoleId(id);
+        List<PermissionDTO> allPermissions = permissionService.findAll();
 
-        List<Permission> permissions = roleService.findPermissionByRoleId(role.getId());
-        List<Permission> allPermissions = permissionService.findAll();
+        Map<String, List<PermissionDTO>> retMap = new HashMap<>();
+        retMap.put("target", targetPermissions);
+        retMap.put("all", allPermissions);
 
-        List<PermissionVO> permissionVOs = new ArrayList<>();
-        List<PermissionVO> allPermissionVOs = new ArrayList<>();
-        for (Permission permission : permissions) {
-            PermissionVO permissionVO = new PermissionVO();
-            BeanUtils.copyProperties(permission, permissionVO);
-            permissionVOs.add(permissionVO);
-        }
-        for (Permission permission : allPermissions) {
-            PermissionVO permissionVO = new PermissionVO();
-            BeanUtils.copyProperties(permission, permissionVO);
-            allPermissionVOs.add(permissionVO);
-        }
-
-        Map<String, Object> retMap = new HashMap<>(16);
-        retMap.put("target", permissionVOs);
-        retMap.put("all", allPermissionVOs);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(retMap);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", retMap));
 
     }
 
     /**
      * 授权
      *
-     * @param grantPermissionVO
+     * @param grantPermissionDTO
      * @return
      */
     @PutMapping(value = "/grant_permission")
-    public ResponseEntity grantPermission(@RequestBody @Validated GrantPermissionVO grantPermissionVO) {
-        Result result = new Result();
+    public ResponseEntity<Result<Object>> grantPermission(@RequestBody @Validated GrantPermissionDTO grantPermissionDTO) {
 
-        Role role = roleService.findById(grantPermissionVO.getRoleId());
-        if (role == null) {
-            throw new BusinessException("不合法的id");
-        }
-
-        roleService.reGrantPermission(grantPermissionVO.getRoleId(), grantPermissionVO.getPermissionIds());
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        roleService.reGrantPermission(grantPermissionDTO.getRoleId(), grantPermissionDTO.getPermissionIds());
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
 
     }
 
     /**
      * 更新角色信息
      *
-     * @param roleVO
+     * @param roleDTO
      * @return
      */
-    @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody @Validated(RoleVO.Update.class) RoleVO roleVO) {
+    @PutMapping
+    public ResponseEntity<Result<Object>> update(@RequestBody @Validated(RoleDTO.Update.class) RoleDTO roleDTO) {
 
-        Result result = new Result();
-
-        //校验参数
-        Role role = roleService.findById(roleVO.getId());
-        if (role == null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("不合法的id");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
-
-        if (!role.getName().equals(roleVO.getName())) {
-            Role roles = roleService.findByName(roleVO.getName());
-            if (roles != null) {
-                result.setStatus(Result.Status.FAILURE);
-                result.setMessage("角色名已存在");
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-        }
-
-        role.setName(roleVO.getName());
-        role.setDescription(roleVO.getDescription());
-        roleService.update(role);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        roleService.update(roleDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
 
     }
 
     /**
      * 新增角色
      *
-     * @param roleVO
+     * @param roleDTO
      * @return
      */
-    @PostMapping(value = "/add")
-    public ResponseEntity add(@RequestBody @Validated(RoleVO.Insert.class) RoleVO roleVO) {
-        Result result = new Result();
-
-        Role r = roleService.findByName(roleVO.getName());
-        if (r != null) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("角色名已存在");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
-
-        Role role = new Role();
-        BeanUtils.copyProperties(roleVO, role);
-        role.setId(UUID.randomUUID().toString());
-        role.setDeletable(1);
-        roleService.save(role);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    @PostMapping
+    public ResponseEntity<Result<Object>> add(@RequestBody @Validated(RoleDTO.Insert.class) RoleDTO roleDTO) {
+        roleService.save(roleDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
 }

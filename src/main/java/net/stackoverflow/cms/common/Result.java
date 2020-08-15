@@ -12,15 +12,25 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class Result {
+public class Result<T> {
 
     private Boolean status;
+    private String message;
+    private T data;
 
-    public static class Status {
-        public static final Boolean SUCCESS = true;
-        public static final Boolean FAILURE = false;
+    public static <T> Result<T> success(String message) {
+        return success(message, null);
     }
 
-    private String message;
-    private Object data;
+    public static <T> Result<T> success(String message, T data) {
+        return new Result<T>(true, message, data);
+    }
+
+    public static <T> Result<T> failure(String message) {
+        return new Result<T>(false, message, null);
+    }
+
+    public static <T> Result<T> failure(String message, T data) {
+        return new Result<T>(false, message, data);
+    }
 }

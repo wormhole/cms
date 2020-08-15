@@ -2,17 +2,12 @@ package net.stackoverflow.cms.web.controller.auth;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
-import net.stackoverflow.cms.common.Page;
+import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.exception.BusinessException;
-import net.stackoverflow.cms.model.entity.Role;
-import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.model.vo.*;
-import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
+import net.stackoverflow.cms.model.dto.*;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
-import net.stackoverflow.cms.util.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户管理模块
@@ -38,8 +35,6 @@ public class UserController extends BaseController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private CmsMd5PasswordEncoder encoder;
 
     /**
      * 分页查询用户信息
@@ -53,148 +48,52 @@ public class UserController extends BaseController {
      * @return
      */
     @GetMapping(value = "/list")
-    public ResponseEntity list(
+    public ResponseEntity<Result<PageResponse<UserDTO>>> list(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "roleIds[]", required = false) List<String> roleIds,
             @RequestParam(value = "key", required = false) String key) {
-
-        Result result = new Result();
-
-        Map<String, Object> resultMap = new HashMap<>(16);
-        Map<String, Object> condition = new HashMap<>(16);
-
-        //根据角色过滤
-        if (roleIds != null && roleIds.size() > 0) {
-            List<String> userIds = new ArrayList<>();
-            userIds.add("");
-            List<User> users = roleService.findUserByRoleIds(roleIds);
-            if (users != null && users.size() > 0) {
-                for (User user : users) {
-                    userIds.add(user.getId());
-                }
-            }
-            condition.put("ids", userIds);
-        }
-
-        if (StringUtils.isBlank(order) || StringUtils.isBlank(sort)) {
-            sort = "deletable";
-            order = "asc";
-        }
-        if (StringUtils.isBlank(key)) {
-            key = null;
-        }
-
-        Page pageParam = new Page(page, limit, sort, order, condition, key);
-        List<User> users = userService.findByPage(pageParam);
-        pageParam.setLimit(null);
-        pageParam.setOffset(null);
-        int total = userService.findByPage(pageParam).size();
-
-        List<UserVO> userVOs = new ArrayList<>();
-        for (User user : users) {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            userVO.setPassword(null);
-            List<Role> roles = userService.findRoleByUserId(user.getId());
-            List<RoleVO> roleVOs = new ArrayList<>();
-            if (roles != null && roles.size() > 0) {
-                for (Role role : roles) {
-                    RoleVO roleVO = new RoleVO();
-                    BeanUtils.copyProperties(role, roleVO);
-                    roleVOs.add(roleVO);
-                }
-            }
-            userVO.setRoles(roleVOs);
-            userVOs.add(userVO);
-        }
-
-        resultMap.put("list", userVOs);
-        resultMap.put("total", total);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(resultMap);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-
+        PageResponse<UserDTO> response = userService.findByPage(page, limit, sort, order, key, roleIds);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", response));
     }
 
     /**
      * 删除用户
      *
-     * @param idsVO
+     * @param idsDTO
      * @return
      */
-    @DeleteMapping(value = "/delete")
-    public ResponseEntity delete(@RequestBody @Validated IdsVO idsVO) {
-        Result result = new Result();
-
-        //检查是否有不可被删除的
-        List<User> users = userService.findByIds(idsVO.getIds());
-        for (User user : users) {
-            if (user.getDeletable() == 0) {
-                throw new BusinessException("超级管理员不允许被删除");
-            }
-        }
-
-        userService.batchDelete(idsVO.getIds());
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-
+    @DeleteMapping
+    public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
+        userService.deleteByIds(idsDTO.getIds());
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
 
     /**
      * 启用
      *
-     * @param idsVO
+     * @param idsDTO
      * @return
      */
     @PutMapping(value = "/enabled")
-    public ResponseEntity enabled(@RequestBody @Validated IdsVO idsVO) {
-        Result result = new Result();
-
-        List<User> users = userService.findByIds(idsVO.getIds());
-        for (User user : users) {
-            if (user.getDeletable() == 0) {
-                throw new BusinessException("超级管理员不允许被操作");
-            }
-            user.setEnabled(1);
-        }
-
-        //更新数据库
-        userService.batchUpdate(users);
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<Result<Object>> enabled(@RequestBody @Validated IdsDTO idsDTO) {
+        userService.updateEnable(idsDTO.getIds(), 1);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
 
     }
 
     /**
      * 禁用
      *
-     * @param idsVO
+     * @param idsDTO
      * @return
      */
     @PutMapping(value = "/disabled")
-    public ResponseEntity disabled(@RequestBody @Validated IdsVO idsVO) {
-        Result result = new Result();
-
-        List<User> users = userService.findByIds(idsVO.getIds());
-        for (User user : users) {
-            if (user.getDeletable() == 0) {
-                throw new BusinessException("超级管理员不允许被操作");
-            }
-            user.setEnabled(0);
-        }
-
-        //更新数据库
-        userService.batchUpdate(users);
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<Result<Object>> disabled(@RequestBody @Validated IdsDTO idsDTO) {
+        userService.updateEnable(idsDTO.getIds(), 0);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
 
     }
 
@@ -204,24 +103,9 @@ public class UserController extends BaseController {
      * @returnfilters
      */
     @GetMapping(value = "/ref_role")
-    public ResponseEntity refRole() {
-        Result result = new Result();
-
-        List<Role> roles = roleService.findAll();
-        List<RoleVO> roleVOs = new ArrayList<>();
-        for (Role role : roles) {
-            RoleVO roleVO = new RoleVO();
-            BeanUtils.copyProperties(role, roleVO);
-            roleVOs.add(roleVO);
-        }
-
-        Map<String, Object> retMap = new HashMap<>(16);
-        retMap.put("roles", roleVOs);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(retMap);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<Result<List<RoleDTO>>> refRole() {
+        List<RoleDTO> roleDTOS = roleService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", roleDTOS));
 
     }
 
@@ -232,148 +116,70 @@ public class UserController extends BaseController {
      * @return
      */
     @GetMapping(value = "/ref_user_role")
-    public ResponseEntity refUserRole(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
-        Result result = new Result();
+    public ResponseEntity<Result<Map<String, List<RoleDTO>>>> refUserRole(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
+        List<RoleDTO> targetRoles = userService.findRoleByUserId(id);
+        List<RoleDTO> allRoles = roleService.findAll();
 
-        User user = userService.findById(id);
-        if (user == null) {
-            throw new BusinessException("不合法的id");
-        }
+        Map<String, List<RoleDTO>> retMap = new HashMap<>();
+        retMap.put("target", targetRoles);
+        retMap.put("all", allRoles);
 
-        List<Role> roles = userService.findRoleByUserId(id);
-        List<Role> allRoles = roleService.findAll();
-
-        List<RoleVO> roleVOs = new ArrayList<>();
-        List<RoleVO> allRoleVOs = new ArrayList<>();
-        for (Role role : roles) {
-            RoleVO roleVO = new RoleVO();
-            BeanUtils.copyProperties(role, roleVO);
-            roleVOs.add(roleVO);
-        }
-        for (Role role : allRoles) {
-            RoleVO roleVO = new RoleVO();
-            BeanUtils.copyProperties(role, roleVO);
-            allRoleVOs.add(roleVO);
-        }
-
-        Map<String, Object> retMap = new HashMap<>(16);
-        retMap.put("target", roleVOs);
-        retMap.put("all", allRoleVOs);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(retMap);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", retMap));
 
     }
 
     /**
      * 授权
      *
-     * @param grantRoleVO
+     * @param grantRoleDTO
      * @return
      */
     @PutMapping(value = "/grant_role")
-    public ResponseEntity grantRole(@RequestBody @Validated GrantRoleVO grantRoleVO) {
-        Result result = new Result();
-
-        User user = userService.findById(grantRoleVO.getUserId());
-        if (user == null) {
-            throw new BusinessException("不合法的id");
-        }
-
-        userService.reGrantRole(grantRoleVO.getUserId(), grantRoleVO.getRoleIds());
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<Result<Object>> grantRole(@RequestBody @Validated GrantRoleDTO grantRoleDTO) {
+        userService.reGrandRole(grantRoleDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
 
     }
 
     /**
      * 更新用户信息
      *
-     * @param userVO
+     * @param userDTO
      * @return
      */
-    @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody @Validated(UserVO.Update.class) UserVO userVO) {
+    @PutMapping
+    public ResponseEntity<Result<Object>> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO) {
 
-        Result result = new Result();
-
-        User user = userService.findById(userVO.getId());
-        if (user == null) {
-            throw new BusinessException("不合法的id");
-        }
-
-        if (!user.getUsername().equals(userVO.getUsername())) {
-            User users = userService.findByUsername(userVO.getUsername());
-            if (users != null) {
-                throw new BusinessException("用户名已存在");
-            }
-        }
-        user.setUsername(userVO.getUsername());
-        user.setEmail(userVO.getEmail());
-        user.setTelephone(userVO.getTelephone());
-        userService.update(user);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        userService.updateBase(userDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
 
     /**
      * 修改密码
      *
-     * @param passwordVO
+     * @param passwordDTO
      * @return
      */
     @PutMapping(value = "/password")
-    public ResponseEntity password(@RequestBody @Validated(PasswordVO.Admin.class) PasswordVO passwordVO) {
-        Result result = new Result();
+    public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Admin.class) PasswordDTO passwordDTO) {
 
-        if (!passwordVO.getNewPassword().equals(passwordVO.getCheckPassword())) {
+        if (!passwordDTO.getNewPassword().equals(passwordDTO.getCheckPassword())) {
             throw new BusinessException("两次密码不一致");
         }
 
-        User user = userService.findById(passwordVO.getId());
-
-        String password = encoder.encode(passwordVO.getNewPassword());
-        user.setPassword(password);
-        userService.update(user);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("修改成功");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        userService.updatePassword(passwordDTO.getId(), passwordDTO.getOldPassword(), passwordDTO.getNewPassword());
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
 
     /**
      * 添加用户
      *
-     * @param userVO
+     * @param userDTO
      * @return
      */
-    @PostMapping(value = "/add")
-    public ResponseEntity add(@RequestBody @Validated(UserVO.Insert.class) UserVO userVO) {
-        Result result = new Result();
-
-        //参数校验
-
-        User u = userService.findByUsername(userVO.getUsername());
-        if (u != null) {
-            throw new BusinessException("用户名已存在");
-        }
-
-        String password = new CmsMd5PasswordEncoder().encode(userVO.getPassword());
-        User user = new User();
-        BeanUtils.copyProperties(userVO, user);
-        user.setId(UUID.randomUUID().toString());
-        user.setPassword(password);
-        user.setEnabled(1);
-        user.setDeletable(1);
-        userService.save(user);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    @PostMapping
+    public ResponseEntity<Result<Object>> add(@RequestBody @Validated(UserDTO.Insert.class) UserDTO userDTO) {
+        userService.save(userDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
 }

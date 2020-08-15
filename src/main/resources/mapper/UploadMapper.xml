@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.stackoverflow.cms.dao.UploadDAO">
+
+    <resultMap type="net.stackoverflow.cms.model.entity.Upload" id="baseMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="columns">
+        `id`, `name`, `path`, `ts`, `user_id`, `type`        
+    </sql>
+
+    <sql id="columns_value">
+        #{id}, #{name}, #{path}, #{ts}, #{userId}, #{type}        
+    </sql>
+
+    <sql id="columns_item_value">
+        #{item.id}, #{item.name}, #{item.path}, #{item.ts}, #{item.userId}, #{item.type}        
+    </sql>
+
+    <sql id="where">
+        <where>
+            <if test="eqWrapper != null">
+                <if test="eqWrapper.id != null">
+                    and `id` = #{eqWrapper.id}
+                </if>
+                <if test="eqWrapper.name != null">
+                    and `name` = #{eqWrapper.name}
+                </if>
+                <if test="eqWrapper.path != null">
+                    and `path` = #{eqWrapper.path}
+                </if>
+                <if test="eqWrapper.ts != null">
+                    and `ts` = #{eqWrapper.ts}
+                </if>
+                <if test="eqWrapper.userId != null">
+                    and `user_id` = #{eqWrapper.userId}
+                </if>
+                <if test="eqWrapper.type != null">
+                    and `type` = #{eqWrapper.type}
+                </if>
+            </if>
+            <if test="neqWrapper != null">
+                <if test="neqWrapper.id != null">
+                    and `id` != #{neqWrapper.id}
+                </if>
+                <if test="neqWrapper.name != null">
+                    and `name` != #{neqWrapper.name}
+                </if>
+                <if test="neqWrapper.path != null">
+                    and `path` != #{neqWrapper.path}
+                </if>
+                <if test="neqWrapper.ts != null">
+                    and `ts` != #{neqWrapper.ts}
+                </if>
+                <if test="neqWrapper.userId != null">
+                    and `user_id` != #{neqWrapper.userId}
+                </if>
+                <if test="neqWrapper.type != null">
+                    and `type` != #{neqWrapper.type}
+                </if>
+            </if>
+            <if test="inWrapper != null">
+                <if test="inWrapper.id != null and inWrapper.id.size() > 0">
+                    and `id` in
+                    <foreach collection="inWrapper.id" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+                <if test="inWrapper.name != null and inWrapper.name.size() > 0">
+                    and `name` in
+                    <foreach collection="inWrapper.name" item="name" open="(" separator="," close=")">
+                        #{name}
+                    </foreach>
+                </if>
+                <if test="inWrapper.path != null and inWrapper.path.size() > 0">
+                    and `path` in
+                    <foreach collection="inWrapper.path" item="path" open="(" separator="," close=")">
+                        #{path}
+                    </foreach>
+                </if>
+                <if test="inWrapper.ts != null and inWrapper.ts.size() > 0">
+                    and `ts` in
+                    <foreach collection="inWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
+                <if test="inWrapper.userId != null and inWrapper.userId.size() > 0">
+                    and `userId` in
+                    <foreach collection="inWrapper.userId" item="userId" open="(" separator="," close=")">
+                        #{userId}
+                    </foreach>
+                </if>
+                <if test="inWrapper.type != null and inWrapper.type.size() > 0">
+                    and `type` in
+                    <foreach collection="inWrapper.type" item="type" open="(" separator="," close=")">
+                        #{type}
+                    </foreach>
+                </if>
+            </if>
+            <if test="ninWrapper != null">
+                <if test="ninWrapper.id != null and ninWrapper.id.size() > 0">
+                    and `id` not in
+                    <foreach collection="ninWrapper.id" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.name != null and ninWrapper.name.size() > 0">
+                    and `name` not in
+                    <foreach collection="ninWrapper.name" item="name" open="(" separator="," close=")">
+                        #{name}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.path != null and ninWrapper.path.size() > 0">
+                    and `path` not in
+                    <foreach collection="ninWrapper.path" item="path" open="(" separator="," close=")">
+                        #{path}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.ts != null and ninWrapper.ts.size() > 0">
+                    and `ts` not in
+                    <foreach collection="ninWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.userId != null and ninWrapper.userId.size() > 0">
+                    and `userId` not in
+                    <foreach collection="ninWrapper.userId" item="userId" open="(" separator="," close=")">
+                        #{userId}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.type != null and ninWrapper.type.size() > 0">
+                    and `type` not in
+                    <foreach collection="ninWrapper.type" item="type" open="(" separator="," close=")">
+                        #{type}
+                    </foreach>
+                </if>
+            </if>
+            <if test="keyWrapper != null and keyWrapper.size() > 0">
+                <foreach collection="keyWrapper.entrySet()" index="k" item="columns">
+                    <if test="columns != null and columns.size()> 0">
+                        and
+                        <foreach collection="columns" item="column" open="(" separator=" or " close=")">
+                            `${column}` like CONCAT('%',#{k},'%')
+                        </foreach>
+                    </if>
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <select id="countByCondition" resultType="int">
+        select COUNT(*) from `upload`
+        <include refid="where"/>
+    </select>
+
+    <select id="select" resultMap="baseMap">
+        select * from `upload` where `id` = #{id}
+    </select>
+
+    <select id="selectByCondition" resultMap="baseMap">
+        select * from `upload`
+        <include refid="where"/>
+        <if test="sortWrapper != null and sortWrapper.size() > 0">
+            order by
+            <foreach collection="sortWrapper.entrySet()" index="k" item="v" separator=",">
+                `${k}` ${v}
+            </foreach>
+        </if>
+        <if test="offset != null and limit != null">
+            limit ${offset}, ${limit}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into `upload`
+        (<include refid="columns"/>)
+        values
+        (<include refid="columns_value"/>)
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into `upload`
+        (<include refid="columns"/>)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (<include refid="columns_item_value"/>)
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="string">
+        delete from `upload` where `id` = #{id}
+    </delete>
+
+    <delete id="batchDelete" parameterType="list">
+        delete from `upload` where `id` in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByCondition">
+        delete from `upload`
+        <include refid="where"/>
+    </delete>
+
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.Upload">
+        update `upload`
+        <set>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="path != null">
+                `path` = #{path},
+            </if>
+            <if test="ts != null">
+                `ts` = #{ts},
+            </if>
+            <if test="userId != null">
+                `user_id` = #{userId},
+            </if>
+            <if test="type != null">
+                `type` = #{type},
+            </if>
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update `upload`
+            <set>
+                <if test="item.name != null">
+                    `name` = #{item.name},
+                </if>
+                <if test="item.path != null">
+                    `path` = #{item.path},
+                </if>
+                <if test="item.ts != null">
+                    `ts` = #{item.ts},
+                </if>
+                <if test="item.userId != null">
+                    `user_id` = #{item.userId},
+                </if>
+                <if test="item.type != null">
+                    `type` = #{item.type},
+                </if>
+            </set>
+            where `id` = #{item.id}
+        </foreach>
+    </update>
+
+    <update id="updateByCondition">
+        update `upload`
+        <set>
+            <if test="upWrapper != null">
+                <if test="upWrapper.id != null">
+                    `id` = #{upWrapper.id},
+                </if>
+                <if test="upWrapper.name != null">
+                    `name` = #{upWrapper.name},
+                </if>
+                <if test="upWrapper.path != null">
+                    `path` = #{upWrapper.path},
+                </if>
+                <if test="upWrapper.ts != null">
+                    `ts` = #{upWrapper.ts},
+                </if>
+                <if test="upWrapper.userId != null">
+                    `user_id` = #{upWrapper.userId},
+                </if>
+                <if test="upWrapper.type != null">
+                    `type` = #{upWrapper.type},
+                </if>
+            </if>
+        </set>
+        <include refid="where"/>
+    </update>
+
+</mapper>

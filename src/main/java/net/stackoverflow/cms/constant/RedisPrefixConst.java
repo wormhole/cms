@@ -7,5 +7,9 @@ package net.stackoverflow.cms.constant;
  */
 public class RedisPrefixConst {
 
-    public static String TOKEN_PREFIX = "token:";
+    public static final String TOKEN_PREFIX = "token:";
+
+    public static final String FAILURE_PREFIX = "failure:";
+
+    public static final String LOCK_PREFIX = "lock:";
 }

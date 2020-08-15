@@ -3,11 +3,13 @@ package net.stackoverflow.cms.model.entity;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * 用户实体类
+ * (User)实体类
  *
  * @author 凉衫薄
+ * @since 2020-08-15 14:24:20
  */
 @Setter
 @Getter
@@ -15,14 +17,18 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ToString
 public class User implements Serializable {
+    private static final long serialVersionUID = -53748804228740756L;
 
-    private static final long serialVersionUID = -1176841729258973475L;
     private String id;
     private String username;
     private String password;
     private String email;
     private String telephone;
-    private Integer enabled;
-    private Integer deletable;
-
+    private Integer enable;
+    private Integer builtin;
+    private Integer ttl;
+    private Integer limit;
+    private Integer lock;
+    private Integer failure;
+    private Date ts;
 }

@@ -3,11 +3,9 @@ package net.stackoverflow.cms.web.controller.personal;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.exception.BusinessException;
+import net.stackoverflow.cms.model.dto.PasswordDTO;
+import net.stackoverflow.cms.model.dto.UserDTO;
 import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.model.vo.PasswordVO;
-import net.stackoverflow.cms.model.vo.UserVO;
-import net.stackoverflow.cms.security.CmsMd5PasswordEncoder;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,91 +21,47 @@ public class PersonalController extends BaseController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private CmsMd5PasswordEncoder encoder;
 
     /**
      * 获取个人信息
      *
      * @return
      */
-    @GetMapping(value = "/info")
-    public ResponseEntity info() {
-        Result result = new Result();
-
-        User user = userService.findById(getUserDetails().getId());
-        UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
-        userVO.setPassword(null);
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        result.setData(userVO);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-
+    @GetMapping
+    public ResponseEntity<Result<UserDTO>> info() {
+        User user = userService.findById(super.getUserId());
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user, userDTO);
+        userDTO.setPassword(null);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", userDTO));
     }
 
 
     /**
      * 更新个人信息
      *
-     * @param userVO
+     * @param dto
      * @return
      */
-    @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody @Validated(UserVO.Update.class) UserVO userVO) {
-
-        Result result = new Result();
-
-        User user = userService.findById(userVO.getId());
-
-        if (!user.getUsername().equals(userVO.getUsername())) {
-            User users = userService.findByUsername(userVO.getUsername());
-            if (users != null) {
-                throw new BusinessException("用户名已存在");
-            }
-        }
-
-        user.setUsername(userVO.getUsername());
-        user.setEmail(userVO.getEmail());
-        user.setTelephone(userVO.getTelephone());
-        userService.update(user);
-        result.setData(user);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("success");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-
+    @PutMapping
+    public ResponseEntity<Result<Object>> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO dto) {
+        dto.setId(super.getUserId());
+        userService.updateBase(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
 
     /**
      * 修改密码
      *
-     * @param passwordVO
+     * @param dto
      * @return
      */
     @PutMapping(value = "/password")
-    public ResponseEntity password(@RequestBody @Validated(PasswordVO.Personal.class) PasswordVO passwordVO) {
-        Result result = new Result();
-
-        if (!passwordVO.getNewPassword().equals(passwordVO.getCheckPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("两次密码不一致");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Personal.class) PasswordDTO dto) {
+        if (!dto.getNewPassword().equals(dto.getCheckPassword())) {
+            return ResponseEntity.status(HttpStatus.OK).body(Result.failure("两次密码不一致"));
         }
-
-        User user = userService.findById(getUserDetails().getId());
-        if (!encoder.encode(passwordVO.getOldPassword()).equals(user.getPassword())) {
-            result.setStatus(Result.Status.FAILURE);
-            result.setMessage("旧密码错误");
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
-
-        String password = encoder.encode(passwordVO.getNewPassword());
-        user.setPassword(password);
-        userService.update(user);
-
-        result.setStatus(Result.Status.SUCCESS);
-        result.setMessage("修改成功");
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        userService.updatePassword(super.getUserId(), dto.getOldPassword(), dto.getNewPassword());
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("修改密码成功"));
     }
 }

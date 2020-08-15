@@ -9,6 +9,10 @@ import org.springframework.security.core.AuthenticationException;
  */
 public class VerifyCodeException extends AuthenticationException {
 
+    public VerifyCodeException() {
+        super(null);
+    }
+
     public VerifyCodeException(String msg) {
         super(msg);
     }

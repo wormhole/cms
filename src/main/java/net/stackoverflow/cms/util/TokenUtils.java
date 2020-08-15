@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.util;
 
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +23,7 @@ public class TokenUtils {
      */
     public static String obtainToken(HttpServletRequest request) {
         String token = request.getHeader(TOKEN_HEADER);
-        if (StringUtils.isNotEmpty(token)) {
+        if (!StringUtils.isEmpty(token)) {
             if (token.startsWith(TOKEN_PREFIX)) {
                 return token.substring(7);
             }
@@ -38,7 +39,10 @@ public class TokenUtils {
      */
     public static String generateToken(String id) {
         String salt = String.valueOf(System.currentTimeMillis());
-        return DigestUtils.md5DigestAsHex((id + salt).getBytes());
+        String md5 = DigestUtils.md5DigestAsHex((id + salt).getBytes());
+        StringBuilder sb = new StringBuilder();
+        sb.append(id.replace("-", ""));
+        sb.append(md5);
+        return sb.toString();
     }
-
 }

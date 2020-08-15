@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.stackoverflow.cms.dao.RolePermissionRefDAO">
+
+    <resultMap type="net.stackoverflow.cms.model.entity.RolePermissionRef" id="baseMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="roleId" column="role_id" jdbcType="VARCHAR"/>
+        <result property="permissionId" column="permission_id" jdbcType="VARCHAR"/>
+        <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="columns">
+        `id`, `role_id`, `permission_id`, `ts`        
+    </sql>
+
+    <sql id="columns_value">
+        #{id}, #{roleId}, #{permissionId}, #{ts}        
+    </sql>
+
+    <sql id="columns_item_value">
+        #{item.id}, #{item.roleId}, #{item.permissionId}, #{item.ts}        
+    </sql>
+
+    <sql id="where">
+        <where>
+            <if test="eqWrapper != null">
+                <if test="eqWrapper.id != null">
+                    and `id` = #{eqWrapper.id}
+                </if>
+                <if test="eqWrapper.roleId != null">
+                    and `role_id` = #{eqWrapper.roleId}
+                </if>
+                <if test="eqWrapper.permissionId != null">
+                    and `permission_id` = #{eqWrapper.permissionId}
+                </if>
+                <if test="eqWrapper.ts != null">
+                    and `ts` = #{eqWrapper.ts}
+                </if>
+            </if>
+            <if test="neqWrapper != null">
+                <if test="neqWrapper.id != null">
+                    and `id` != #{neqWrapper.id}
+                </if>
+                <if test="neqWrapper.roleId != null">
+                    and `role_id` != #{neqWrapper.roleId}
+                </if>
+                <if test="neqWrapper.permissionId != null">
+                    and `permission_id` != #{neqWrapper.permissionId}
+                </if>
+                <if test="neqWrapper.ts != null">
+                    and `ts` != #{neqWrapper.ts}
+                </if>
+            </if>
+            <if test="inWrapper != null">
+                <if test="inWrapper.id != null and inWrapper.id.size() > 0">
+                    and `id` in
+                    <foreach collection="inWrapper.id" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+                <if test="inWrapper.roleId != null and inWrapper.roleId.size() > 0">
+                    and `roleId` in
+                    <foreach collection="inWrapper.roleId" item="roleId" open="(" separator="," close=")">
+                        #{roleId}
+                    </foreach>
+                </if>
+                <if test="inWrapper.permissionId != null and inWrapper.permissionId.size() > 0">
+                    and `permissionId` in
+                    <foreach collection="inWrapper.permissionId" item="permissionId" open="(" separator="," close=")">
+                        #{permissionId}
+                    </foreach>
+                </if>
+                <if test="inWrapper.ts != null and inWrapper.ts.size() > 0">
+                    and `ts` in
+                    <foreach collection="inWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
+            </if>
+            <if test="ninWrapper != null">
+                <if test="ninWrapper.id != null and ninWrapper.id.size() > 0">
+                    and `id` not in
+                    <foreach collection="ninWrapper.id" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.roleId != null and ninWrapper.roleId.size() > 0">
+                    and `roleId` not in
+                    <foreach collection="ninWrapper.roleId" item="roleId" open="(" separator="," close=")">
+                        #{roleId}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.permissionId != null and ninWrapper.permissionId.size() > 0">
+                    and `permissionId` not in
+                    <foreach collection="ninWrapper.permissionId" item="permissionId" open="(" separator="," close=")">
+                        #{permissionId}
+                    </foreach>
+                </if>
+                <if test="ninWrapper.ts != null and ninWrapper.ts.size() > 0">
+                    and `ts` not in
+                    <foreach collection="ninWrapper.ts" item="ts" open="(" separator="," close=")">
+                        #{ts}
+                    </foreach>
+                </if>
+            </if>
+            <if test="keyWrapper != null and keyWrapper.size() > 0">
+                <foreach collection="keyWrapper.entrySet()" index="k" item="columns">
+                    <if test="columns != null and columns.size()> 0">
+                        and
+                        <foreach collection="columns" item="column" open="(" separator=" or " close=")">
+                            `${column}` like CONCAT('%',#{k},'%')
+                        </foreach>
+                    </if>
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <select id="countByCondition" resultType="int">
+        select COUNT(*) from `role_permission_ref`
+        <include refid="where"/>
+    </select>
+
+    <select id="select" resultMap="baseMap">
+        select * from `role_permission_ref` where `id` = #{id}
+    </select>
+
+    <select id="selectByCondition" resultMap="baseMap">
+        select * from `role_permission_ref`
+        <include refid="where"/>
+        <if test="sortWrapper != null and sortWrapper.size() > 0">
+            order by
+            <foreach collection="sortWrapper.entrySet()" index="k" item="v" separator=",">
+                `${k}` ${v}
+            </foreach>
+        </if>
+        <if test="offset != null and limit != null">
+            limit ${offset}, ${limit}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into `role_permission_ref`
+        (<include refid="columns"/>)
+        values
+        (<include refid="columns_value"/>)
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into `role_permission_ref`
+        (<include refid="columns"/>)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (<include refid="columns_item_value"/>)
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="string">
+        delete from `role_permission_ref` where `id` = #{id}
+    </delete>
+
+    <delete id="batchDelete" parameterType="list">
+        delete from `role_permission_ref` where `id` in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByCondition">
+        delete from `role_permission_ref`
+        <include refid="where"/>
+    </delete>
+
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.RolePermissionRef">
+        update `role_permission_ref`
+        <set>
+            <if test="roleId != null">
+                `role_id` = #{roleId},
+            </if>
+            <if test="permissionId != null">
+                `permission_id` = #{permissionId},
+            </if>
+            <if test="ts != null">
+                `ts` = #{ts},
+            </if>
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update `role_permission_ref`
+            <set>
+                <if test="item.roleId != null">
+                    `role_id` = #{item.roleId},
+                </if>
+                <if test="item.permissionId != null">
+                    `permission_id` = #{item.permissionId},
+                </if>
+                <if test="item.ts != null">
+                    `ts` = #{item.ts},
+                </if>
+            </set>
+            where `id` = #{item.id}
+        </foreach>
+    </update>
+
+    <update id="updateByCondition">
+        update `role_permission_ref`
+        <set>
+            <if test="upWrapper != null">
+                <if test="upWrapper.id != null">
+                    `id` = #{upWrapper.id},
+                </if>
+                <if test="upWrapper.roleId != null">
+                    `role_id` = #{upWrapper.roleId},
+                </if>
+                <if test="upWrapper.permissionId != null">
+                    `permission_id` = #{upWrapper.permissionId},
+                </if>
+                <if test="upWrapper.ts != null">
+                    `ts` = #{upWrapper.ts},
+                </if>
+            </if>
+        </set>
+        <include refid="where"/>
+    </update>
+
+</mapper>

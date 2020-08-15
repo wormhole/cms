@@ -1,42 +1,42 @@
 package net.stackoverflow.cms.service;
 
-import net.stackoverflow.cms.common.Page;
-import net.stackoverflow.cms.model.entity.Permission;
-import net.stackoverflow.cms.model.entity.Role;
+import net.stackoverflow.cms.common.PageResponse;
+import net.stackoverflow.cms.model.dto.GrantRoleDTO;
+import net.stackoverflow.cms.model.dto.PermissionDTO;
+import net.stackoverflow.cms.model.dto.RoleDTO;
+import net.stackoverflow.cms.model.dto.UserDTO;
 import net.stackoverflow.cms.model.entity.User;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * 用户服务接口
+ *
+ * @author 凉衫薄
+ */
 public interface UserService {
-
-    List<User> findByPage(Page page);
-
-    List<User> findByCondition(Map<String, Object> condition);
-
-    List<User> findByIds(List<String> ids);
-
-    User findByUsername(String username);
 
     User findById(String id);
 
+    User findByUsername(String username);
+
+    List<RoleDTO> findRoleByUserId(String userId);
+
+    List<PermissionDTO> findPermissionByUserId(String userId);
+
+    void save(UserDTO dto);
+
+    void updateBase(UserDTO dto);
+
+    void updatePassword(String id, String oldPassword, String newPassword);
+
+    PageResponse<UserDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> roleIds);
+
+    void deleteByIds(List<String> ids);
+
+    void updateEnable(List<String> ids, Integer enable);
+
+    void reGrandRole(GrantRoleDTO dto);
+
     Integer count();
-
-    void save(User user);
-
-    void batchDelete(List<String> ids);
-
-    void update(User user);
-
-    void batchUpdate(List<User> users);
-
-    void grantRole(String userId, String roleId);
-
-    void reGrantRole(String userId, List<String> roleIds);
-
-    List<Role> findRoleByUserId(String userId);
-
-    List<Permission> findPermissionByUserId(String userId);
-
-    void saveWithRole(User user, String role);
 }

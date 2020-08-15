@@ -32,17 +32,14 @@ public class ExceptionController {
      * @return
      */
     @ExceptionHandler(value = ConstraintViolationException.class)
-    public ResponseEntity ConstraintViolationException(ConstraintViolationException e) {
+    public ResponseEntity<Result<Object>> ConstraintViolationException(ConstraintViolationException e) {
         log.error(e.getMessage(), e);
         StringBuilder sb = new StringBuilder();
         e.getConstraintViolations().forEach(violation -> {
             sb.append(violation.getMessageTemplate() + "，");
         });
 
-        Result result = new Result();
-        result.setStatus(Result.Status.FAILURE);
-        result.setMessage(sb.substring(0, sb.length() - 1));
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.failure(sb.substring(0, sb.length() - 1)));
     }
 
     /**
@@ -52,19 +49,15 @@ public class ExceptionController {
      * @return
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity MethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<Result<Map<String, String>>> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        Result result = new Result();
         Map<String, String> map = new HashMap<>();
         BindingResult br = e.getBindingResult();
         List<FieldError> fes = br.getFieldErrors();
         fes.forEach(fe -> {
             map.put(fe.getField(), fe.getDefaultMessage());
         });
-        result.setStatus(Result.Status.FAILURE);
-        result.setMessage("字段校验失败");
-        result.setData(map);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.failure("字段校验失败", map));
     }
 
     /**
@@ -74,14 +67,9 @@ public class ExceptionController {
      * @return
      */
     @ExceptionHandler(value = BusinessException.class)
-    public ResponseEntity businessException(BusinessException e) {
+    public ResponseEntity<Result<Object>> businessException(BusinessException e) {
         log.error(e.getMessage());
-
-        Result result = new Result();
-        result.setStatus(Result.Status.FAILURE);
-        result.setMessage(e.getMessage());
-        result.setData(e.getData());
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.failure(e.getMessage(), e.getData()));
     }
 
     /**
@@ -91,11 +79,8 @@ public class ExceptionController {
      * @return
      */
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity exception(Exception e) {
+    public ResponseEntity<Result<Object>> exception(Exception e) {
         log.error(e.getMessage(), e);
-        Result result = new Result();
-        result.setStatus(Result.Status.FAILURE);
-        result.setMessage(e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.failure(e.getMessage()));
     }
 }

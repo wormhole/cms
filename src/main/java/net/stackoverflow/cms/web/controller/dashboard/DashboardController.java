@@ -40,11 +40,9 @@ public class DashboardController extends BaseController {
      *
      * @return
      */
-    @GetMapping(value = "/info")
-    public ResponseEntity info() throws SigarException {
-        Result result = new Result();
-
-        Map<String, Object> map = new HashMap<>(16);
+    @GetMapping
+    public ResponseEntity<Result<Map<String, Object>>> dashboard() throws SigarException {
+        Map<String, Object> map = new HashMap<>();
 
         //获取用户,角色,权限数量
         Map<String, Integer> countMap = new HashMap<>(16);
@@ -118,10 +116,7 @@ public class DashboardController extends BaseController {
         map.put("disk", diskMap);
         map.put("net", netMap);
 
-        result.setMessage("success");
-        result.setData(map);
-        result.setStatus(Result.Status.SUCCESS);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", map));
 
     }
 }

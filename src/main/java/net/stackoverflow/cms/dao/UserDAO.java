@@ -1,20 +1,25 @@
 package net.stackoverflow.cms.dao;
 
-import net.stackoverflow.cms.common.Page;
+import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.model.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * (User)表数据库访问层
+ *
+ * @author 凉衫薄
+ * @since 2020-08-15 14:24:21
+ */
 @Mapper
 public interface UserDAO {
 
-    List<User> selectByPage(Page page);
-
-    List<User> selectByCondition(Map<String, Object> condition);
+    int countByCondition(QueryWrapper wrapper);
 
     User select(String id);
+
+    List<User> selectByCondition(QueryWrapper wrapper);
 
     int insert(User user);
 
@@ -24,7 +29,11 @@ public interface UserDAO {
 
     int batchDelete(List<String> ids);
 
+    int deleteByCondition(QueryWrapper wrapper);
+
     int update(User user);
 
     int batchUpdate(List<User> users);
+
+    int updateByCondition(QueryWrapper wrapper);
 }

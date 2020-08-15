@@ -1,33 +1,26 @@
 package net.stackoverflow.cms.service;
 
-import net.stackoverflow.cms.common.Page;
-import net.stackoverflow.cms.model.entity.Permission;
-import net.stackoverflow.cms.model.entity.Role;
+import net.stackoverflow.cms.common.PageResponse;
+import net.stackoverflow.cms.model.dto.PermissionDTO;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * 权限服务接口
+ *
+ * @author 凉衫薄
+ */
 public interface PermissionService {
 
-    List<Permission> findByPage(Page page);
+    List<PermissionDTO> findAll();
 
-    List<Permission> findByCondition(Map<String, Object> condition);
+    PageResponse<PermissionDTO> findByPage(Integer page, Integer limit, String sort, String order, String key);
 
-    Permission findByName(String name);
+    void deleteByIds(List<String> ids);
 
-    List<Permission> findAll();
+    void update(PermissionDTO permissionDTO);
 
-    Permission findById(String id);
-
-    List<Permission> findByIds(List<String> ids);
+    void save(PermissionDTO permissionDTO);
 
     Integer count();
-
-    void save(Permission permission);
-
-    void batchDelete(List<String> ids);
-
-    void update(Permission permission);
-
-    List<Role> findRoleByPermissionIds(List<String> permissionIds);
 }
