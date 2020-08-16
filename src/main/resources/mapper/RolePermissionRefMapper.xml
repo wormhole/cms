@@ -59,13 +59,13 @@
                     </foreach>
                 </if>
                 <if test="inWrapper.roleId != null and inWrapper.roleId.size() > 0">
-                    and `roleId` in
+                    and `role_id` in
                     <foreach collection="inWrapper.roleId" item="roleId" open="(" separator="," close=")">
                         #{roleId}
                     </foreach>
                 </if>
                 <if test="inWrapper.permissionId != null and inWrapper.permissionId.size() > 0">
-                    and `permissionId` in
+                    and `permission_id` in
                     <foreach collection="inWrapper.permissionId" item="permissionId" open="(" separator="," close=")">
                         #{permissionId}
                     </foreach>
@@ -85,13 +85,13 @@
                     </foreach>
                 </if>
                 <if test="ninWrapper.roleId != null and ninWrapper.roleId.size() > 0">
-                    and `roleId` not in
+                    and `role_id` not in
                     <foreach collection="ninWrapper.roleId" item="roleId" open="(" separator="," close=")">
                         #{roleId}
                     </foreach>
                 </if>
                 <if test="ninWrapper.permissionId != null and ninWrapper.permissionId.size() > 0">
-                    and `permissionId` not in
+                    and `permission_id` not in
                     <foreach collection="ninWrapper.permissionId" item="permissionId" open="(" separator="," close=")">
                         #{permissionId}
                     </foreach>
@@ -225,5 +225,4 @@
         </set>
         <include refid="where"/>
     </update>
-
 </mapper>

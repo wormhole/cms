@@ -91,7 +91,7 @@
                     </foreach>
                 </if>
                 <if test="inWrapper.userId != null and inWrapper.userId.size() > 0">
-                    and `userId` in
+                    and `user_id` in
                     <foreach collection="inWrapper.userId" item="userId" open="(" separator="," close=")">
                         #{userId}
                     </foreach>
@@ -129,7 +129,7 @@
                     </foreach>
                 </if>
                 <if test="ninWrapper.userId != null and ninWrapper.userId.size() > 0">
-                    and `userId` not in
+                    and `user_id` not in
                     <foreach collection="ninWrapper.userId" item="userId" open="(" separator="," close=")">
                         #{userId}
                     </foreach>
@@ -281,5 +281,4 @@
         </set>
         <include refid="where"/>
     </update>
-
 </mapper>

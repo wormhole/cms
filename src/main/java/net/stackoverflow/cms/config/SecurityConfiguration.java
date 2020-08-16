@@ -67,7 +67,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
                 .rememberMeParameter("rememberMe");
         http.authorizeRequests()
-                .antMatchers("/login/**", "/register", "/code").permitAll()
                 .antMatchers("/home/**").authenticated()
                 .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/personal/**").authenticated()

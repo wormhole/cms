@@ -1,7 +1,9 @@
 package net.stackoverflow.cms.security;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.constant.RedisPrefixConst;
+import net.stackoverflow.cms.exception.TokenException;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.TokenUtils;
@@ -21,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,24 +50,30 @@ public class CmsTokenFilter extends OncePerRequestFilter {
 
         String token = TokenUtils.obtainToken(request);
         if (token != null) {
-            Authentication authentication = (Authentication) redisTemplate.opsForValue().get(RedisPrefixConst.TOKEN_PREFIX + token);
-            if (authentication != null) {
-                CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
-                User user = userService.findById(userDetails.getUser().getId());
-                if (user != null) {
-                    CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                            details, null, details.getAuthorities());
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    log.info("token认证成功:{}", details.getUsername());
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    redisTemplate.expire(RedisPrefixConst.TOKEN_PREFIX + token, 30, TimeUnit.MINUTES);
+            Map<String, String> jwt = null;
+            try {
+                jwt = TokenUtils.parseToken(token);
+                Authentication authentication = (Authentication) redisTemplate.opsForValue().get(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"));
+                if (authentication != null) {
+                    CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
+                    User user = userService.findById(userDetails.getUser().getId());
+                    if (user != null) {
+                        CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
+                        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                                details, null, details.getAuthorities());
+                        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        log.info("token认证成功:{}", details.getUsername());
+                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                        redisTemplate.expire(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"), 30, TimeUnit.MINUTES);
+                    } else {
+                        log.error("token认证失败:{}", token);
+                        redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"));
+                    }
                 } else {
-                    log.error("token认证失败:{}", token);
-                    redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + token);
+                    log.error("token不存在:{}", token);
                 }
-            } else {
-                log.error("token不存在:{}", token);
+            } catch (JsonProcessingException | TokenException e) {
+                log.error("解析token异常", e);
             }
         }
         doFilter(request, response, filterChain);

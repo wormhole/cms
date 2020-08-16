@@ -30,7 +30,7 @@ public class LoginController extends BaseController {
      *
      * @return
      */
-    @GetMapping("/properties/remember")
+    @GetMapping("/property/remember")
     public ResponseEntity<Result<String>> isRememberMe() {
         PropertyDTO propertyDTO = propertyService.findByKey("rememberMe");
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", propertyDTO.getValue()));

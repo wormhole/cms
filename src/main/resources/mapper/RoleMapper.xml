@@ -253,5 +253,4 @@
         </set>
         <include refid="where"/>
     </update>
-
 </mapper>

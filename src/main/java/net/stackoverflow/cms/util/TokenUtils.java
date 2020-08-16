@@ -1,15 +1,21 @@
 package net.stackoverflow.cms.util;
 
-import org.springframework.util.DigestUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
+import net.stackoverflow.cms.exception.TokenException;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * token工具类
  *
  * @author 凉衫薄
  */
+@Slf4j
 public class TokenUtils {
 
     private static final String TOKEN_PREFIX = "Bearer";
@@ -37,12 +43,26 @@ public class TokenUtils {
      * @param id
      * @return
      */
-    public static String generateToken(String id) {
-        String salt = String.valueOf(System.currentTimeMillis());
-        String md5 = DigestUtils.md5DigestAsHex((id + salt).getBytes());
-        StringBuilder sb = new StringBuilder();
-        sb.append(id.replace("-", ""));
-        sb.append(md5);
-        return sb.toString();
+    public static Map<String, String> generateToken(String id) {
+        Map<String, String> jwt = new HashMap<>(16);
+        jwt.put("uid", id);
+        jwt.put("ts", String.valueOf(System.currentTimeMillis()));
+        return jwt;
+    }
+
+    /**
+     * 解析json
+     *
+     * @param token
+     * @return
+     * @throws JsonProcessingException
+     */
+    public static Map<String, String> parseToken(String token) throws JsonProcessingException, TokenException {
+        String base64 = new String(Base64.getDecoder().decode(token));
+        Map<String, String> jwt = (Map<String, String>) JsonUtils.json2bean(base64, Map.class);
+        if (jwt.get("uid") == null || jwt.get("ts") == null) {
+            throw new TokenException("token解析异常");
+        }
+        return jwt;
     }
 }
