@@ -120,7 +120,7 @@ public class UserController extends BaseController {
         List<RoleDTO> targetRoles = userService.findRoleByUserId(id);
         List<RoleDTO> allRoles = roleService.findAll();
 
-        Map<String, List<RoleDTO>> retMap = new HashMap<>();
+        Map<String, List<RoleDTO>> retMap = new HashMap<>(16);
         retMap.put("target", targetRoles);
         retMap.put("all", allRoles);
 

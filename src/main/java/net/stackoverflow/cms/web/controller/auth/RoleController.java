@@ -99,7 +99,7 @@ public class RoleController extends BaseController {
         List<PermissionDTO> targetPermissions = roleService.findPermissionByRoleId(id);
         List<PermissionDTO> allPermissions = permissionService.findAll();
 
-        Map<String, List<PermissionDTO>> retMap = new HashMap<>();
+        Map<String, List<PermissionDTO>> retMap = new HashMap<>(16);
         retMap.put("target", targetPermissions);
         retMap.put("all", allPermissions);
 

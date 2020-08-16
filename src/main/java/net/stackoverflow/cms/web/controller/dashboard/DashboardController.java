@@ -42,7 +42,7 @@ public class DashboardController extends BaseController {
      */
     @GetMapping
     public ResponseEntity<Result<Map<String, Object>>> dashboard() throws SigarException {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
 
         //获取用户,角色,权限数量
         Map<String, Integer> countMap = new HashMap<>(16);
@@ -98,7 +98,7 @@ public class DashboardController extends BaseController {
         diskMap.put("percent", FormatUtils.doubleFormat(diskUsedPercent * 100, 2) + "%");
 
         //网络信息
-        Map<String, Object> netMap = new HashMap<>();
+        Map<String, Object> netMap = new HashMap<>(16);
         double upload = 0D;
         double download = 0D;
         String[] ifNames = sigar.getNetInterfaceList();

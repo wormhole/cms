@@ -51,7 +51,7 @@ public class ExceptionController {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<Result<Map<String, String>>> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>(16);
         BindingResult br = e.getBindingResult();
         List<FieldError> fes = br.getFieldErrors();
         fes.forEach(fe -> {

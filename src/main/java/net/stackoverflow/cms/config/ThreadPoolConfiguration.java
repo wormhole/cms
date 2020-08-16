@@ -1,7 +1,7 @@
 package net.stackoverflow.cms.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
  * @author 凉衫薄
  */
 @Configuration
-public class ThreadPoolConfiguration implements AsyncConfigurer {
+public class ThreadPoolConfiguration {
 
-    @Override
+    @Bean("threadPool")
     public Executor getAsyncExecutor() {
         return new ThreadPoolExecutor(10, 30, 60, TimeUnit.MINUTES, new LinkedBlockingDeque<>(10));
     }

@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public PageResponse<UserDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> roleIds) {
         Set<String> userIds = new HashSet<>();
         if (!CollectionUtils.isEmpty(roleIds)) {
@@ -236,8 +236,9 @@ public class UserServiceImpl implements UserService {
     public void updateEnable(List<String> ids, Integer enable) {
         List<User> users = userDAO.selectByCondition(new QueryWrapperBuilder().in("id", ids.toArray()).build());
         for (User user : users) {
-            if (user.getBuiltin().equals(1))
+            if (user.getBuiltin().equals(1)) {
                 throw new BusinessException("超级管理员不允许被操作");
+            }
         }
 
         QueryWrapperBuilder builder = new QueryWrapperBuilder();

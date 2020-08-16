@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 主页控制器
@@ -42,14 +39,15 @@ public class HomeController extends BaseController {
     @GetMapping(value = "/config")
     public ResponseEntity<Result<Map<String, String>>> config() {
 
-        List<PropertyDTO> propertyDTOS = propertyService.findAll();
-        Map<String, String> map = new HashMap<>();
+        List<PropertyDTO> propertyDTOS = propertyService.findByKeys(Arrays.asList("title", "head", "copyright", "rememberMe"));
+        Map<String, String> map = new HashMap<>(16);
         for (PropertyDTO propertyDTO : propertyDTOS) {
-            if (propertyDTO.getKey().equals("head")) {
-                if (propertyDTO.getValue().equals("default"))
+            if ("head".equals(propertyDTO.getKey())) {
+                if ("default".equals(propertyDTO.getValue())) {
                     map.put(propertyDTO.getKey(), "/head.jpg");
-                else
+                } else {
                     map.put(propertyDTO.getKey(), UploadPathConst.PREFIX + propertyDTO.getValue());
+                }
             } else {
                 map.put(propertyDTO.getKey(), propertyDTO.getValue());
             }

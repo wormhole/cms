@@ -24,7 +24,7 @@ import java.io.IOException;
 @Slf4j
 public class CmsVerifyCodeFilter extends OncePerRequestFilter {
 
-    private static final PathMatcher pathMatcher = new AntPathMatcher();
+    private final PathMatcher pathMatcher = new AntPathMatcher();
 
     @Autowired
     private CmsAuthenticationFailureHandler authenticationFailureHandler;
