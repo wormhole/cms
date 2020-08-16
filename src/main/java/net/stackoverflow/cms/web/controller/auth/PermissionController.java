@@ -21,7 +21,7 @@ import javax.validation.constraints.Min;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/auth/permission")
+@RequestMapping(value = "/auth/permission_manage")
 @Slf4j
 @Validated
 public class PermissionController extends BaseController {
@@ -39,7 +39,7 @@ public class PermissionController extends BaseController {
      * @param key
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/permissions")
     public ResponseEntity<Result<PageResponse<PermissionDTO>>> list(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
@@ -58,7 +58,7 @@ public class PermissionController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @DeleteMapping
+    @DeleteMapping(value = "/permissions")
     public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
         permissionService.deleteByIds(idsDTO.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -71,7 +71,7 @@ public class PermissionController extends BaseController {
      * @param permissionDTO
      * @return
      */
-    @PutMapping
+    @PutMapping(value = "/permission")
     public ResponseEntity<Result<Object>> update(@RequestBody @Validated(PermissionDTO.Update.class) PermissionDTO permissionDTO) {
         permissionService.update(permissionDTO);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -83,7 +83,7 @@ public class PermissionController extends BaseController {
      * @param permissionDTO
      * @return
      */
-    @PostMapping
+    @PostMapping(value = "/permission")
     public ResponseEntity<Result<Object>> add(@RequestBody @Validated(PermissionDTO.Insert.class) PermissionDTO permissionDTO) {
         permissionService.save(permissionDTO);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));

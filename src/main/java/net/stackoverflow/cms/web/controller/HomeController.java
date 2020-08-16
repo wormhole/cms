@@ -36,8 +36,8 @@ public class HomeController extends BaseController {
      *
      * @return
      */
-    @GetMapping(value = "/config")
-    public ResponseEntity<Result<Map<String, String>>> config() {
+    @GetMapping(value = "/properties")
+    public ResponseEntity<Result<Map<String, String>>> properties() {
 
         List<PropertyDTO> propertyDTOS = propertyService.findByKeys(Arrays.asList("title", "head", "copyright", "rememberMe"));
         Map<String, String> map = new HashMap<>(16);

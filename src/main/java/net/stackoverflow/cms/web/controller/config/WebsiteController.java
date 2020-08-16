@@ -44,7 +44,7 @@ public class WebsiteController extends BaseController {
      *
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/properties")
     public ResponseEntity<Result<Map<String, String>>> list() {
         List<PropertyDTO> propertyDTOS = propertyService.findByKeys(Arrays.asList("title", "copyright", "head", "rememberMe"));
         Map<String, String> map = new HashMap<>(16);
@@ -68,7 +68,7 @@ public class WebsiteController extends BaseController {
      * @param propertyDTOS
      * @return
      */
-    @PutMapping(value = "/update")
+    @PutMapping(value = "/properties")
     public ResponseEntity<Result<Object>> update(@RequestBody @NotEmpty(message = "参数不能为空") List<PropertyDTO> propertyDTOS) {
         propertyService.batchUpdateByKey(propertyDTOS);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -81,7 +81,7 @@ public class WebsiteController extends BaseController {
      * @param file
      * @return
      */
-    @PostMapping(value = "/head")
+    @PutMapping(value = "/head")
     public ResponseEntity<Result<Object>> head(@RequestParam("file") MultipartFile file) throws IOException {
         uploadService.updateHead(file, super.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));

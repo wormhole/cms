@@ -26,7 +26,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/auth/user")
+@RequestMapping(value = "/auth/user_manage")
 @Slf4j
 @Validated
 public class UserController extends BaseController {
@@ -47,7 +47,7 @@ public class UserController extends BaseController {
      * @param key
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/users")
     public ResponseEntity<Result<PageResponse<UserDTO>>> list(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
@@ -65,7 +65,7 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @DeleteMapping
+    @DeleteMapping(value = "/users")
     public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
         userService.deleteByIds(idsDTO.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -77,7 +77,7 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @PutMapping(value = "/enabled")
+    @PutMapping(value = "/user/enabled")
     public ResponseEntity<Result<Object>> enabled(@RequestBody @Validated IdsDTO idsDTO) {
         userService.updateEnable(idsDTO.getIds(), 1);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -90,7 +90,7 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @PutMapping(value = "/disabled")
+    @PutMapping(value = "/user/disabled")
     public ResponseEntity<Result<Object>> disabled(@RequestBody @Validated IdsDTO idsDTO) {
         userService.updateEnable(idsDTO.getIds(), 0);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -147,7 +147,7 @@ public class UserController extends BaseController {
      * @param userDTO
      * @return
      */
-    @PutMapping
+    @PutMapping(value = "/user")
     public ResponseEntity<Result<Object>> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO) {
 
         userService.updateBase(userDTO);
@@ -160,7 +160,7 @@ public class UserController extends BaseController {
      * @param passwordDTO
      * @return
      */
-    @PutMapping(value = "/password")
+    @PutMapping(value = "/user/password")
     public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Admin.class) PasswordDTO passwordDTO) {
 
         if (!passwordDTO.getNewPassword().equals(passwordDTO.getCheckPassword())) {
@@ -177,7 +177,7 @@ public class UserController extends BaseController {
      * @param userDTO
      * @return
      */
-    @PostMapping
+    @PostMapping(value = "/user")
     public ResponseEntity<Result<Object>> add(@RequestBody @Validated(UserDTO.Insert.class) UserDTO userDTO) {
         userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));

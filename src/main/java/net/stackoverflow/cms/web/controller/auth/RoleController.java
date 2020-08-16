@@ -28,7 +28,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/auth/role")
+@RequestMapping(value = "/auth/role_manage")
 @Slf4j
 @Validated
 public class RoleController extends BaseController {
@@ -49,7 +49,7 @@ public class RoleController extends BaseController {
      * @param key
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/roles")
     public ResponseEntity<Result<PageResponse<RoleDTO>>> list(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
@@ -80,7 +80,7 @@ public class RoleController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @DeleteMapping
+    @DeleteMapping(value = "/roles")
     public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
         roleService.deleteByIds(idsDTO.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -127,7 +127,7 @@ public class RoleController extends BaseController {
      * @param roleDTO
      * @return
      */
-    @PutMapping
+    @PutMapping(value = "/role")
     public ResponseEntity<Result<Object>> update(@RequestBody @Validated(RoleDTO.Update.class) RoleDTO roleDTO) {
 
         roleService.update(roleDTO);
@@ -141,7 +141,7 @@ public class RoleController extends BaseController {
      * @param roleDTO
      * @return
      */
-    @PostMapping
+    @PostMapping(value = "/role")
     public ResponseEntity<Result<Object>> add(@RequestBody @Validated(RoleDTO.Insert.class) RoleDTO roleDTO) {
         roleService.save(roleDTO);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));

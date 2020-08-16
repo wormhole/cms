@@ -27,8 +27,8 @@ public class PersonalController extends BaseController {
      *
      * @return
      */
-    @GetMapping
-    public ResponseEntity<Result<UserDTO>> info() {
+    @GetMapping(value = "/user")
+    public ResponseEntity<Result<UserDTO>> user() {
         User user = userService.findById(super.getUserId());
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(user, userDTO);
@@ -43,7 +43,7 @@ public class PersonalController extends BaseController {
      * @param dto
      * @return
      */
-    @PutMapping
+    @PutMapping(value = "/user")
     public ResponseEntity<Result<Object>> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO dto) {
         dto.setId(super.getUserId());
         userService.updateBase(dto);
@@ -56,7 +56,7 @@ public class PersonalController extends BaseController {
      * @param dto
      * @return
      */
-    @PutMapping(value = "/password")
+    @PutMapping(value = "/user/password")
     public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Personal.class) PasswordDTO dto) {
         if (!dto.getNewPassword().equals(dto.getCheckPassword())) {
             return ResponseEntity.status(HttpStatus.OK).body(Result.failure("两次密码不一致"));

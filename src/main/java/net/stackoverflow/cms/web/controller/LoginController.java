@@ -3,7 +3,7 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.model.entity.Property;
+import net.stackoverflow.cms.model.dto.PropertyDTO;
 import net.stackoverflow.cms.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,9 +30,9 @@ public class LoginController extends BaseController {
      *
      * @return
      */
-    @GetMapping("/remember")
+    @GetMapping("/properties/remember")
     public ResponseEntity<Result<String>> isRememberMe() {
-        Property property = propertyService.findByKey("rememberMe");
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", property.getValue()));
+        PropertyDTO propertyDTO = propertyService.findByKey("rememberMe");
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", propertyDTO.getValue()));
     }
 }

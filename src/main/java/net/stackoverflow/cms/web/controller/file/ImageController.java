@@ -39,7 +39,7 @@ public class ImageController extends BaseController {
      * @param key
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/uploads")
     public ResponseEntity<Result<PageResponse<UploadDTO>>> list(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
@@ -58,10 +58,9 @@ public class ImageController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @DeleteMapping
+    @DeleteMapping(value = "/uploads")
     public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
         uploadService.deleteByIds(idsDTO.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
-
     }
 }
