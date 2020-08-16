@@ -95,10 +95,11 @@ public class UploadServiceImpl implements UploadService {
             dto.setUrl(UploadPathConst.PREFIX + dto.getPath());
             dto.setUsername(userService.findById(dto.getUserId()).getUsername());
             String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + dto.getPath();
-            if (SysUtils.isWin())
+            if (SysUtils.isWin()) {
                 path = path.replace("/", "\\");
-            else
+            } else {
                 path = path.replace("\\", "/");
+            }
             dto.setPath(path);
             uploadDTOS.add(dto);
         }

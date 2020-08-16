@@ -1,7 +1,6 @@
 package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.model.dto.PropertyDTO;
-import net.stackoverflow.cms.model.entity.Property;
 
 import java.util.List;
 
@@ -12,11 +11,11 @@ import java.util.List;
  */
 public interface PropertyService {
 
-    Property findByKey(String key);
+    PropertyDTO findByKey(String key);
 
-    List<PropertyDTO> findAll();
+    List<PropertyDTO> findByKeys(List<String> keys);
 
-    void update(List<PropertyDTO> propertyDTOS);
+    void batchUpdateByKey(List<PropertyDTO> propertyDTOS);
 
     void updateByKey(String key, String value);
 }

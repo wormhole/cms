@@ -1,7 +1,6 @@
 package net.stackoverflow.cms.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.dao.PropertyDAO;
 import net.stackoverflow.cms.model.dto.PropertyDTO;
@@ -32,42 +31,46 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Property findByKey(String key) {
-        Property property = null;
+    public PropertyDTO findByKey(String key) {
+        PropertyDTO propertyDTO = null;
         if (!StringUtils.isEmpty(key)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.eq("key", key);
             List<Property> properties = propertyDAO.selectByCondition(builder.build());
             if (!CollectionUtils.isEmpty(properties)) {
-                property = properties.get(0);
+                Property property = properties.get(0);
+                propertyDTO = new PropertyDTO();
+                BeanUtils.copyProperties(property, propertyDTO);
             }
         }
-        return property;
+        return propertyDTO;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<PropertyDTO> findAll() {
-        List<Property> properties = propertyDAO.selectByCondition(new QueryWrapper());
+    public List<PropertyDTO> findByKeys(List<String> keys) {
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.in("key", keys.toArray());
+        List<Property> properties = propertyDAO.selectByCondition(builder.build());
         List<PropertyDTO> propertyDTOS = new ArrayList<>();
-        for (Property property : properties) {
+        properties.forEach(property -> {
             PropertyDTO propertyDTO = new PropertyDTO();
             BeanUtils.copyProperties(property, propertyDTO);
             propertyDTOS.add(propertyDTO);
-        }
+        });
         return propertyDTOS;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(List<PropertyDTO> propertyDTOS) {
+    public void batchUpdateByKey(List<PropertyDTO> propertyDTOS) {
         for (PropertyDTO propertyDTO : propertyDTOS) {
             updateByKey(propertyDTO.getKey(), propertyDTO.getValue());
         }
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateByKey(String key, String value) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.update("value", value);

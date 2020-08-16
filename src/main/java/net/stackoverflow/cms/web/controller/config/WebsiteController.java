@@ -16,10 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 网站配置接口
@@ -49,14 +46,15 @@ public class WebsiteController extends BaseController {
      */
     @GetMapping(value = "/list")
     public ResponseEntity<Result<Map<String, String>>> list() {
-        List<PropertyDTO> propertyDTOS = propertyService.findAll();
-        Map<String, String> map = new HashMap<>();
+        List<PropertyDTO> propertyDTOS = propertyService.findByKeys(Arrays.asList("title", "copyright", "head", "rememberMe"));
+        Map<String, String> map = new HashMap<>(16);
         for (PropertyDTO propertyDTO : propertyDTOS) {
-            if (propertyDTO.getKey().equals("head")) {
-                if (propertyDTO.getValue().equals("default"))
+            if ("head".equals(propertyDTO.getKey())) {
+                if ("default".equals(propertyDTO.getValue())) {
                     map.put(propertyDTO.getKey(), "/head.jpg");
-                else
+                } else {
                     map.put(propertyDTO.getKey(), UploadPathConst.PREFIX + propertyDTO.getValue());
+                }
             } else {
                 map.put(propertyDTO.getKey(), propertyDTO.getValue());
             }
@@ -72,7 +70,7 @@ public class WebsiteController extends BaseController {
      */
     @PutMapping(value = "/update")
     public ResponseEntity<Result<Object>> update(@RequestBody @NotEmpty(message = "参数不能为空") List<PropertyDTO> propertyDTOS) {
-        propertyService.update(propertyDTOS);
+        propertyService.batchUpdateByKey(propertyDTOS);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
 
     }
@@ -119,19 +117,16 @@ public class WebsiteController extends BaseController {
         propertyDTOS.add(head);
         propertyDTOS.add(rememberMe);
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>(16);
         for (PropertyDTO propertyDTO : propertyDTOS) {
-            if (propertyDTO.getKey().equals("head")) {
-                if (propertyDTO.getValue().equals("default"))
-                    map.put(propertyDTO.getKey(), "/head.jpg");
-                else
-                    map.put(propertyDTO.getKey(), UploadPathConst.PREFIX + propertyDTO.getValue());
+            if ("head".equals(propertyDTO.getKey())) {
+                map.put(propertyDTO.getKey(), "/head.jpg");
             } else {
                 map.put(propertyDTO.getKey(), propertyDTO.getValue());
             }
         }
 
-        propertyService.update(propertyDTOS);
+        propertyService.batchUpdateByKey(propertyDTOS);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", map));
     }
 }
