@@ -45,7 +45,7 @@ public class CmsAuthenticationSuccessHandler implements AuthenticationSuccessHan
             ttl = redisTemplate.getExpire(RedisPrefixConst.LOCK_PREFIX + user.getId() + ":" + request.getRemoteAddr());
             result = Result.failure("该用户已被锁定，剩余时间：" + ttl + "秒");
         } else {
-            Integer count = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + user.getId()).size();
+            Integer count = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + user.getId() + ":*").size();
             if (count < user.getLimit()) {
                 Map<String, String> jwt = TokenUtils.generateToken(user.getId());
                 redisTemplate.delete(RedisPrefixConst.FAILURE_PREFIX + user.getId() + ":" + request.getRemoteAddr());
