@@ -65,6 +65,7 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
                         redisTemplate.delete(RedisPrefixConst.FAILURE_PREFIX + user.getId() + ":" + request.getRemoteAddr());
                         result = Result.failure("登录失败次数超过" + user.getFailure() + "次，已被锁定");
                     } else {
+                        redisTemplate.expire(RedisPrefixConst.FAILURE_PREFIX + user.getId() + ":" + request.getRemoteAddr(), 3, TimeUnit.MINUTES);
                         result = Result.failure("登录失败" + count + "次，还有" + (user.getFailure() - count) + "次机会");
                     }
                 }

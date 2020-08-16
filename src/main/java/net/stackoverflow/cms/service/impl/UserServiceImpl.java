@@ -131,6 +131,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(dto, user);
         user.setId(UUID.randomUUID().toString());
         user.setBuiltin(0);
+        user.setEnable(1);
         user.setTs(new Date());
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userDAO.insert(user);
@@ -256,7 +257,9 @@ public class UserServiceImpl implements UserService {
         for (String roleId : dto.getRoleIds()) {
             userRoleRefs.add(new UserRoleRef(UUID.randomUUID().toString(), dto.getUserId(), roleId, new Date()));
         }
-        userRoleRefDAO.batchInsert(userRoleRefs);
+        if (!CollectionUtils.isEmpty(userRoleRefs)) {
+            userRoleRefDAO.batchInsert(userRoleRefs);
+        }
     }
 
     @Override

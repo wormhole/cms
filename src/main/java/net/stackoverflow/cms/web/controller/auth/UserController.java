@@ -76,7 +76,7 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @PutMapping(value = "/user/enabled")
+    @PutMapping(value = "/users/enabled")
     public ResponseEntity<Result<Object>> enabled(@RequestBody @Validated IdsDTO idsDTO) {
         userService.updateEnable(idsDTO.getIds(), 1);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
@@ -89,7 +89,7 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @PutMapping(value = "/user/disabled")
+    @PutMapping(value = "/users/disabled")
     public ResponseEntity<Result<Object>> disabled(@RequestBody @Validated IdsDTO idsDTO) {
         userService.updateEnable(idsDTO.getIds(), 0);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));

@@ -133,7 +133,9 @@ public class RoleServiceImpl implements RoleService {
         permissionIds.forEach(permissionId -> {
             rolePermissionRefs.add(new RolePermissionRef(UUID.randomUUID().toString(), roleId, permissionId, new Date()));
         });
-        rolePermissionRefDAO.batchInsert(rolePermissionRefs);
+        if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
+            rolePermissionRefDAO.batchInsert(rolePermissionRefs);
+        }
     }
 
     @Override
