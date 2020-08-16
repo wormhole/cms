@@ -80,6 +80,7 @@ public class HomeController extends BaseController {
                 permissions.add(authority);
             }
         });
+        authorityDTO.setUsername(userDetails.getUsername());
         authorityDTO.setRoles(roles);
         authorityDTO.setPermissions(permissions);
 
