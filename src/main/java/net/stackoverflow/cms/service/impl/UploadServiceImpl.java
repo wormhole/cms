@@ -66,6 +66,7 @@ public class UploadServiceImpl implements UploadService {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.update("value", upload.getPath());
         builder.update("ts", new Date());
+        builder.update("type", FileTypeConst.T_IMAGE);
         builder.eq("key", "head");
         propertyDAO.updateByCondition(builder.build());
     }
@@ -79,7 +80,7 @@ public class UploadServiceImpl implements UploadService {
         } else {
             builder.sort(sort, order);
         }
-        builder.eq("type", FileTypeConst.IMAGE);
+        builder.eq("type", FileTypeConst.T_IMAGE);
         builder.eq("userId", userId);
         builder.like(!StringUtils.isEmpty(key), key, Arrays.asList("name", "path"));
         builder.page((page - 1) * limit, limit);

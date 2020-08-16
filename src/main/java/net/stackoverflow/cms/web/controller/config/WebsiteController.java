@@ -81,7 +81,7 @@ public class WebsiteController extends BaseController {
      * @param file
      * @return
      */
-    @PutMapping(value = "/head")
+    @PostMapping(value = "/head")
     public ResponseEntity<Result<Object>> head(@RequestParam("file") MultipartFile file) throws IOException {
         uploadService.updateHead(file, super.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
