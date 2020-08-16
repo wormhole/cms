@@ -3,6 +3,7 @@ package net.stackoverflow.cms.security;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.constant.RedisPrefixConst;
+import net.stackoverflow.cms.exception.TokenException;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.util.JsonUtils;
 import net.stackoverflow.cms.util.TokenUtils;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * 注销成功handler
@@ -36,9 +38,14 @@ public class CmsLogoutSuccessHandler implements LogoutSuccessHandler {
         CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
         User user = userDetails.getUser();
         String token = TokenUtils.obtainToken(request);
-
         if (token != null) {
-            redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + user.getId() + ":" + token);
+            Map<String, String> jwt = null;
+            try {
+                jwt = TokenUtils.parseToken(token);
+                redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + user.getId() + ":" + jwt.get("uid") + ":" + jwt.get("ts"));
+            } catch (TokenException e) {
+                log.info("解析token异常", e);
+            }
         }
 
         Result<Object> result = Result.success("注销成功");

@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
     public void updatePassword(String id, String oldPassword, String newPassword) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = userDAO.select(id);
-        if (!encoder.encode(oldPassword).equals(user.getPassword())) {
+        if (!encoder.matches(oldPassword, user.getPassword())) {
             throw new BusinessException("旧密码不匹配");
         }
 
