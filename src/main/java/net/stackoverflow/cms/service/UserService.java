@@ -30,6 +30,8 @@ public interface UserService {
 
     void updatePassword(String id, String oldPassword, String newPassword);
 
+    void updatePassword(String id, String password);
+
     PageResponse<UserDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> roleIds);
 
     void deleteByIds(List<String> ids);

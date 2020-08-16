@@ -176,6 +176,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void updatePassword(String id, String password) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = userDAO.select(id);
+        password = encoder.encode(password);
+
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.update("password", password);
+        builder.update("ts", new Date());
+        builder.eq("id", user.getId());
+        userDAO.updateByCondition(builder.build());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public PageResponse<UserDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> roleIds) {
         Set<String> userIds = new HashSet<>();
         if (!CollectionUtils.isEmpty(roleIds)) {

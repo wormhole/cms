@@ -161,7 +161,7 @@ public class UserController extends BaseController {
      */
     @PutMapping(value = "/user/password")
     public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Admin.class) PasswordDTO passwordDTO) {
-        userService.updatePassword(passwordDTO.getId(), passwordDTO.getOldPassword(), passwordDTO.getNewPassword());
+        userService.updatePassword(passwordDTO.getId(), passwordDTO.getNewPassword());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
 
