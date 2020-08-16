@@ -116,7 +116,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
-        List<Role> roles = roleDAO.selectByCondition(new QueryWrapper());
+        List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", ids.toArray()).build());
         for (Role role : roles) {
             if (role.getBuiltin().equals(1)) {
                 throw new BusinessException("内建角色不允许被删除");
@@ -148,14 +148,12 @@ public class RoleServiceImpl implements RoleService {
         if (!CollectionUtils.isEmpty(roles)) {
             throw new BusinessException("角色名不能重复");
         }
-        Role role = roleDAO.select(roleDTO.getId());
-        if (role.getBuiltin().equals(1)) {
-            throw new BusinessException("内建角色不允许被修改");
-        }
 
-        BeanUtils.copyProperties(roleDTO, role);
-        role.setTs(new Date());
-        roleDAO.update(role);
+        roleDAO.updateByCondition(QueryWrapper.newBuilder()
+                .update("name", roleDTO.getName())
+                .update("note", roleDTO.getNote())
+                .update("ts", new Date())
+                .eq("id", roleDTO.getId()).build());
     }
 
     @Override
