@@ -39,18 +39,21 @@ public class CmsAuthenticationSuccessHandler implements AuthenticationSuccessHan
         User user = userDetails.getUser();
         Result<Object> result = null;
 
-        Integer count = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + user.getId()).size();
-
-        if (count < user.getLimit()) {
-            Map<String, String> jwt = TokenUtils.generateToken(user.getId());
-
-            redisTemplate.delete(RedisPrefixConst.FAILURE_PREFIX + user.getId());
-            redisTemplate.delete(RedisPrefixConst.LOCK_PREFIX + user.getId());
-            redisTemplate.opsForValue().set(RedisPrefixConst.TOKEN_PREFIX + user.getId() + ":" + jwt.get("ts"), authentication, user.getTtl(), TimeUnit.MINUTES);
-
-            result = Result.success("登录成功", Base64.getEncoder().encodeToString(JsonUtils.bean2json(jwt).getBytes()));
+        Long ttl = -1L;
+        Boolean lock = (Boolean) redisTemplate.opsForValue().get(RedisPrefixConst.LOCK_PREFIX + user.getId() + ":" + request.getRemoteAddr());
+        if (lock != null) {
+            ttl = redisTemplate.getExpire(RedisPrefixConst.LOCK_PREFIX + user.getId() + ":" + request.getRemoteAddr());
+            result = Result.failure("该用户已被锁定，剩余时间：" + ttl + "秒");
         } else {
-            result = Result.failure("超过登录限制");
+            Integer count = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + user.getId()).size();
+            if (count < user.getLimit()) {
+                Map<String, String> jwt = TokenUtils.generateToken(user.getId());
+                redisTemplate.delete(RedisPrefixConst.FAILURE_PREFIX + user.getId() + ":" + request.getRemoteAddr());
+                redisTemplate.opsForValue().set(RedisPrefixConst.TOKEN_PREFIX + user.getId() + ":" + jwt.get("ts"), authentication, user.getTtl(), TimeUnit.MINUTES);
+                result = Result.success("登录成功", Base64.getEncoder().encodeToString(JsonUtils.bean2json(jwt).getBytes()));
+            } else {
+                result = Result.failure("超过登录限制");
+            }
         }
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

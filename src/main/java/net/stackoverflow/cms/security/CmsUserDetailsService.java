@@ -1,13 +1,11 @@
 package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.constant.RedisPrefixConst;
 import net.stackoverflow.cms.model.dto.PermissionDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,8 +27,6 @@ public class CmsUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -47,8 +43,7 @@ public class CmsUserDetailsService implements UserDetailsService {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority(permissionDTO.getName());
                 authorities.add(sga);
             }
-            Boolean lock = (Boolean) redisTemplate.opsForValue().get(RedisPrefixConst.LOCK_PREFIX + user.getId());
-            return new CmsUserDetails(lock != null, user, authorities);
+            return new CmsUserDetails(user, authorities);
         } else {
             log.error("找不到对应的用户:{}", username);
             throw new UsernameNotFoundException(username);

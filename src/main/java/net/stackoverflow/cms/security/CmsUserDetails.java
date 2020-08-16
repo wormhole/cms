@@ -15,12 +15,10 @@ import java.util.List;
  */
 public class CmsUserDetails implements UserDetails {
 
-    private Boolean lock;
     private User user;
     private final List<GrantedAuthority> authorities;
 
-    public CmsUserDetails(Boolean lock, User user, List<GrantedAuthority> authorities) {
-        this.lock = lock;
+    public CmsUserDetails(User user, List<GrantedAuthority> authorities) {
         this.user = user;
         this.authorities = authorities;
     }
@@ -47,7 +45,7 @@ public class CmsUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !lock;
+        return true;
     }
 
     @Override

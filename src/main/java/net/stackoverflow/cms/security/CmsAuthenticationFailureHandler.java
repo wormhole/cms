@@ -48,27 +48,28 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
         } else if (exception instanceof DisabledException) {
             result = Result.failure("该用户被禁用");
         } else if (exception instanceof LockedException) {
-            String username = request.getParameter("username");
-            Long ttl = -1L;
-            User user = userService.findByUsername(username);
-            if (user != null) {
-                ttl = redisTemplate.getExpire(RedisPrefixConst.LOCK_PREFIX + user.getId());
-            }
-            result = Result.failure("该用户已被锁定，剩余时间：" + ttl + "秒");
+
         } else if (exception instanceof BadCredentialsException) {
             String username = request.getParameter("username");
             User user = userService.findByUsername(username);
             if (user != null) {
-                Long count = redisTemplate.opsForValue().increment(RedisPrefixConst.FAILURE_PREFIX + user.getId());
-                if (count >= user.getFailure()) {
-                    redisTemplate.opsForValue().set(RedisPrefixConst.LOCK_PREFIX + user.getId(), true, user.getLock(), TimeUnit.MINUTES);
-                    redisTemplate.delete(RedisPrefixConst.FAILURE_PREFIX + user.getId());
-                    result = Result.failure("登录失败次数超过" + user.getFailure() + "次，已被锁定");
+                Long ttl = -1L;
+                Boolean lock = (Boolean) redisTemplate.opsForValue().get(RedisPrefixConst.LOCK_PREFIX + user.getId() + ":" + request.getRemoteAddr());
+                if (lock != null) {
+                    ttl = redisTemplate.getExpire(RedisPrefixConst.LOCK_PREFIX + user.getId() + ":" + request.getRemoteAddr());
+                    result = Result.failure("该用户已被锁定，剩余时间：" + ttl + "秒");
                 } else {
-                    result = Result.failure("登录失败" + count + "次，还有" + (user.getFailure() - count) + "次机会");
+                    Long count = redisTemplate.opsForValue().increment(RedisPrefixConst.FAILURE_PREFIX + user.getId() + ":" + request.getRemoteAddr());
+                    if (count >= user.getFailure()) {
+                        redisTemplate.opsForValue().set(RedisPrefixConst.LOCK_PREFIX + user.getId() + ":" + request.getRemoteAddr(), true, user.getLock(), TimeUnit.MINUTES);
+                        redisTemplate.delete(RedisPrefixConst.FAILURE_PREFIX + user.getId() + ":" + request.getRemoteAddr());
+                        result = Result.failure("登录失败次数超过" + user.getFailure() + "次，已被锁定");
+                    } else {
+                        result = Result.failure("登录失败" + count + "次，还有" + (user.getFailure() - count) + "次机会");
+                    }
                 }
             } else {
-                result = Result.failure("密码错误");
+                result = Result.failure("无此用户");
             }
         }
         out.write(JsonUtils.bean2json(result));
