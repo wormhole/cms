@@ -58,9 +58,6 @@ public class PersonalController extends BaseController {
      */
     @PutMapping(value = "/user/password")
     public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Personal.class) PasswordDTO dto) {
-        if (!dto.getNewPassword().equals(dto.getCheckPassword())) {
-            return ResponseEntity.status(HttpStatus.OK).body(Result.failure("两次密码不一致"));
-        }
         userService.updatePassword(super.getUserId(), dto.getOldPassword(), dto.getNewPassword());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("修改密码成功"));
     }

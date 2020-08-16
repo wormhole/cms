@@ -1,5 +1,6 @@
 package net.stackoverflow.cms.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -23,8 +24,9 @@ public class PermissionDTO {
     private String name;
     @NotBlank(message = "note不能为空", groups = {Insert.class, Update.class})
     private String note;
-    private Integer builtin;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date ts;
+    private Integer builtin;
 
     public interface Update {
     }

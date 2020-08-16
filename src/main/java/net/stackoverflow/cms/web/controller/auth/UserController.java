@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.dto.*;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
@@ -162,11 +161,6 @@ public class UserController extends BaseController {
      */
     @PutMapping(value = "/user/password")
     public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Admin.class) PasswordDTO passwordDTO) {
-
-        if (!passwordDTO.getNewPassword().equals(passwordDTO.getCheckPassword())) {
-            throw new BusinessException("两次密码不一致");
-        }
-
         userService.updatePassword(passwordDTO.getId(), passwordDTO.getOldPassword(), passwordDTO.getNewPassword());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
