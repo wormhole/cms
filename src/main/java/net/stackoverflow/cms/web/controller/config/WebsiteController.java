@@ -37,7 +37,6 @@ public class WebsiteController extends BaseController {
     private final String TITLE = "内容管理系统";
     private final String COPYRIGHT = "copyright © 2020 by 凉衫薄";
     private final String HEAD = "default";
-    private final String REMEMBER_ME = "false";
 
     /**
      * 获取配置信息
@@ -46,7 +45,7 @@ public class WebsiteController extends BaseController {
      */
     @GetMapping(value = "/properties")
     public ResponseEntity<Result<Map<String, String>>> list() {
-        List<PropertyDTO> propertyDTOS = propertyService.findByKeys(Arrays.asList("title", "copyright", "head", "rememberMe"));
+        List<PropertyDTO> propertyDTOS = propertyService.findByKeys(Arrays.asList("title", "copyright", "head"));
         Map<String, String> map = new HashMap<>(16);
         for (PropertyDTO propertyDTO : propertyDTOS) {
             if ("head".equals(propertyDTO.getKey())) {
@@ -108,14 +107,9 @@ public class WebsiteController extends BaseController {
         head.setKey("head");
         head.setValue(HEAD);
 
-        PropertyDTO rememberMe = new PropertyDTO();
-        rememberMe.setKey("rememberMe");
-        rememberMe.setValue(REMEMBER_ME);
-
         propertyDTOS.add(title);
         propertyDTOS.add(copyright);
         propertyDTOS.add(head);
-        propertyDTOS.add(rememberMe);
 
         Map<String, String> map = new HashMap<>(16);
         for (PropertyDTO propertyDTO : propertyDTOS) {
