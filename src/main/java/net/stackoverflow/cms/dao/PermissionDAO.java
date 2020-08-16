@@ -2,7 +2,7 @@ package net.stackoverflow.cms.dao;
 
 import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.model.entity.Permission;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author 凉衫薄
  * @since 2020-08-15 11:12:26
  */
-@Mapper
+@Repository
 public interface PermissionDAO {
 
     int countByCondition(QueryWrapper wrapper);

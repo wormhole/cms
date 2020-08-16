@@ -2,7 +2,7 @@ package net.stackoverflow.cms.dao;
 
 import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.model.entity.Upload;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author 凉衫薄
  * @since 2020-08-15 23:24:40
  */
-@Mapper
+@Repository
 public interface UploadDAO {
 
     int countByCondition(QueryWrapper wrapper);

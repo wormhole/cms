@@ -2,7 +2,7 @@ package net.stackoverflow.cms.dao;
 
 import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.model.entity.User;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author 凉衫薄
  * @since 2020-08-15 14:24:21
  */
-@Mapper
+@Repository
 public interface UserDAO {
 
     int countByCondition(QueryWrapper wrapper);
