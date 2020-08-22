@@ -14,6 +14,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
+    private static final String PATH = UploadPathConst.PREFIX + "/**";
+
     /**
      * 静态文件路径映射
      *
@@ -21,9 +23,9 @@ public class WebConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern(UploadPathConst.PREFIX + "/**")) {
+        if (!registry.hasMappingForPattern(PATH)) {
             String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH;
-            registry.addResourceHandler(UploadPathConst.PREFIX + "/**").addResourceLocations("file:" + path);
+            registry.addResourceHandler(PATH).addResourceLocations("file:" + path);
         }
     }
 }

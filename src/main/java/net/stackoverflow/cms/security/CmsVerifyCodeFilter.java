@@ -24,7 +24,9 @@ import java.io.IOException;
 @Slf4j
 public class CmsVerifyCodeFilter extends OncePerRequestFilter {
 
-    private final PathMatcher pathMatcher = new AntPathMatcher();
+    private static final PathMatcher pathMatcher = new AntPathMatcher();
+    private static final String METHOD = "POST";
+    private static final String URL = "/login";
 
     @Autowired
     private CmsAuthenticationFailureHandler authenticationFailureHandler;
@@ -32,7 +34,7 @@ public class CmsVerifyCodeFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if ("POST".equalsIgnoreCase(request.getMethod()) && pathMatcher.match("/login", request.getServletPath())) {
+        if (METHOD.equalsIgnoreCase(request.getMethod()) && pathMatcher.match(URL, request.getServletPath())) {
             String code = request.getParameter("code");
             String realCode = (String) request.getSession().getAttribute("code");
             if (StringUtils.isBlank(code)) {

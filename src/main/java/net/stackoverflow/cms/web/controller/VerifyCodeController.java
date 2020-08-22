@@ -26,6 +26,8 @@ import java.util.Random;
 @Slf4j
 public class VerifyCodeController {
 
+    private static final Integer LENGTH = 4;
+
     /**
      * 获取验证码
      *
@@ -54,7 +56,7 @@ public class VerifyCodeController {
     private String drawImg(ByteArrayOutputStream output) {
 
         String code = "";
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < LENGTH; i++) {
             code += randomChar();
         }
 
