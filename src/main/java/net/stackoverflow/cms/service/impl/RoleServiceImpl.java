@@ -97,13 +97,15 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
-        List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", ids).build());
-        for (Role role : roles) {
-            if (role.getBuiltin().equals(1)) {
-                throw new BusinessException("内建角色不允许被删除");
+        if (!CollectionUtils.isEmpty(ids)) {
+            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", ids).build());
+            for (Role role : roles) {
+                if (role.getBuiltin().equals(1)) {
+                    throw new BusinessException("内建角色不允许被删除");
+                }
             }
+            roleDAO.batchDelete(ids);
         }
-        roleDAO.batchDelete(ids);
     }
 
     @Override
