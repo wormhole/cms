@@ -14,6 +14,11 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.Properties;
 
+/**
+ * 启动类
+ *
+ * @author 凉衫薄
+ */
 @SpringBootApplication
 @MapperScan(basePackages = {"net.stackoverflow.cms.dao"}, sqlSessionFactoryRef = "sqlSessionFactory")
 @EnableTransactionManagement

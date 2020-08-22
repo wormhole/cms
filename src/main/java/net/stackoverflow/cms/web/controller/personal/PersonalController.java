@@ -14,6 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 个人信息
+ *
+ * @author 凉衫薄
+ */
 @RestController
 @RequestMapping(value = "/personal")
 @Slf4j

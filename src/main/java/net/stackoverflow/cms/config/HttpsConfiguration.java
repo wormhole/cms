@@ -10,6 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+/**
+ * ssl配置
+ *
+ * @author 凉衫薄
+ */
 @Configuration
 @Profile("prod")
 public class HttpsConfiguration {

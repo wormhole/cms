@@ -5,6 +5,11 @@ import lombok.*;
 
 import java.util.Date;
 
+/**
+ * 上传
+ *
+ * @author 凉衫薄
+ */
 @Getter
 @Setter
 @NoArgsConstructor
