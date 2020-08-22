@@ -64,7 +64,7 @@ public class CmsTokenFilter extends OncePerRequestFilter {
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         log.info("token认证成功:{}", details.getUsername());
                         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                        redisTemplate.expire(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"), 30, TimeUnit.MINUTES);
+                        redisTemplate.opsForValue().set(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"), authentication, 30, TimeUnit.MINUTES);
                     } else {
                         log.error("token认证失败:{}", token);
                         redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"));
