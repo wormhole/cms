@@ -70,7 +70,9 @@ public class RolePermissionRefServiceImpl implements RolePermissionRefService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByRoleId(String roleId) {
         if (!StringUtils.isEmpty(roleId)) {
-            rolePermissionRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("role_id", roleId).build());
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.eq("role_id", roleId);
+            rolePermissionRefDAO.deleteByCondition(builder.build());
         }
     }
 
