@@ -47,7 +47,7 @@ public class CmsLogoutSuccessHandler implements LogoutSuccessHandler {
 
         Result<Object> result = Result.success("注销成功");
 
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         PrintWriter out = response.getWriter();
         out.write(JsonUtils.bean2json(result));
         out.flush();

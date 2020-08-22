@@ -40,7 +40,7 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
 
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         PrintWriter out = response.getWriter();
         Result<Object> result = null;
         if (exception instanceof VerifyCodeException) {
