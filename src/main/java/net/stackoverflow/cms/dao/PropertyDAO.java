@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * (Property)表数据库访问层
  *
- * @author 凉衫薄
- * @since 2020-08-15 11:16:04
+ * @author minsheng.cai
+ * @since 2020-08-22 11:42:10
  */
 @Repository
 public interface PropertyDAO {

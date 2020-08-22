@@ -38,7 +38,7 @@ public class CmsTokenFilter extends OncePerRequestFilter {
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
-    @Qualifier("cmsUserDetailsService")
+    @Qualifier("cmsUserDetailsServiceImpl")
     private UserDetailsService userDetailsService;
     @Autowired
     private UserService userService;

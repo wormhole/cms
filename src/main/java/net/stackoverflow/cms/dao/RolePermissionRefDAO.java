@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * (RolePermissionRef)表数据库访问层
  *
- * @author 凉衫薄
- * @since 2020-08-15 11:12:35
+ * @author minsheng.cai
+ * @since 2020-08-22 11:42:32
  */
 @Repository
 public interface RolePermissionRefDAO {

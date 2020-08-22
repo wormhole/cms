@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * (Permission)表数据库访问层
  *
- * @author 凉衫薄
- * @since 2020-08-15 11:12:26
+ * @author minsheng.cai
+ * @since 2020-08-22 11:41:59
  */
 @Repository
 public interface PermissionDAO {

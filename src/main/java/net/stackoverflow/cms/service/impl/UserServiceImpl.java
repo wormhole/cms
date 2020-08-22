@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private RolePermissionRefDAO rolePermissionRefDAO;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public User findById(String id) {
         User user = null;
         if (id != null) {
@@ -53,6 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public User findByUsername(String username) {
         User user = null;
         if (!StringUtils.isEmpty(username)) {

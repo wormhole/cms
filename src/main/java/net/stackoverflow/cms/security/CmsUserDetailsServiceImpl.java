@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class CmsUserDetailsService implements UserDetailsService {
+public class CmsUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UserService userService;

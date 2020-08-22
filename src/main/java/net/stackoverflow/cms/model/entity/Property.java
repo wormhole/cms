@@ -8,8 +8,8 @@ import java.util.Date;
 /**
  * (Property)实体类
  *
- * @author 凉衫薄
- * @since 2020-08-15 11:16:03
+ * @author minsheng.cai
+ * @since 2020-08-22 11:42:09
  */
 @Setter
 @Getter
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class Property implements Serializable {
-    private static final long serialVersionUID = -59516374834062580L;
+    private static final long serialVersionUID = 864453131150283541L;
 
     private String id;
     private String key;

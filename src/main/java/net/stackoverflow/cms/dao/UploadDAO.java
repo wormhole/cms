@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * (Upload)表数据库访问层
  *
- * @author 凉衫薄
- * @since 2020-08-15 23:24:40
+ * @author minsheng.cai
+ * @since 2020-08-22 13:34:17
  */
 @Repository
 public interface UploadDAO {

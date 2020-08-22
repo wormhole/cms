@@ -9,106 +9,48 @@
         <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <sql id="columns">
-        `id`, `role_id`, `permission_id`, `ts`        
-    </sql>
-
-    <sql id="columns_value">
-        #{id}, #{roleId}, #{permissionId}, #{ts}        
-    </sql>
-
-    <sql id="columns_item_value">
-        #{item.id}, #{item.roleId}, #{item.permissionId}, #{item.ts}        
-    </sql>
-
     <sql id="where">
         <where>
             <if test="eqWrapper != null">
-                <if test="eqWrapper.id != null">
-                    and `id` = #{eqWrapper.id}
-                </if>
-                <if test="eqWrapper.roleId != null">
-                    and `role_id` = #{eqWrapper.roleId}
-                </if>
-                <if test="eqWrapper.permissionId != null">
-                    and `permission_id` = #{eqWrapper.permissionId}
-                </if>
-                <if test="eqWrapper.ts != null">
-                    and `ts` = #{eqWrapper.ts}
-                </if>
+                <foreach collection="eqWrapper.entrySet()" index="column" item="value">
+                    <if test="column != null and value != null">
+                        and `${column}` = #{value}
+                    </if>
+                </foreach>
             </if>
             <if test="neqWrapper != null">
-                <if test="neqWrapper.id != null">
-                    and `id` != #{neqWrapper.id}
-                </if>
-                <if test="neqWrapper.roleId != null">
-                    and `role_id` != #{neqWrapper.roleId}
-                </if>
-                <if test="neqWrapper.permissionId != null">
-                    and `permission_id` != #{neqWrapper.permissionId}
-                </if>
-                <if test="neqWrapper.ts != null">
-                    and `ts` != #{neqWrapper.ts}
-                </if>
+                <foreach collection="neqWrapper.entrySet()" index="column" item="value">
+                    <if test="column != null and value != null">
+                        and `${column}` != #{value}
+                    </if>
+                </foreach>
             </if>
             <if test="inWrapper != null">
-                <if test="inWrapper.id != null and inWrapper.id.size() > 0">
-                    and `id` in
-                    <foreach collection="inWrapper.id" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
-                </if>
-                <if test="inWrapper.roleId != null and inWrapper.roleId.size() > 0">
-                    and `role_id` in
-                    <foreach collection="inWrapper.roleId" item="roleId" open="(" separator="," close=")">
-                        #{roleId}
-                    </foreach>
-                </if>
-                <if test="inWrapper.permissionId != null and inWrapper.permissionId.size() > 0">
-                    and `permission_id` in
-                    <foreach collection="inWrapper.permissionId" item="permissionId" open="(" separator="," close=")">
-                        #{permissionId}
-                    </foreach>
-                </if>
-                <if test="inWrapper.ts != null and inWrapper.ts.size() > 0">
-                    and `ts` in
-                    <foreach collection="inWrapper.ts" item="ts" open="(" separator="," close=")">
-                        #{ts}
-                    </foreach>
-                </if>
+                <foreach collection="inWrapper.entrySet()" index="column" item="values">
+                    <if test="values != null and values.size() > 0">
+                        and `${column}` in
+                        <foreach collection="values" item="value" open="(" separator="," close=")">
+                            #{value}
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
             <if test="ninWrapper != null">
-                <if test="ninWrapper.id != null and ninWrapper.id.size() > 0">
-                    and `id` not in
-                    <foreach collection="ninWrapper.id" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.roleId != null and ninWrapper.roleId.size() > 0">
-                    and `role_id` not in
-                    <foreach collection="ninWrapper.roleId" item="roleId" open="(" separator="," close=")">
-                        #{roleId}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.permissionId != null and ninWrapper.permissionId.size() > 0">
-                    and `permission_id` not in
-                    <foreach collection="ninWrapper.permissionId" item="permissionId" open="(" separator="," close=")">
-                        #{permissionId}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.ts != null and ninWrapper.ts.size() > 0">
-                    and `ts` not in
-                    <foreach collection="ninWrapper.ts" item="ts" open="(" separator="," close=")">
-                        #{ts}
-                    </foreach>
-                </if>
+                <foreach collection="ninWrapper.entrySet()" index="column" item="values">
+                    <if test="values != null and values.size() > 0">
+                        and `${column}` not in
+                        <foreach collection="values" item="value" open="(" separator="," close=")">
+                            #{value}
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
             <if test="keyWrapper != null and keyWrapper.size() > 0">
-                <foreach collection="keyWrapper.entrySet()" index="k" item="columns">
-                    <if test="columns != null and columns.size()> 0">
+                <foreach collection="keyWrapper.entrySet()" index="key" item="columns">
+                    <if test="columns != null and columns.size() > 0">
                         and
                         <foreach collection="columns" item="column" open="(" separator=" or " close=")">
-                            `${column}` like CONCAT('%',#{k},'%')
+                            `${column}` like CONCAT('%',#{key},'%')
                         </foreach>
                     </if>
                 </foreach>
@@ -141,17 +83,17 @@
 
     <insert id="insert">
         insert into `role_permission_ref`
-        (<include refid="columns"/>)
+        (`id`, `role_id`, `permission_id`, `ts`)
         values
-        (<include refid="columns_value"/>)
+        (#{id}, #{roleId}, #{permissionId}, #{ts})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
         insert into `role_permission_ref`
-        (<include refid="columns"/>)
+        (`id`, `role_id`, `permission_id`, `ts`)
         values
         <foreach collection="list" item="item" separator=",">
-            (<include refid="columns_item_value"/>)
+            (#{item.id}, #{item.roleId}, #{item.permissionId}, #{item.ts})
         </foreach>
     </insert>
 
@@ -212,11 +154,11 @@
                 <if test="upWrapper.id != null">
                     `id` = #{upWrapper.id},
                 </if>
-                <if test="upWrapper.roleId != null">
-                    `role_id` = #{upWrapper.roleId},
+                <if test="upWrapper.role_id != null">
+                    `role_id` = #{upWrapper.role_id},
                 </if>
-                <if test="upWrapper.permissionId != null">
-                    `permission_id` = #{upWrapper.permissionId},
+                <if test="upWrapper.permission_id != null">
+                    `permission_id` = #{upWrapper.permission_id},
                 </if>
                 <if test="upWrapper.ts != null">
                     `ts` = #{upWrapper.ts},

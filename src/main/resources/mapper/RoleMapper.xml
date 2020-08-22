@@ -10,124 +10,48 @@
         <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <sql id="columns">
-        `id`, `name`, `note`, `builtin`, `ts`        
-    </sql>
-
-    <sql id="columns_value">
-        #{id}, #{name}, #{note}, #{builtin}, #{ts}        
-    </sql>
-
-    <sql id="columns_item_value">
-        #{item.id}, #{item.name}, #{item.note}, #{item.builtin}, #{item.ts}        
-    </sql>
-
     <sql id="where">
         <where>
             <if test="eqWrapper != null">
-                <if test="eqWrapper.id != null">
-                    and `id` = #{eqWrapper.id}
-                </if>
-                <if test="eqWrapper.name != null">
-                    and `name` = #{eqWrapper.name}
-                </if>
-                <if test="eqWrapper.note != null">
-                    and `note` = #{eqWrapper.note}
-                </if>
-                <if test="eqWrapper.builtin != null">
-                    and `builtin` = #{eqWrapper.builtin}
-                </if>
-                <if test="eqWrapper.ts != null">
-                    and `ts` = #{eqWrapper.ts}
-                </if>
+                <foreach collection="eqWrapper.entrySet()" index="column" item="value">
+                    <if test="column != null and value != null">
+                        and `${column}` = #{value}
+                    </if>
+                </foreach>
             </if>
             <if test="neqWrapper != null">
-                <if test="neqWrapper.id != null">
-                    and `id` != #{neqWrapper.id}
-                </if>
-                <if test="neqWrapper.name != null">
-                    and `name` != #{neqWrapper.name}
-                </if>
-                <if test="neqWrapper.note != null">
-                    and `note` != #{neqWrapper.note}
-                </if>
-                <if test="neqWrapper.builtin != null">
-                    and `builtin` != #{neqWrapper.builtin}
-                </if>
-                <if test="neqWrapper.ts != null">
-                    and `ts` != #{neqWrapper.ts}
-                </if>
+                <foreach collection="neqWrapper.entrySet()" index="column" item="value">
+                    <if test="column != null and value != null">
+                        and `${column}` != #{value}
+                    </if>
+                </foreach>
             </if>
             <if test="inWrapper != null">
-                <if test="inWrapper.id != null and inWrapper.id.size() > 0">
-                    and `id` in
-                    <foreach collection="inWrapper.id" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
-                </if>
-                <if test="inWrapper.name != null and inWrapper.name.size() > 0">
-                    and `name` in
-                    <foreach collection="inWrapper.name" item="name" open="(" separator="," close=")">
-                        #{name}
-                    </foreach>
-                </if>
-                <if test="inWrapper.note != null and inWrapper.note.size() > 0">
-                    and `note` in
-                    <foreach collection="inWrapper.note" item="note" open="(" separator="," close=")">
-                        #{note}
-                    </foreach>
-                </if>
-                <if test="inWrapper.builtin != null and inWrapper.builtin.size() > 0">
-                    and `builtin` in
-                    <foreach collection="inWrapper.builtin" item="builtin" open="(" separator="," close=")">
-                        #{builtin}
-                    </foreach>
-                </if>
-                <if test="inWrapper.ts != null and inWrapper.ts.size() > 0">
-                    and `ts` in
-                    <foreach collection="inWrapper.ts" item="ts" open="(" separator="," close=")">
-                        #{ts}
-                    </foreach>
-                </if>
+                <foreach collection="inWrapper.entrySet()" index="column" item="values">
+                    <if test="values != null and values.size() > 0">
+                        and `${column}` in
+                        <foreach collection="values" item="value" open="(" separator="," close=")">
+                            #{value}
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
             <if test="ninWrapper != null">
-                <if test="ninWrapper.id != null and ninWrapper.id.size() > 0">
-                    and `id` not in
-                    <foreach collection="ninWrapper.id" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.name != null and ninWrapper.name.size() > 0">
-                    and `name` not in
-                    <foreach collection="ninWrapper.name" item="name" open="(" separator="," close=")">
-                        #{name}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.note != null and ninWrapper.note.size() > 0">
-                    and `note` not in
-                    <foreach collection="ninWrapper.note" item="note" open="(" separator="," close=")">
-                        #{note}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.builtin != null and ninWrapper.builtin.size() > 0">
-                    and `builtin` not in
-                    <foreach collection="ninWrapper.builtin" item="builtin" open="(" separator="," close=")">
-                        #{builtin}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.ts != null and ninWrapper.ts.size() > 0">
-                    and `ts` not in
-                    <foreach collection="ninWrapper.ts" item="ts" open="(" separator="," close=")">
-                        #{ts}
-                    </foreach>
-                </if>
+                <foreach collection="ninWrapper.entrySet()" index="column" item="values">
+                    <if test="values != null and values.size() > 0">
+                        and `${column}` not in
+                        <foreach collection="values" item="value" open="(" separator="," close=")">
+                            #{value}
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
             <if test="keyWrapper != null and keyWrapper.size() > 0">
-                <foreach collection="keyWrapper.entrySet()" index="k" item="columns">
-                    <if test="columns != null and columns.size()> 0">
+                <foreach collection="keyWrapper.entrySet()" index="key" item="columns">
+                    <if test="columns != null and columns.size() > 0">
                         and
                         <foreach collection="columns" item="column" open="(" separator=" or " close=")">
-                            `${column}` like CONCAT('%',#{k},'%')
+                            `${column}` like CONCAT('%',#{key},'%')
                         </foreach>
                     </if>
                 </foreach>
@@ -160,17 +84,17 @@
 
     <insert id="insert">
         insert into `role`
-        (<include refid="columns"/>)
+        (`id`, `name`, `note`, `builtin`, `ts`)
         values
-        (<include refid="columns_value"/>)
+        (#{id}, #{name}, #{note}, #{builtin}, #{ts})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
         insert into `role`
-        (<include refid="columns"/>)
+        (`id`, `name`, `note`, `builtin`, `ts`)
         values
         <foreach collection="list" item="item" separator=",">
-            (<include refid="columns_item_value"/>)
+            (#{item.id}, #{item.name}, #{item.note}, #{item.builtin}, #{item.ts})
         </foreach>
     </insert>
 

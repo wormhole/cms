@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * (UserRoleRef)表数据库访问层
  *
- * @author 凉衫薄
- * @since 2020-08-15 11:12:31
+ * @author minsheng.cai
+ * @since 2020-08-22 13:34:45
  */
 @Repository
 public interface UserRoleRefDAO {

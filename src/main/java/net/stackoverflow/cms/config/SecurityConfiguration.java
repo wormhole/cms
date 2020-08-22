@@ -40,7 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
     @Autowired
-    @Qualifier("cmsUserDetailsService")
+    @Qualifier("cmsUserDetailsServiceImpl")
     private UserDetailsService userDetailsService;
     @Autowired
     private CmsTokenFilter tokenFilter;

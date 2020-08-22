@@ -10,7 +10,7 @@ import java.util.List;
  * (User)表数据库访问层
  *
  * @author minsheng.cai
- * @since 2020-08-22 11:28:04
+ * @since 2020-08-22 13:34:32
  */
 @Repository
 public interface UserDAO {

@@ -8,8 +8,8 @@ import java.util.Date;
 /**
  * (UserRoleRef)实体类
  *
- * @author 凉衫薄
- * @since 2020-08-15 10:27:54
+ * @author minsheng.cai
+ * @since 2020-08-22 13:34:44
  */
 @Setter
 @Getter
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class UserRoleRef implements Serializable {
-    private static final long serialVersionUID = 736491412179650622L;
+    private static final long serialVersionUID = -72287444393428800L;
 
     private String id;
     private String userId;
