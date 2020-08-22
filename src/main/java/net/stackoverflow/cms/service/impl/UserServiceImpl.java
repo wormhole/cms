@@ -4,13 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
-import net.stackoverflow.cms.dao.*;
+import net.stackoverflow.cms.dao.UserDAO;
 import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.dto.GrantRoleDTO;
-import net.stackoverflow.cms.model.dto.PermissionDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.dto.UserDTO;
-import net.stackoverflow.cms.model.entity.*;
+import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.model.entity.UserRoleRef;
+import net.stackoverflow.cms.service.RoleService;
+import net.stackoverflow.cms.service.UserRoleRefService;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +37,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDAO userDAO;
     @Autowired
-    private RoleDAO roleDAO;
+    private RoleService roleService;
     @Autowired
-    private PermissionDAO permissionDAO;
-    @Autowired
-    private UserRoleRefDAO userRoleRefDAO;
-    @Autowired
-    private RolePermissionRefDAO rolePermissionRefDAO;
+    private UserRoleRefService userRoleRefService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -66,58 +64,6 @@ public class UserServiceImpl implements UserService {
             }
         }
         return user;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public List<RoleDTO> findRoleByUserId(String userId) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.eq("user_id", userId);
-        List<UserRoleRef> userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
-        List<RoleDTO> roleDTOS = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(userRoleRefs)) {
-            List<String> roleIds = new ArrayList<>();
-            userRoleRefs.forEach(userRoleRef -> {
-                roleIds.add(userRoleRef.getRoleId());
-
-            });
-            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", roleIds).build());
-            roles.forEach(role -> {
-                RoleDTO dto = new RoleDTO();
-                BeanUtils.copyProperties(role, dto);
-                roleDTOS.add(dto);
-            });
-        }
-        return roleDTOS;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public List<PermissionDTO> findPermissionByUserId(String userId) {
-        List<RoleDTO> roleDTOS = findRoleByUserId(userId);
-
-        List<PermissionDTO> permissionDTOS = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(roleDTOS)) {
-            Set<String> roleIds = new HashSet<>();
-            roleDTOS.forEach(roleDTO -> roleIds.add(roleDTO.getId()));
-
-            QueryWrapperBuilder builder = QueryWrapper.newBuilder();
-            builder.in("role_id", new ArrayList<>(roleIds));
-            List<RolePermissionRef> rolePermissionRefs = rolePermissionRefDAO.selectByCondition(builder.build());
-            if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
-                Set<String> permissionIds = new HashSet<>();
-                rolePermissionRefs.forEach(rolePermissionRef -> permissionIds.add(rolePermissionRef.getPermissionId()));
-
-                List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", new ArrayList<>(permissionIds)).build());
-                permissions.forEach(permission -> {
-                    PermissionDTO permissionDTO = new PermissionDTO();
-                    BeanUtils.copyProperties(permission, permissionDTO);
-                    permissionDTOS.add(permissionDTO);
-                });
-            }
-        }
-
-        return permissionDTOS;
     }
 
     @Override
@@ -195,9 +141,7 @@ public class UserServiceImpl implements UserService {
     public PageResponse<UserDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> roleIds) {
         Set<String> userIds = new HashSet<>();
         if (!CollectionUtils.isEmpty(roleIds)) {
-            QueryWrapperBuilder builder = new QueryWrapperBuilder();
-            builder.in("role_id", roleIds);
-            List<UserRoleRef> userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
+            List<UserRoleRef> userRoleRefs = userRoleRefService.findByRoleIds(roleIds);
             if (!CollectionUtils.isEmpty(userRoleRefs)) {
                 userRoleRefs.forEach(userRoleRef -> userIds.add(userRoleRef.getUserId()));
             } else {
@@ -225,7 +169,7 @@ public class UserServiceImpl implements UserService {
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(user, userDTO);
             userDTO.setPassword(null);
-            List<RoleDTO> roleDTOS = findRoleByUserId(user.getId());
+            List<RoleDTO> roleDTOS = roleService.findByUserId(user.getId());
             userDTO.setRoles(roleDTOS);
             userDTOS.add(userDTO);
         }
@@ -245,7 +189,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userDAO.batchDelete(ids);
-        userRoleRefDAO.deleteByCondition(new QueryWrapperBuilder().in("user_id", ids).build());
+        userRoleRefService.deleteByUserIds(ids);
     }
 
     @Override
@@ -268,13 +212,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void reGrandRole(GrantRoleDTO dto) {
-        userRoleRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("user_id", dto.getUserId()).build());
+        String userId = dto.getUserId();
+        List<String> roleIds = dto.getRoleIds();
+
+        userRoleRefService.deleteByUserId(userId);
         List<UserRoleRef> userRoleRefs = new ArrayList<>();
-        for (String roleId : dto.getRoleIds()) {
-            userRoleRefs.add(new UserRoleRef(UUID.randomUUID().toString(), dto.getUserId(), roleId, new Date()));
+        for (String roleId : roleIds) {
+            userRoleRefs.add(new UserRoleRef(UUID.randomUUID().toString(), userId, roleId, new Date()));
         }
         if (!CollectionUtils.isEmpty(userRoleRefs)) {
-            userRoleRefDAO.batchInsert(userRoleRefs);
+            userRoleRefService.batchSave(userRoleRefs);
         }
     }
 

@@ -7,8 +7,12 @@ import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.dao.PermissionDAO;
 import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.dto.PermissionDTO;
+import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.entity.Permission;
+import net.stackoverflow.cms.model.entity.RolePermissionRef;
 import net.stackoverflow.cms.service.PermissionService;
+import net.stackoverflow.cms.service.RolePermissionRefService;
+import net.stackoverflow.cms.service.RoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,10 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Autowired
     private PermissionDAO permissionDAO;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private RolePermissionRefService rolePermissionRefService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -126,6 +134,53 @@ public class PermissionServiceImpl implements PermissionService {
     @Transactional(rollbackFor = Exception.class)
     public Integer count() {
         return permissionDAO.countByCondition(new QueryWrapper());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<PermissionDTO> findByUserId(String userId) {
+        List<RoleDTO> roleDTOS = roleService.findByUserId(userId);
+
+        List<PermissionDTO> permissionDTOS = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(roleDTOS)) {
+            Set<String> roleIds = new HashSet<>();
+            roleDTOS.forEach(roleDTO -> roleIds.add(roleDTO.getId()));
+
+            List<RolePermissionRef> rolePermissionRefs = rolePermissionRefService.findByRoleIds(new ArrayList<>(roleIds));
+            if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
+                Set<String> permissionIds = new HashSet<>();
+                rolePermissionRefs.forEach(rolePermissionRef -> permissionIds.add(rolePermissionRef.getPermissionId()));
+
+                List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", new ArrayList<>(permissionIds)).build());
+                permissions.forEach(permission -> {
+                    PermissionDTO permissionDTO = new PermissionDTO();
+                    BeanUtils.copyProperties(permission, permissionDTO);
+                    permissionDTOS.add(permissionDTO);
+                });
+            }
+        }
+
+        return permissionDTOS;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<PermissionDTO> findByRoleId(String roleId) {
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.eq("role_id", roleId);
+        List<RolePermissionRef> rolePermissionRefs = rolePermissionRefService.findByRoleId(roleId);
+        List<PermissionDTO> permissionDTOS = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
+            List<String> permissionIds = new ArrayList<>();
+            rolePermissionRefs.forEach(rolePermissionRef -> permissionIds.add(rolePermissionRef.getPermissionId()));
+            List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", permissionIds).build());
+            permissions.forEach(permission -> {
+                PermissionDTO permissionDTO = new PermissionDTO();
+                BeanUtils.copyProperties(permission, permissionDTO);
+                permissionDTOS.add(permissionDTO);
+            });
+        }
+        return permissionDTOS;
     }
 
 }

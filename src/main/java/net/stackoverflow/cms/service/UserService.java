@@ -2,8 +2,6 @@ package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.model.dto.GrantRoleDTO;
-import net.stackoverflow.cms.model.dto.PermissionDTO;
-import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.dto.UserDTO;
 import net.stackoverflow.cms.model.entity.User;
 
@@ -19,10 +17,6 @@ public interface UserService {
     User findById(String id);
 
     User findByUsername(String username);
-
-    List<RoleDTO> findRoleByUserId(String userId);
-
-    List<PermissionDTO> findPermissionByUserId(String userId);
 
     void save(UserDTO dto);
 

@@ -96,7 +96,7 @@ public class RoleController extends BaseController {
     @GetMapping(value = "/ref_role_permission")
     public ResponseEntity<Result<Map<String, List<PermissionDTO>>>> refRolePermission(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
 
-        List<PermissionDTO> targetPermissions = roleService.findPermissionByRoleId(id);
+        List<PermissionDTO> targetPermissions = permissionService.findByRoleId(id);
         List<PermissionDTO> allPermissions = permissionService.findAll();
 
         Map<String, List<PermissionDTO>> retMap = new HashMap<>(16);

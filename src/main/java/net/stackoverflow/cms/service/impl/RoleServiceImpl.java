@@ -4,16 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
-import net.stackoverflow.cms.dao.PermissionDAO;
 import net.stackoverflow.cms.dao.RoleDAO;
-import net.stackoverflow.cms.dao.RolePermissionRefDAO;
 import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.dto.PermissionDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
-import net.stackoverflow.cms.model.entity.Permission;
 import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.RolePermissionRef;
+import net.stackoverflow.cms.model.entity.UserRoleRef;
+import net.stackoverflow.cms.service.PermissionService;
+import net.stackoverflow.cms.service.RolePermissionRefService;
 import net.stackoverflow.cms.service.RoleService;
+import net.stackoverflow.cms.service.UserRoleRefService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,9 +36,11 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleDAO roleDAO;
     @Autowired
-    private RolePermissionRefDAO rolePermissionRefDAO;
+    private UserRoleRefService userRoleRefService;
     @Autowired
-    private PermissionDAO permissionDAO;
+    private RolePermissionRefService rolePermissionRefService;
+    @Autowired
+    private PermissionService permissionService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -56,10 +59,8 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public PageResponse<RoleDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> permissionIds) {
         Set<String> roleIds = new HashSet<>();
-        if (!CollectionUtils.isEmpty(roleIds)) {
-            QueryWrapperBuilder builder = new QueryWrapperBuilder();
-            builder.in("permission_id", permissionIds);
-            List<RolePermissionRef> rolePermissionRefs = rolePermissionRefDAO.selectByCondition(builder.build());
+        if (!CollectionUtils.isEmpty(permissionIds)) {
+            List<RolePermissionRef> rolePermissionRefs = rolePermissionRefService.findByPermissionIds(permissionIds);
             if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
                 rolePermissionRefs.forEach(rolePermissionRef -> roleIds.add(rolePermissionRef.getRoleId()));
             } else {
@@ -86,31 +87,11 @@ public class RoleServiceImpl implements RoleService {
         for (Role role : roles) {
             RoleDTO roleDTO = new RoleDTO();
             BeanUtils.copyProperties(role, roleDTO);
-            List<PermissionDTO> permissionDTOS = findPermissionByRoleId(role.getId());
+            List<PermissionDTO> permissionDTOS = permissionService.findByRoleId(role.getId());
             roleDTO.setPermissions(permissionDTOS);
             roleDTOS.add(roleDTO);
         }
         return new PageResponse<>(total, roleDTOS);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public List<PermissionDTO> findPermissionByRoleId(String roleId) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.eq("role_id", roleId);
-        List<RolePermissionRef> rolePermissionRefs = rolePermissionRefDAO.selectByCondition(builder.build());
-        List<PermissionDTO> permissionDTOS = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
-            List<String> permissionIds = new ArrayList<>();
-            rolePermissionRefs.forEach(rolePermissionRef -> permissionIds.add(rolePermissionRef.getPermissionId()));
-            List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", permissionIds).build());
-            permissions.forEach(permission -> {
-                PermissionDTO permissionDTO = new PermissionDTO();
-                BeanUtils.copyProperties(permission, permissionDTO);
-                permissionDTOS.add(permissionDTO);
-            });
-        }
-        return permissionDTOS;
     }
 
     @Override
@@ -128,13 +109,13 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void reGrantPermission(String roleId, List<String> permissionIds) {
-        rolePermissionRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("role_id", roleId).build());
+        rolePermissionRefService.deleteByRoleId(roleId);
         List<RolePermissionRef> rolePermissionRefs = new ArrayList<>();
         permissionIds.forEach(permissionId -> {
             rolePermissionRefs.add(new RolePermissionRef(UUID.randomUUID().toString(), roleId, permissionId, new Date()));
         });
         if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
-            rolePermissionRefDAO.batchInsert(rolePermissionRefs);
+            rolePermissionRefService.batchSave(rolePermissionRefs);
         }
     }
 
@@ -178,6 +159,26 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public Integer count() {
         return roleDAO.countByCondition(new QueryWrapper());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<RoleDTO> findByUserId(String userId) {
+        List<UserRoleRef> userRoleRefs = userRoleRefService.findByUserId(userId);
+        List<RoleDTO> roleDTOS = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(userRoleRefs)) {
+            List<String> roleIds = new ArrayList<>();
+            userRoleRefs.forEach(userRoleRef -> {
+                roleIds.add(userRoleRef.getRoleId());
+            });
+            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", roleIds).build());
+            roles.forEach(role -> {
+                RoleDTO dto = new RoleDTO();
+                BeanUtils.copyProperties(role, dto);
+                roleDTOS.add(dto);
+            });
+        }
+        return roleDTOS;
     }
 
 }

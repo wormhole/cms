@@ -116,7 +116,7 @@ public class UserController extends BaseController {
      */
     @GetMapping(value = "/ref_user_role")
     public ResponseEntity<Result<Map<String, List<RoleDTO>>>> refUserRole(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
-        List<RoleDTO> targetRoles = userService.findRoleByUserId(id);
+        List<RoleDTO> targetRoles = roleService.findByUserId(id);
         List<RoleDTO> allRoles = roleService.findAll();
 
         Map<String, List<RoleDTO>> retMap = new HashMap<>(16);

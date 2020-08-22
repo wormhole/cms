@@ -1,7 +1,6 @@
 package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.PageResponse;
-import net.stackoverflow.cms.model.dto.PermissionDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 
 import java.util.List;
@@ -17,8 +16,6 @@ public interface RoleService {
 
     PageResponse<RoleDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> permissionIds);
 
-    List<PermissionDTO> findPermissionByRoleId(String roleId);
-
     void deleteByIds(List<String> ids);
 
     void reGrantPermission(String roleId, List<String> permissionIds);
@@ -28,4 +25,6 @@ public interface RoleService {
     void save(RoleDTO roleDTO);
 
     Integer count();
+
+    List<RoleDTO> findByUserId(String userId);
 }

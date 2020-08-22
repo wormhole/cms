@@ -23,4 +23,8 @@ public interface PermissionService {
     void save(PermissionDTO permissionDTO);
 
     Integer count();
+
+    List<PermissionDTO> findByUserId(String userId);
+
+    List<PermissionDTO> findByRoleId(String roleId);
 }
