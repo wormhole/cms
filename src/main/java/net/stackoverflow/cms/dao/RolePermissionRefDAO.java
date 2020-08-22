@@ -10,7 +10,7 @@ import java.util.List;
  * (RolePermissionRef)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:32
+ * @since 2020-08-22 16:49:26
  */
 @Repository
 public interface RolePermissionRefDAO {
@@ -42,7 +42,7 @@ public interface RolePermissionRefDAO {
     /**
      * 新增
      *
-     * @param permission
+     * @param rolePermissionRef
      * @return
      */
     int insert(RolePermissionRef rolePermissionRef);
@@ -50,7 +50,7 @@ public interface RolePermissionRefDAO {
     /**
      * 批量新增
      *
-     * @param permissions
+     * @param rolePermissionRefs
      * @return
      */
     int batchInsert(List<RolePermissionRef> rolePermissionRefs);
@@ -82,7 +82,7 @@ public interface RolePermissionRefDAO {
     /**
      * 更新
      *
-     * @param permission
+     * @param rolePermissionRef
      * @return
      */
     int update(RolePermissionRef rolePermissionRef);
@@ -90,7 +90,7 @@ public interface RolePermissionRefDAO {
     /**
      * 批量更新
      *
-     * @param permissions
+     * @param rolePermissionRefs
      * @return
      */
     int batchUpdate(List<RolePermissionRef> rolePermissionRefs);

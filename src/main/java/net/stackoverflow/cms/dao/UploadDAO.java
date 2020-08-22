@@ -10,7 +10,7 @@ import java.util.List;
  * (Upload)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:39
+ * @since 2020-08-22 16:49:33
  */
 @Repository
 public interface UploadDAO {
@@ -42,7 +42,7 @@ public interface UploadDAO {
     /**
      * 新增
      *
-     * @param permission
+     * @param upload
      * @return
      */
     int insert(Upload upload);
@@ -50,7 +50,7 @@ public interface UploadDAO {
     /**
      * 批量新增
      *
-     * @param permissions
+     * @param uploads
      * @return
      */
     int batchInsert(List<Upload> uploads);
@@ -82,7 +82,7 @@ public interface UploadDAO {
     /**
      * 更新
      *
-     * @param permission
+     * @param upload
      * @return
      */
     int update(Upload upload);
@@ -90,7 +90,7 @@ public interface UploadDAO {
     /**
      * 批量更新
      *
-     * @param permissions
+     * @param uploads
      * @return
      */
     int batchUpdate(List<Upload> uploads);

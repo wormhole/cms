@@ -10,7 +10,7 @@ import java.util.List;
  * (User)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:45
+ * @since 2020-08-22 16:49:40
  */
 @Repository
 public interface UserDAO {
@@ -42,7 +42,7 @@ public interface UserDAO {
     /**
      * 新增
      *
-     * @param permission
+     * @param user
      * @return
      */
     int insert(User user);
@@ -50,7 +50,7 @@ public interface UserDAO {
     /**
      * 批量新增
      *
-     * @param permissions
+     * @param users
      * @return
      */
     int batchInsert(List<User> users);
@@ -82,7 +82,7 @@ public interface UserDAO {
     /**
      * 更新
      *
-     * @param permission
+     * @param user
      * @return
      */
     int update(User user);
@@ -90,7 +90,7 @@ public interface UserDAO {
     /**
      * 批量更新
      *
-     * @param permissions
+     * @param users
      * @return
      */
     int batchUpdate(List<User> users);

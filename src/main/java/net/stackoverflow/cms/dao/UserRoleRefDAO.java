@@ -10,7 +10,7 @@ import java.util.List;
  * (UserRoleRef)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:51
+ * @since 2020-08-22 16:49:46
  */
 @Repository
 public interface UserRoleRefDAO {
@@ -42,7 +42,7 @@ public interface UserRoleRefDAO {
     /**
      * 新增
      *
-     * @param permission
+     * @param userRoleRef
      * @return
      */
     int insert(UserRoleRef userRoleRef);
@@ -50,7 +50,7 @@ public interface UserRoleRefDAO {
     /**
      * 批量新增
      *
-     * @param permissions
+     * @param userRoleRefs
      * @return
      */
     int batchInsert(List<UserRoleRef> userRoleRefs);
@@ -82,7 +82,7 @@ public interface UserRoleRefDAO {
     /**
      * 更新
      *
-     * @param permission
+     * @param userRoleRef
      * @return
      */
     int update(UserRoleRef userRoleRef);
@@ -90,7 +90,7 @@ public interface UserRoleRefDAO {
     /**
      * 批量更新
      *
-     * @param permissions
+     * @param userRoleRefs
      * @return
      */
     int batchUpdate(List<UserRoleRef> userRoleRefs);

@@ -9,7 +9,7 @@ import java.util.Date;
  * (RolePermissionRef)实体类
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:32
+ * @since 2020-08-22 16:49:26
  */
 @Setter
 @Getter
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class RolePermissionRef implements Serializable {
-    private static final long serialVersionUID = -46356313630199754L;
+    private static final long serialVersionUID = 530142413279449196L;
 
     private String id;
     private String roleId;

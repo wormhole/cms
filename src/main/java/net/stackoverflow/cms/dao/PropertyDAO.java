@@ -10,7 +10,7 @@ import java.util.List;
  * (Property)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:20
+ * @since 2020-08-22 16:49:14
  */
 @Repository
 public interface PropertyDAO {
@@ -42,7 +42,7 @@ public interface PropertyDAO {
     /**
      * 新增
      *
-     * @param permission
+     * @param property
      * @return
      */
     int insert(Property property);
@@ -50,7 +50,7 @@ public interface PropertyDAO {
     /**
      * 批量新增
      *
-     * @param permissions
+     * @param propertys
      * @return
      */
     int batchInsert(List<Property> propertys);
@@ -82,7 +82,7 @@ public interface PropertyDAO {
     /**
      * 更新
      *
-     * @param permission
+     * @param property
      * @return
      */
     int update(Property property);
@@ -90,7 +90,7 @@ public interface PropertyDAO {
     /**
      * 批量更新
      *
-     * @param permissions
+     * @param propertys
      * @return
      */
     int batchUpdate(List<Property> propertys);

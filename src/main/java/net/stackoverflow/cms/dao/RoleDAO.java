@@ -10,7 +10,7 @@ import java.util.List;
  * (Role)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:27
+ * @since 2020-08-22 16:49:20
  */
 @Repository
 public interface RoleDAO {
@@ -42,7 +42,7 @@ public interface RoleDAO {
     /**
      * 新增
      *
-     * @param permission
+     * @param role
      * @return
      */
     int insert(Role role);
@@ -50,7 +50,7 @@ public interface RoleDAO {
     /**
      * 批量新增
      *
-     * @param permissions
+     * @param roles
      * @return
      */
     int batchInsert(List<Role> roles);
@@ -82,7 +82,7 @@ public interface RoleDAO {
     /**
      * 更新
      *
-     * @param permission
+     * @param role
      * @return
      */
     int update(Role role);
@@ -90,7 +90,7 @@ public interface RoleDAO {
     /**
      * 批量更新
      *
-     * @param permissions
+     * @param roles
      * @return
      */
     int batchUpdate(List<Role> roles);

@@ -10,7 +10,7 @@ import java.util.List;
  * (Permission)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:43:15
+ * @since 2020-08-22 16:49:08
  */
 @Repository
 public interface PermissionDAO {
