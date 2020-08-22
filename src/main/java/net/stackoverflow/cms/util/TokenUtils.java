@@ -20,6 +20,8 @@ public class TokenUtils {
 
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String TOKEN_HEADER = "Authorization";
+    private static final String ATT_UID = "uid";
+    private static final String ATT_TS = "ts";
 
     /**
      * 从请求头部中获取token
@@ -45,8 +47,8 @@ public class TokenUtils {
      */
     public static Map<String, String> generateToken(String id) {
         Map<String, String> jwt = new HashMap<>(16);
-        jwt.put("uid", id);
-        jwt.put("ts", String.valueOf(System.currentTimeMillis()));
+        jwt.put(ATT_UID, id);
+        jwt.put(ATT_TS, String.valueOf(System.currentTimeMillis()));
         return jwt;
     }
 
@@ -60,7 +62,7 @@ public class TokenUtils {
     public static Map<String, String> parseToken(String token) throws JsonProcessingException, TokenException {
         String base64 = new String(Base64.getDecoder().decode(token));
         Map<String, String> jwt = (Map<String, String>) JsonUtils.json2bean(base64, Map.class);
-        if (jwt.get("uid") == null || jwt.get("ts") == null) {
+        if (jwt.get(ATT_UID) == null || jwt.get(ATT_TS) == null) {
             throw new TokenException("token解析异常");
         }
         return jwt;

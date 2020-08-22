@@ -28,6 +28,8 @@ import java.util.*;
 @Slf4j
 public class HomeController extends BaseController {
 
+    private static final String ROLE_PREFIX = "ROLE_";
+
     @Autowired
     private PropertyService propertyService;
 
@@ -74,7 +76,7 @@ public class HomeController extends BaseController {
 
         sgas.forEach(sga -> {
             String authority = sga.getAuthority();
-            if (authority.startsWith("ROLE_")) {
+            if (authority.startsWith(ROLE_PREFIX)) {
                 roles.add(authority.substring(5));
             } else {
                 permissions.add(authority);
