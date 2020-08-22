@@ -179,34 +179,38 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("id", ids);
-        List<User> users = userDAO.selectByCondition(builder.build());
-        for (User user : users) {
-            if (user.getBuiltin().equals(1)) {
-                throw new BusinessException("内建用户不允许被删除");
+        if (!CollectionUtils.isEmpty(ids)) {
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.in("id", ids);
+            List<User> users = userDAO.selectByCondition(builder.build());
+            for (User user : users) {
+                if (user.getBuiltin().equals(1)) {
+                    throw new BusinessException("内建用户不允许被删除");
+                }
             }
-        }
 
-        userDAO.batchDelete(ids);
-        userRoleRefService.deleteByUserIds(ids);
+            userDAO.batchDelete(ids);
+            userRoleRefService.deleteByUserIds(ids);
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateEnable(List<String> ids, Integer enable) {
-        List<User> users = userDAO.selectByCondition(new QueryWrapperBuilder().in("id", ids).build());
-        for (User user : users) {
-            if (user.getBuiltin().equals(1)) {
-                throw new BusinessException("超级管理员不允许被操作");
+        if (!CollectionUtils.isEmpty(ids)) {
+            List<User> users = userDAO.selectByCondition(new QueryWrapperBuilder().in("id", ids).build());
+            for (User user : users) {
+                if (user.getBuiltin().equals(1)) {
+                    throw new BusinessException("超级管理员不允许被操作");
+                }
             }
-        }
 
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.update("enable", enable);
-        builder.update("ts", new Date());
-        builder.in("id", ids);
-        userDAO.updateByCondition(builder.build());
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.update("enable", enable);
+            builder.update("ts", new Date());
+            builder.in("id", ids);
+            userDAO.updateByCondition(builder.build());
+        }
     }
 
     @Override
