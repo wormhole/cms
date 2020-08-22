@@ -1,7 +1,6 @@
 package net.stackoverflow.cms.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.dao.UserRoleRefDAO;
 import net.stackoverflow.cms.model.entity.UserRoleRef;
@@ -30,9 +29,12 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<UserRoleRef> findByUserId(String userId) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.eq("user_id", userId);
-        List<UserRoleRef> userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
+        List<UserRoleRef> userRoleRefs = new ArrayList<>();
+        if (!StringUtils.isEmpty(userId)) {
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.eq("user_id", userId);
+            userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
+        }
         return userRoleRefs;
     }
 
@@ -52,7 +54,9 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByUserIds(List<String> userIds) {
         if (!CollectionUtils.isEmpty(userIds)) {
-            userRoleRefDAO.deleteByCondition(new QueryWrapperBuilder().in("user_id", userIds).build());
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.in("user_id", userIds);
+            userRoleRefDAO.deleteByCondition(builder.build());
         }
     }
 
@@ -60,7 +64,9 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByUserId(String userId) {
         if (!StringUtils.isEmpty(userId)) {
-            userRoleRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("user_id", userId).build());
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.eq("user_id", userId);
+            userRoleRefDAO.deleteByCondition(builder.build());
         }
     }
 
