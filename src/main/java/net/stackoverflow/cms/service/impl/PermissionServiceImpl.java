@@ -81,15 +81,17 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("id", ids);
-        List<Permission> permissions = permissionDAO.selectByCondition(builder.build());
-        for (Permission permission : permissions) {
-            if (permission.getBuiltin().equals(1)) {
-                throw new BusinessException("内建权限不允许被删除");
+        if (!CollectionUtils.isEmpty(ids)) {
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.in("id", ids);
+            List<Permission> permissions = permissionDAO.selectByCondition(builder.build());
+            for (Permission permission : permissions) {
+                if (permission.getBuiltin().equals(1)) {
+                    throw new BusinessException("内建权限不允许被删除");
+                }
             }
+            permissionDAO.batchDelete(ids);
         }
-        permissionDAO.batchDelete(ids);
     }
 
     @Override
@@ -166,8 +168,6 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<PermissionDTO> findByRoleId(String roleId) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.eq("role_id", roleId);
         List<RolePermissionRef> rolePermissionRefs = rolePermissionRefService.findByRoleId(roleId);
         List<PermissionDTO> permissionDTOS = new ArrayList<>();
         if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
