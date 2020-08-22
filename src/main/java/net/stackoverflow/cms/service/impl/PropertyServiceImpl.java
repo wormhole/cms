@@ -49,15 +49,17 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<PropertyDTO> findByKeys(List<String> keys) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("key", keys);
-        List<Property> properties = propertyDAO.selectByCondition(builder.build());
         List<PropertyDTO> propertyDTOS = new ArrayList<>();
-        properties.forEach(property -> {
-            PropertyDTO propertyDTO = new PropertyDTO();
-            BeanUtils.copyProperties(property, propertyDTO);
-            propertyDTOS.add(propertyDTO);
-        });
+        if (!CollectionUtils.isEmpty(keys)) {
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.in("key", keys);
+            List<Property> properties = propertyDAO.selectByCondition(builder.build());
+            properties.forEach(property -> {
+                PropertyDTO propertyDTO = new PropertyDTO();
+                BeanUtils.copyProperties(property, propertyDTO);
+                propertyDTOS.add(propertyDTO);
+            });
+        }
         return propertyDTOS;
     }
 

@@ -6,10 +6,10 @@ import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.constant.FileTypeConst;
 import net.stackoverflow.cms.constant.UploadPathConst;
-import net.stackoverflow.cms.dao.PropertyDAO;
 import net.stackoverflow.cms.dao.UploadDAO;
 import net.stackoverflow.cms.model.dto.UploadDTO;
 import net.stackoverflow.cms.model.entity.Upload;
+import net.stackoverflow.cms.service.PropertyService;
 import net.stackoverflow.cms.service.UploadService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.FileUtils;
@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,7 +38,7 @@ public class UploadServiceImpl implements UploadService {
     @Autowired
     private UploadDAO uploadDAO;
     @Autowired
-    private PropertyDAO propertyDAO;
+    private PropertyService propertyService;
     @Autowired
     private UserService userService;
 
@@ -63,12 +64,7 @@ public class UploadServiceImpl implements UploadService {
     @Transactional(rollbackFor = Exception.class)
     public void updateHead(MultipartFile file, String userId) throws IOException {
         Upload upload = saveFile(file, userId);
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.update("value", upload.getPath());
-        builder.update("ts", new Date());
-        builder.update("type", FileTypeConst.T_IMAGE);
-        builder.eq("key", "head");
-        propertyDAO.updateByCondition(builder.build());
+        propertyService.updateByKey("head", upload.getPath());
     }
 
     @Override
@@ -111,17 +107,19 @@ public class UploadServiceImpl implements UploadService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
-        QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("id", ids);
-        List<Upload> uploads = uploadDAO.selectByCondition(builder.build());
-        for (Upload upload : uploads) {
-            String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + upload.getPath();
-            File file = new File(path);
-            if (file.exists()) {
-                file.delete();
+        if (!CollectionUtils.isEmpty(ids)) {
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.in("id", ids);
+            List<Upload> uploads = uploadDAO.selectByCondition(builder.build());
+            for (Upload upload : uploads) {
+                String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + upload.getPath();
+                File file = new File(path);
+                if (file.exists()) {
+                    file.delete();
+                }
             }
+            uploadDAO.batchDelete(ids);
         }
-        uploadDAO.batchDelete(ids);
     }
 
 }

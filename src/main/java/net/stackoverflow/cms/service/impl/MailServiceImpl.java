@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * 邮件服务实现类
  *
- * @author
+ * @author 凉衫薄
  */
 @Service
 public class MailServiceImpl implements MailService {
