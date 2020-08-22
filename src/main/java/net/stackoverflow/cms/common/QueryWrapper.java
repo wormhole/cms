@@ -2,7 +2,10 @@ package net.stackoverflow.cms.common;
 
 import lombok.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 条件查询
@@ -38,11 +41,11 @@ public class QueryWrapper {
     /**
      * in条件
      */
-    private Map<String, List<Object>> inWrapper;
+    private Map<String, List<?>> inWrapper;
     /**
      * not in条件
      */
-    private Map<String, List<Object>> ninWrapper;
+    private Map<String, List<?>> ninWrapper;
     /**
      * 模糊查询条件
      */
@@ -66,8 +69,8 @@ public class QueryWrapper {
         private final Map<String, String> sortWrapper;
         private final Map<String, Object> eqWrapper;
         private final Map<String, Object> neqWrapper;
-        private final Map<String, List<Object>> inWrapper;
-        private final Map<String, List<Object>> ninWrapper;
+        private final Map<String, List<?>> inWrapper;
+        private final Map<String, List<?>> ninWrapper;
         private final Map<String, List<String>> keyWrapper;
         private final Map<String, Object> upWrapper;
 
@@ -141,9 +144,9 @@ public class QueryWrapper {
          * @param value     值
          * @return 返回建造者对象
          */
-        public synchronized QueryWrapperBuilder in(Boolean condition, String column, Object[] value) {
+        public synchronized QueryWrapperBuilder in(Boolean condition, String column, List<?> value) {
             if (condition) {
-                inWrapper.put(column, Arrays.asList(value));
+                inWrapper.put(column, value);
             }
             return this;
         }
@@ -155,7 +158,7 @@ public class QueryWrapper {
          * @param value  值
          * @return 返回建造者对象
          */
-        public synchronized QueryWrapperBuilder in(String column, Object[] value) {
+        public synchronized QueryWrapperBuilder in(String column, List<?> value) {
             return in(true, column, value);
         }
 
@@ -167,9 +170,9 @@ public class QueryWrapper {
          * @param value     值
          * @return 返回建造者对象
          */
-        public synchronized QueryWrapperBuilder notIn(Boolean condition, String column, Object[] value) {
+        public synchronized QueryWrapperBuilder notIn(Boolean condition, String column, List<?> value) {
             if (condition) {
-                ninWrapper.put(column, Arrays.asList(value));
+                ninWrapper.put(column, value);
             }
             return this;
         }
@@ -181,7 +184,7 @@ public class QueryWrapper {
          * @param value  值
          * @return 返回建造者对象
          */
-        public synchronized QueryWrapperBuilder notIn(String column, Object[] value) {
+        public synchronized QueryWrapperBuilder notIn(String column, List<?> value) {
             return notIn(true, column, value);
         }
 
