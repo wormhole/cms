@@ -58,7 +58,7 @@ public class RoleServiceImpl implements RoleService {
         Set<String> roleIds = new HashSet<>();
         if (!CollectionUtils.isEmpty(roleIds)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
-            builder.in("permissionId", permissionIds.toArray());
+            builder.in("permission_id", permissionIds);
             List<RolePermissionRef> rolePermissionRefs = rolePermissionRefDAO.selectByCondition(builder.build());
             if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
                 rolePermissionRefs.forEach(rolePermissionRef -> roleIds.add(rolePermissionRef.getRoleId()));
@@ -76,7 +76,7 @@ public class RoleServiceImpl implements RoleService {
         }
         builder.like(!StringUtils.isEmpty(key), key, Arrays.asList("name", "note"));
         builder.page((page - 1) * limit, limit);
-        builder.in("id", roleIds.toArray());
+        builder.in("id", new ArrayList<>(roleIds));
         QueryWrapper wrapper = builder.build();
 
         List<Role> roles = roleDAO.selectByCondition(wrapper);
@@ -97,13 +97,13 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public List<PermissionDTO> findPermissionByRoleId(String roleId) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.eq("roleId", roleId);
+        builder.eq("role_id", roleId);
         List<RolePermissionRef> rolePermissionRefs = rolePermissionRefDAO.selectByCondition(builder.build());
         List<PermissionDTO> permissionDTOS = new ArrayList<>();
         if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
             List<String> permissionIds = new ArrayList<>();
             rolePermissionRefs.forEach(rolePermissionRef -> permissionIds.add(rolePermissionRef.getPermissionId()));
-            List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", permissionIds.toArray()).build());
+            List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", permissionIds).build());
             permissions.forEach(permission -> {
                 PermissionDTO permissionDTO = new PermissionDTO();
                 BeanUtils.copyProperties(permission, permissionDTO);
@@ -116,7 +116,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
-        List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", ids.toArray()).build());
+        List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", ids).build());
         for (Role role : roles) {
             if (role.getBuiltin().equals(1)) {
                 throw new BusinessException("内建角色不允许被删除");
@@ -128,7 +128,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void reGrantPermission(String roleId, List<String> permissionIds) {
-        rolePermissionRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("roleId", roleId).build());
+        rolePermissionRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("role_id", roleId).build());
         List<RolePermissionRef> rolePermissionRefs = new ArrayList<>();
         permissionIds.forEach(permissionId -> {
             rolePermissionRefs.add(new RolePermissionRef(UUID.randomUUID().toString(), roleId, permissionId, new Date()));

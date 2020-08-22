@@ -81,7 +81,7 @@ public class UploadServiceImpl implements UploadService {
             builder.sort(sort, order);
         }
         builder.eq("type", FileTypeConst.T_IMAGE);
-        builder.eq("userId", userId);
+        builder.eq("user_id", userId);
         builder.like(!StringUtils.isEmpty(key), key, Arrays.asList("name", "path"));
         builder.page((page - 1) * limit, limit);
         QueryWrapper wrapper = builder.build();
@@ -112,7 +112,7 @@ public class UploadServiceImpl implements UploadService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("id", ids.toArray());
+        builder.in("id", ids);
         List<Upload> uploads = uploadDAO.selectByCondition(builder.build());
         for (Upload upload : uploads) {
             String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + upload.getPath();

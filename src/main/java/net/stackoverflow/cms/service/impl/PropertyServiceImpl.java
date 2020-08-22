@@ -50,7 +50,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Transactional(rollbackFor = Exception.class)
     public List<PropertyDTO> findByKeys(List<String> keys) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("key", keys.toArray());
+        builder.in("key", keys);
         List<Property> properties = propertyDAO.selectByCondition(builder.build());
         List<PropertyDTO> propertyDTOS = new ArrayList<>();
         properties.forEach(property -> {

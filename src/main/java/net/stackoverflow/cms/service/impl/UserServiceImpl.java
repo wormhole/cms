@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public List<RoleDTO> findRoleByUserId(String userId) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.eq("userId", userId);
+        builder.eq("user_id", userId);
         List<UserRoleRef> userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
         List<RoleDTO> roleDTOS = new ArrayList<>();
         if (!CollectionUtils.isEmpty(userRoleRefs)) {
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
                 roleIds.add(userRoleRef.getRoleId());
 
             });
-            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", roleIds.toArray()).build());
+            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", roleIds).build());
             roles.forEach(role -> {
                 RoleDTO dto = new RoleDTO();
                 BeanUtils.copyProperties(role, dto);
@@ -100,13 +100,13 @@ public class UserServiceImpl implements UserService {
             roleDTOS.forEach(roleDTO -> roleIds.add(roleDTO.getId()));
 
             QueryWrapperBuilder builder = QueryWrapper.newBuilder();
-            builder.in("roleId", roleIds.toArray());
+            builder.in("role_id", new ArrayList<>(roleIds));
             List<RolePermissionRef> rolePermissionRefs = rolePermissionRefDAO.selectByCondition(builder.build());
             if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
                 Set<String> permissionIds = new HashSet<>();
                 rolePermissionRefs.forEach(rolePermissionRef -> permissionIds.add(rolePermissionRef.getPermissionId()));
 
-                List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", permissionIds.toArray()).build());
+                List<Permission> permissions = permissionDAO.selectByCondition(QueryWrapper.newBuilder().in("id", new ArrayList<>(permissionIds)).build());
                 permissions.forEach(permission -> {
                     PermissionDTO permissionDTO = new PermissionDTO();
                     BeanUtils.copyProperties(permission, permissionDTO);
@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
         Set<String> userIds = new HashSet<>();
         if (!CollectionUtils.isEmpty(roleIds)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
-            builder.in("roleId", roleIds.toArray());
+            builder.in("role_id", roleIds);
             List<UserRoleRef> userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
             if (!CollectionUtils.isEmpty(userRoleRefs)) {
                 userRoleRefs.forEach(userRoleRef -> userIds.add(userRoleRef.getUserId()));
@@ -212,7 +212,7 @@ public class UserServiceImpl implements UserService {
         }
         builder.like(!StringUtils.isEmpty(key), key, Arrays.asList("username", "telephone", "email"));
         builder.page((page - 1) * limit, limit);
-        builder.in("id", userIds.toArray());
+        builder.in("id", new ArrayList<>(userIds));
         QueryWrapper wrapper = builder.build();
 
         List<User> users = userDAO.selectByCondition(wrapper);
@@ -234,7 +234,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("id", ids.toArray());
+        builder.in("id", ids);
         List<User> users = userDAO.selectByCondition(builder.build());
         for (User user : users) {
             if (user.getBuiltin().equals(1)) {
@@ -243,13 +243,13 @@ public class UserServiceImpl implements UserService {
         }
 
         userDAO.batchDelete(ids);
-        userRoleRefDAO.deleteByCondition(new QueryWrapperBuilder().in("userId", ids.toArray()).build());
+        userRoleRefDAO.deleteByCondition(new QueryWrapperBuilder().in("user_id", ids).build());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateEnable(List<String> ids, Integer enable) {
-        List<User> users = userDAO.selectByCondition(new QueryWrapperBuilder().in("id", ids.toArray()).build());
+        List<User> users = userDAO.selectByCondition(new QueryWrapperBuilder().in("id", ids).build());
         for (User user : users) {
             if (user.getBuiltin().equals(1)) {
                 throw new BusinessException("超级管理员不允许被操作");
@@ -259,14 +259,14 @@ public class UserServiceImpl implements UserService {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.update("enable", enable);
         builder.update("ts", new Date());
-        builder.in("id", ids.toArray());
+        builder.in("id", ids);
         userDAO.updateByCondition(builder.build());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void reGrandRole(GrantRoleDTO dto) {
-        userRoleRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("userId", dto.getUserId()).build());
+        userRoleRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("user_id", dto.getUserId()).build());
         List<UserRoleRef> userRoleRefs = new ArrayList<>();
         for (String roleId : dto.getRoleIds()) {
             userRoleRefs.add(new UserRoleRef(UUID.randomUUID().toString(), dto.getUserId(), roleId, new Date()));

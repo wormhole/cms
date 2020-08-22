@@ -74,7 +74,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.in("id", ids.toArray());
+        builder.in("id", ids);
         List<Permission> permissions = permissionDAO.selectByCondition(builder.build());
         for (Permission permission : permissions) {
             if (permission.getBuiltin().equals(1)) {
