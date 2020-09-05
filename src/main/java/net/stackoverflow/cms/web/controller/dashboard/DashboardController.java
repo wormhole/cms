@@ -3,7 +3,6 @@ package net.stackoverflow.cms.web.controller.dashboard;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.service.PermissionService;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.FormatUtils;
@@ -32,8 +31,6 @@ public class DashboardController extends BaseController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private PermissionService permissionService;
 
     /**
      * 获取仪表盘信息
@@ -48,10 +45,8 @@ public class DashboardController extends BaseController {
         Map<String, Integer> countMap = new HashMap<>(16);
         Integer userCount = userService.count();
         Integer roleCount = roleService.count();
-        Integer permissionCount = permissionService.count();
         countMap.put("user", userCount);
         countMap.put("role", roleCount);
-        countMap.put("permission", permissionCount);
 
         //cpu使用率
         Sigar sigar = new Sigar();

@@ -22,15 +22,14 @@ public interface RoleService {
     /**
      * 分页查询角色
      *
-     * @param page          当前页
-     * @param limit         每页大小
-     * @param sort          排序字段
-     * @param order         排序方式
-     * @param key           关键字
-     * @param permissionIds 权限主键过滤
+     * @param page  当前页
+     * @param limit 每页大小
+     * @param sort  排序字段
+     * @param order 排序方式
+     * @param key   关键字
      * @return
      */
-    PageResponse<RoleDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> permissionIds);
+    PageResponse<RoleDTO> findByPage(Integer page, Integer limit, String sort, String order, String key);
 
     /**
      * 根据主键列表删除角色
@@ -38,14 +37,6 @@ public interface RoleService {
      * @param ids
      */
     void deleteByIds(List<String> ids);
-
-    /**
-     * 重新给角色分配权限
-     *
-     * @param roleId        角色主键
-     * @param permissionIds 权限主键列表
-     */
-    void reGrantPermission(String roleId, List<String> permissionIds);
 
     /**
      * 更新角色信息
@@ -75,4 +66,12 @@ public interface RoleService {
      * @return
      */
     List<RoleDTO> findByUserId(String userId);
+
+    /**
+     * 根据角色主键查询角色信息
+     *
+     * @param id
+     * @return
+     */
+    RoleDTO findById(String id);
 }

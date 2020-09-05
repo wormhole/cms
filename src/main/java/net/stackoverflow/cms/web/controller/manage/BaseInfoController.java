@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.web.controller.config;
+package net.stackoverflow.cms.web.controller.manage;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
@@ -24,10 +24,10 @@ import java.util.*;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/config/website")
+@RequestMapping(value = "/manage/base")
 @Slf4j
 @Validated
-public class WebsiteController extends BaseController {
+public class BaseInfoController extends BaseController {
 
     @Autowired
     private PropertyService propertyService;

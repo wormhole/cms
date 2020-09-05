@@ -6,13 +6,12 @@ import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.dao.RoleDAO;
 import net.stackoverflow.cms.exception.BusinessException;
-import net.stackoverflow.cms.model.dto.PermissionDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.entity.Role;
-import net.stackoverflow.cms.model.entity.RolePermissionRef;
+import net.stackoverflow.cms.model.entity.RoleMenuRef;
 import net.stackoverflow.cms.model.entity.UserRoleRef;
-import net.stackoverflow.cms.service.PermissionService;
-import net.stackoverflow.cms.service.RolePermissionRefService;
+import net.stackoverflow.cms.service.MenuService;
+import net.stackoverflow.cms.service.RoleMenuRefService;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserRoleRefService;
 import org.springframework.beans.BeanUtils;
@@ -38,9 +37,9 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private UserRoleRefService userRoleRefService;
     @Autowired
-    private RolePermissionRefService rolePermissionRefService;
+    private MenuService menuService;
     @Autowired
-    private PermissionService permissionService;
+    private RoleMenuRefService roleMenuRefService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -57,16 +56,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PageResponse<RoleDTO> findByPage(Integer page, Integer limit, String sort, String order, String key, List<String> permissionIds) {
+    public PageResponse<RoleDTO> findByPage(Integer page, Integer limit, String sort, String order, String key) {
         Set<String> roleIds = new HashSet<>();
-        if (!CollectionUtils.isEmpty(permissionIds)) {
-            List<RolePermissionRef> rolePermissionRefs = rolePermissionRefService.findByPermissionIds(permissionIds);
-            if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
-                rolePermissionRefs.forEach(rolePermissionRef -> roleIds.add(rolePermissionRef.getRoleId()));
-            } else {
-                return new PageResponse<>(0, new ArrayList<>());
-            }
-        }
 
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.sort("builtin", "desc");
@@ -87,8 +78,6 @@ public class RoleServiceImpl implements RoleService {
         for (Role role : roles) {
             RoleDTO roleDTO = new RoleDTO();
             BeanUtils.copyProperties(role, roleDTO);
-            List<PermissionDTO> permissionDTOS = permissionService.findByRoleId(role.getId());
-            roleDTO.setPermissions(permissionDTOS);
             roleDTOS.add(roleDTO);
         }
         return new PageResponse<>(total, roleDTOS);
@@ -110,19 +99,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reGrantPermission(String roleId, List<String> permissionIds) {
-        rolePermissionRefService.deleteByRoleId(roleId);
-        List<RolePermissionRef> rolePermissionRefs = new ArrayList<>();
-        permissionIds.forEach(permissionId -> {
-            rolePermissionRefs.add(new RolePermissionRef(UUID.randomUUID().toString(), roleId, permissionId, new Date()));
-        });
-        if (!CollectionUtils.isEmpty(rolePermissionRefs)) {
-            rolePermissionRefService.batchSave(rolePermissionRefs);
-        }
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public void update(RoleDTO roleDTO) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.neq("id", roleDTO.getId());
@@ -137,6 +113,21 @@ public class RoleServiceImpl implements RoleService {
                 .update("note", roleDTO.getNote())
                 .update("ts", new Date())
                 .eq("id", roleDTO.getId()).build());
+
+        roleMenuRefService.deleteByRoleId(roleDTO.getId());
+        List<String> ids = menuService.findIdsByKeys(roleDTO.getMenus());
+        List<RoleMenuRef> refs = new ArrayList<>();
+        for (String id : ids) {
+            RoleMenuRef ref = new RoleMenuRef();
+            ref.setId(UUID.randomUUID().toString());
+            ref.setMenuId(id);
+            ref.setRoleId(roleDTO.getId());
+            ref.setTs(new Date());
+            refs.add(ref);
+        }
+        if (!CollectionUtils.isEmpty(refs)) {
+            roleMenuRefService.batchSave(refs);
+        }
     }
 
     @Override
@@ -155,6 +146,20 @@ public class RoleServiceImpl implements RoleService {
         role.setBuiltin(0);
         role.setTs(new Date());
         roleDAO.insert(role);
+
+        List<String> ids = menuService.findIdsByKeys(roleDTO.getMenus());
+        List<RoleMenuRef> refs = new ArrayList<>();
+        for (String id : ids) {
+            RoleMenuRef ref = new RoleMenuRef();
+            ref.setId(UUID.randomUUID().toString());
+            ref.setMenuId(id);
+            ref.setRoleId(role.getId());
+            ref.setTs(new Date());
+            refs.add(ref);
+        }
+        if (!CollectionUtils.isEmpty(refs)) {
+            roleMenuRefService.batchSave(refs);
+        }
     }
 
     @Override
@@ -177,10 +182,25 @@ public class RoleServiceImpl implements RoleService {
             roles.forEach(role -> {
                 RoleDTO dto = new RoleDTO();
                 BeanUtils.copyProperties(role, dto);
+                dto.setMenus(menuService.findKeysByRoleId(role.getId()));
                 roleDTOS.add(dto);
             });
         }
         return roleDTOS;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RoleDTO findById(String id) {
+        Role role = roleDAO.select(id);
+        if (role != null) {
+            RoleDTO dto = new RoleDTO();
+            BeanUtils.copyProperties(role, dto);
+            dto.setMenus(menuService.findKeysByRoleId(role.getId()));
+            return dto;
+        } else {
+            return null;
+        }
     }
 
 }

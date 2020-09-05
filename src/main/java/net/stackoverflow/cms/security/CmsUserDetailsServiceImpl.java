@@ -1,10 +1,9 @@
 package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.model.dto.PermissionDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.service.PermissionService;
+import net.stackoverflow.cms.service.MenuService;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +31,21 @@ public class CmsUserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private RoleService roleService;
     @Autowired
-    private PermissionService permissionService;
+    private MenuService menuService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findByUsername(username);
         if (user != null) {
             List<RoleDTO> roleDTOS = roleService.findByUserId(user.getId());
-            List<PermissionDTO> permissionDTOS = permissionService.findByUserId(user.getId());
+            List<String> menus = menuService.findKeysByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (RoleDTO roleDTO : roleDTOS) {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + roleDTO.getName());
                 authorities.add(sga);
             }
-            for (PermissionDTO permissionDTO : permissionDTOS) {
-                SimpleGrantedAuthority sga = new SimpleGrantedAuthority(permissionDTO.getName());
+            for (String menu : menus) {
+                SimpleGrantedAuthority sga = new SimpleGrantedAuthority("MENU_" + menu);
                 authorities.add(sga);
             }
             return new CmsUserDetails(user, authorities);

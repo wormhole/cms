@@ -30,6 +30,8 @@ public class HomeController extends BaseController {
 
     private static final String ROLE_PREFIX = "ROLE_";
 
+    private static final String MENU_PREFIX = "MENU_";
+
     @Autowired
     private PropertyService propertyService;
 
@@ -72,19 +74,19 @@ public class HomeController extends BaseController {
         List<SimpleGrantedAuthority> sgas = (List<SimpleGrantedAuthority>) userDetails.getAuthorities();
 
         List<String> roles = new ArrayList<>();
-        List<String> permissions = new ArrayList<>();
+        List<String> menus = new ArrayList<>();
 
         sgas.forEach(sga -> {
             String authority = sga.getAuthority();
             if (authority.startsWith(ROLE_PREFIX)) {
                 roles.add(authority.substring(5));
-            } else {
-                permissions.add(authority);
+            } else if (authority.startsWith(MENU_PREFIX)) {
+                menus.add(authority.substring(5));
             }
         });
         authorityDTO.setUsername(userDetails.getUsername());
         authorityDTO.setRoles(roles);
-        authorityDTO.setPermissions(permissions);
+        authorityDTO.setMenus(menus);
 
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", authorityDTO));
 

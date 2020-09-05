@@ -28,7 +28,7 @@ public class RoleDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date ts;
     private Integer builtin;
-    List<PermissionDTO> permissions;
+    List<String> menus;
 
     public interface Insert {
     }

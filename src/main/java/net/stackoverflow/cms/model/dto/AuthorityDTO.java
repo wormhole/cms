@@ -18,5 +18,5 @@ public class AuthorityDTO {
 
     private String username;
     private List<String> roles;
-    private List<String> permissions;
+    private List<String> menus;
 }

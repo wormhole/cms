@@ -70,9 +70,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/home/**").authenticated()
                 .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/personal/**").authenticated()
-                .antMatchers("/auth/**").hasAuthority("auth")
-                .antMatchers("/file/**").hasAuthority("file")
-                .antMatchers("/config/**").hasAuthority("config")
+                //.antMatchers("/auth/**").hasAuthority("auth")
+                //.antMatchers("/manage/**").hasAuthority("manage")
                 .anyRequest().permitAll();
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint);
