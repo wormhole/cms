@@ -36,7 +36,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (!StringUtils.isEmpty(key)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.eq("key", key);
-            List<Property> properties = propertyDAO.selectByCondition(builder.build());
+            List<Property> properties = propertyDAO.querySelect(builder.build());
             if (!CollectionUtils.isEmpty(properties)) {
                 Property property = properties.get(0);
                 propertyDTO = new PropertyDTO();
@@ -53,7 +53,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (!CollectionUtils.isEmpty(keys)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("key", keys);
-            List<Property> properties = propertyDAO.selectByCondition(builder.build());
+            List<Property> properties = propertyDAO.querySelect(builder.build());
             properties.forEach(property -> {
                 PropertyDTO propertyDTO = new PropertyDTO();
                 BeanUtils.copyProperties(property, propertyDTO);
@@ -78,7 +78,7 @@ public class PropertyServiceImpl implements PropertyService {
         builder.update("value", value);
         builder.update("ts", new Date());
         builder.eq("key", key);
-        propertyDAO.updateByCondition(builder.build());
+        propertyDAO.querySelect(builder.build());
     }
 
 

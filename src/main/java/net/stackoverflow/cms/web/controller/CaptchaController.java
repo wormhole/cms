@@ -24,7 +24,7 @@ import java.util.Random;
  */
 @Controller
 @Slf4j
-public class VerifyCodeController {
+public class CaptchaController {
 
     private static final Integer LENGTH = 4;
 
@@ -34,14 +34,14 @@ public class VerifyCodeController {
      * @param response http响应对象
      * @param session  会话对象
      */
-    @RequestMapping(value = "/code", method = RequestMethod.GET)
+    @RequestMapping(value = "/captcha", method = RequestMethod.GET)
     public void code(HttpServletResponse response, HttpSession session) throws IOException {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        String verifyCode = drawImg(output);
-        log.info("sessionId:{},验证码:{}", session.getId(), verifyCode);
+        String captcha = drawImg(output);
+        log.info("sessionId:{},验证码:{}", session.getId(), captcha);
 
-        session.setAttribute("code", verifyCode);
+        session.setAttribute("captcha", captcha);
 
         ServletOutputStream out = response.getOutputStream();
         output.writeTo(out);

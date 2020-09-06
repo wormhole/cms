@@ -9,7 +9,7 @@ import java.util.Date;
  * (Upload)实体类
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:49:33
+ * @since 2020-09-06 13:46:41
  */
 @Setter
 @Getter
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class Upload implements Serializable {
-    private static final long serialVersionUID = 680952456317353299L;
+    private static final long serialVersionUID = 222962803863704681L;
 
     private String id;
     private String name;

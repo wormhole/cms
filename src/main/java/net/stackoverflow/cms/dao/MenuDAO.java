@@ -10,7 +10,7 @@ import java.util.List;
  * (Menu)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-09-06 10:09:35
+ * @since 2020-09-06 13:47:04
  */
 @Repository
 public interface MenuDAO {

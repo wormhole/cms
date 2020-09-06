@@ -10,7 +10,7 @@ import java.util.List;
  * (Role)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:49:20
+ * @since 2020-09-06 13:46:29
  */
 @Repository
 public interface RoleDAO {
@@ -21,7 +21,7 @@ public interface RoleDAO {
      * @param wrapper
      * @return
      */
-    int countByCondition(QueryWrapper wrapper);
+    int queryCount(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -37,7 +37,7 @@ public interface RoleDAO {
      * @param wrapper
      * @return
      */
-    List<Role> selectByCondition(QueryWrapper wrapper);
+    List<Role> querySelect(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +77,7 @@ public interface RoleDAO {
      * @param wrapper
      * @return
      */
-    int deleteByCondition(QueryWrapper wrapper);
+    int queryDelete(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +101,5 @@ public interface RoleDAO {
      * @param wrapper
      * @return
      */
-    int updateByCondition(QueryWrapper wrapper);
+    int queryUpdate(QueryWrapper wrapper);
 }

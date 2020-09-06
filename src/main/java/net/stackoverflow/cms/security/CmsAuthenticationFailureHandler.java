@@ -3,7 +3,7 @@ package net.stackoverflow.cms.security;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.constant.RedisPrefixConst;
-import net.stackoverflow.cms.exception.VerifyCodeException;
+import net.stackoverflow.cms.exception.CaptchaException;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.JsonUtils;
@@ -43,7 +43,7 @@ public class CmsAuthenticationFailureHandler implements AuthenticationFailureHan
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         PrintWriter out = response.getWriter();
         Result<Object> result = null;
-        if (exception instanceof VerifyCodeException) {
+        if (exception instanceof CaptchaException) {
             result = Result.failure("验证码错误");
         } else if (exception instanceof DisabledException) {
             result = Result.failure("该用户被禁用");

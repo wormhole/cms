@@ -9,7 +9,7 @@ import java.util.Date;
  * (Menu)实体类
  *
  * @author 凉衫薄
- * @since 2020-09-06 10:09:34
+ * @since 2020-09-06 13:47:03
  */
 @Setter
 @Getter
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class Menu implements Serializable {
-    private static final long serialVersionUID = -46171317154920145L;
+    private static final long serialVersionUID = -23854076571904011L;
 
     private String id;
     private String title;

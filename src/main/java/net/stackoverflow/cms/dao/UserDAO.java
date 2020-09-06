@@ -10,7 +10,7 @@ import java.util.List;
  * (User)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:49:40
+ * @since 2020-09-06 13:28:27
  */
 @Repository
 public interface UserDAO {
@@ -21,7 +21,7 @@ public interface UserDAO {
      * @param wrapper
      * @return
      */
-    int countByCondition(QueryWrapper wrapper);
+    int queryCount(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -37,7 +37,7 @@ public interface UserDAO {
      * @param wrapper
      * @return
      */
-    List<User> selectByCondition(QueryWrapper wrapper);
+    List<User> querySelect(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +77,7 @@ public interface UserDAO {
      * @param wrapper
      * @return
      */
-    int deleteByCondition(QueryWrapper wrapper);
+    int queryDelete(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +101,5 @@ public interface UserDAO {
      * @param wrapper
      * @return
      */
-    int updateByCondition(QueryWrapper wrapper);
+    int queryUpdate(QueryWrapper wrapper);
 }

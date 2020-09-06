@@ -10,7 +10,7 @@ import java.util.List;
  * (Upload)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:49:33
+ * @since 2020-09-06 13:46:41
  */
 @Repository
 public interface UploadDAO {
@@ -21,7 +21,7 @@ public interface UploadDAO {
      * @param wrapper
      * @return
      */
-    int countByCondition(QueryWrapper wrapper);
+    int queryCount(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -37,7 +37,7 @@ public interface UploadDAO {
      * @param wrapper
      * @return
      */
-    List<Upload> selectByCondition(QueryWrapper wrapper);
+    List<Upload> querySelect(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +77,7 @@ public interface UploadDAO {
      * @param wrapper
      * @return
      */
-    int deleteByCondition(QueryWrapper wrapper);
+    int queryDelete(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +101,5 @@ public interface UploadDAO {
      * @param wrapper
      * @return
      */
-    int updateByCondition(QueryWrapper wrapper);
+    int queryUpdate(QueryWrapper wrapper);
 }

@@ -42,7 +42,7 @@ public class UserDTO {
     private Integer enable;
     private Integer builtin;
     private List<RoleDTO> roles;
-    private String code;
+    private String captcha;
 
     public interface Update {
     }

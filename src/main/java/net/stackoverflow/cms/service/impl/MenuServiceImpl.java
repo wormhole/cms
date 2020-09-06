@@ -95,10 +95,10 @@ public class MenuServiceImpl implements MenuService {
     public List<String> findFullKeysByUserId(String userId) {
         List<RoleDTO> dtos = roleService.findByUserId(userId);
         Set<String> keys = new HashSet<>();
-        dtos.forEach(dto -> {
+        for (RoleDTO dto : dtos) {
             List<String> ks = findFullKeysByRoleId(dto.getId());
             keys.addAll(ks);
-        });
+        }
         return new ArrayList<>(keys);
     }
 
@@ -107,17 +107,17 @@ public class MenuServiceImpl implements MenuService {
     public List<String> findKeysByUserId(String userId) {
         List<RoleDTO> dtos = roleService.findByUserId(userId);
         Set<String> keys = new HashSet<>();
-        dtos.forEach(dto -> {
+        for (RoleDTO dto : dtos) {
             List<String> ks = findKeysByRoleId(dto.getId());
             keys.addAll(ks);
-        });
+        }
         return new ArrayList<>(keys);
     }
 
     private List<MenuDTO> toTree(List<Menu> menus) {
         List<MenuDTO> dtos = new ArrayList<>();
         Map<String, List<MenuDTO>> map = new HashMap<>(16);
-        menus.forEach(menu -> {
+        for (Menu menu : menus) {
             if (menu.getParent() != null) {
                 MenuDTO dto = new MenuDTO();
                 BeanUtils.copyProperties(menu, dto);
@@ -128,15 +128,15 @@ public class MenuServiceImpl implements MenuService {
                 list.add(dto);
                 map.put(menu.getParent(), list);
             }
-        });
-        menus.forEach(menu -> {
+        }
+        for (Menu menu : menus) {
             if (menu.getParent() == null) {
                 MenuDTO dto = new MenuDTO();
                 BeanUtils.copyProperties(menu, dto);
                 dto.setChildren(map.get(menu.getId()));
                 dtos.add(dto);
             }
-        });
+        }
         return dtos;
     }
 }

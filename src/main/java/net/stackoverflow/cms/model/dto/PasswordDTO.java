@@ -17,16 +17,8 @@ import javax.validation.constraints.Size;
 @ToString
 public class PasswordDTO {
 
-    @NotBlank(message = "id不能为空", groups = {Admin.class})
-    private String id;
-    @NotBlank(message = "旧密码不能为空", groups = {Personal.class})
-    private String oldPassword;
-    @Size(min = 6, message = "新密码长度不不能小于6", groups = {Admin.class, Personal.class})
-    private String newPassword;
-
-    public interface Admin {
-    }
-
-    public interface Personal {
-    }
+    @Size(min = 6, message = "新密码长度不不能小于6")
+    private String password;
+    @NotBlank(message = "旧密码不能为空")
+    private String old;
 }

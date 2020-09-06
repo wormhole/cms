@@ -33,7 +33,7 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
         if (!StringUtils.isEmpty(userId)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.eq("user_id", userId);
-            userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
+            userRoleRefs = userRoleRefDAO.querySelect(builder.build());
         }
         return userRoleRefs;
     }
@@ -45,7 +45,7 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
         if (!CollectionUtils.isEmpty(roleIds)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("role_id", roleIds);
-            userRoleRefs = userRoleRefDAO.selectByCondition(builder.build());
+            userRoleRefs = userRoleRefDAO.querySelect(builder.build());
         }
         return userRoleRefs;
     }
@@ -56,7 +56,7 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
         if (!CollectionUtils.isEmpty(userIds)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("user_id", userIds);
-            userRoleRefDAO.deleteByCondition(builder.build());
+            userRoleRefDAO.queryDelete(builder.build());
         }
     }
 
@@ -66,7 +66,7 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
         if (!StringUtils.isEmpty(userId)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.eq("user_id", userId);
-            userRoleRefDAO.deleteByCondition(builder.build());
+            userRoleRefDAO.queryDelete(builder.build());
         }
     }
 

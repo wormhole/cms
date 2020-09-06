@@ -44,13 +44,13 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<RoleDTO> findAll() {
-        List<Role> roles = roleDAO.selectByCondition(new QueryWrapper());
+        List<Role> roles = roleDAO.querySelect(new QueryWrapper());
         List<RoleDTO> roleDTOS = new ArrayList<>();
-        roles.forEach(role -> {
+        for (Role role : roles) {
             RoleDTO roleDTO = new RoleDTO();
             BeanUtils.copyProperties(role, roleDTO);
             roleDTOS.add(roleDTO);
-        });
+        }
         return roleDTOS;
     }
 
@@ -71,8 +71,8 @@ public class RoleServiceImpl implements RoleService {
         builder.in("id", new ArrayList<>(roleIds));
         QueryWrapper wrapper = builder.build();
 
-        List<Role> roles = roleDAO.selectByCondition(wrapper);
-        Integer total = roleDAO.countByCondition(wrapper);
+        List<Role> roles = roleDAO.querySelect(wrapper);
+        Integer total = roleDAO.queryCount(wrapper);
 
         List<RoleDTO> roleDTOS = new ArrayList<>();
         for (Role role : roles) {
@@ -87,7 +87,7 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<String> ids) {
         if (!CollectionUtils.isEmpty(ids)) {
-            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", ids).build());
+            List<Role> roles = roleDAO.querySelect(QueryWrapper.newBuilder().in("id", ids).build());
             for (Role role : roles) {
                 if (role.getBuiltin().equals(1)) {
                     throw new BusinessException("内建角色不允许被删除");
@@ -103,16 +103,17 @@ public class RoleServiceImpl implements RoleService {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.neq("id", roleDTO.getId());
         builder.eq("name", roleDTO.getName());
-        List<Role> roles = roleDAO.selectByCondition(builder.build());
+        List<Role> roles = roleDAO.querySelect(builder.build());
         if (!CollectionUtils.isEmpty(roles)) {
             throw new BusinessException("角色名不能重复");
         }
 
-        roleDAO.updateByCondition(QueryWrapper.newBuilder()
-                .update("name", roleDTO.getName())
-                .update("note", roleDTO.getNote())
-                .update("ts", new Date())
-                .eq("id", roleDTO.getId()).build());
+        QueryWrapperBuilder deleteBuilder = new QueryWrapperBuilder();
+        deleteBuilder.update("name", roleDTO.getName());
+        deleteBuilder.update("note", roleDTO.getNote());
+        deleteBuilder.update("ts", new Date());
+        deleteBuilder.eq("id", roleDTO.getId());
+        roleDAO.queryUpdate(deleteBuilder.build());
 
         roleMenuRefService.deleteByRoleId(roleDTO.getId());
         List<String> ids = menuService.findIdsByKeys(roleDTO.getMenus());
@@ -135,7 +136,7 @@ public class RoleServiceImpl implements RoleService {
     public void save(RoleDTO roleDTO) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.eq("name", roleDTO.getName());
-        List<Role> roles = roleDAO.selectByCondition(builder.build());
+        List<Role> roles = roleDAO.querySelect(builder.build());
         if (!CollectionUtils.isEmpty(roles)) {
             throw new BusinessException("角色名不能重复");
         }
@@ -165,7 +166,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer count() {
-        return roleDAO.countByCondition(new QueryWrapper());
+        return roleDAO.queryCount(new QueryWrapper());
     }
 
     @Override
@@ -175,16 +176,14 @@ public class RoleServiceImpl implements RoleService {
         List<RoleDTO> roleDTOS = new ArrayList<>();
         if (!CollectionUtils.isEmpty(userRoleRefs)) {
             List<String> roleIds = new ArrayList<>();
-            userRoleRefs.forEach(userRoleRef -> {
-                roleIds.add(userRoleRef.getRoleId());
-            });
-            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", roleIds).build());
-            roles.forEach(role -> {
+            userRoleRefs.forEach(userRoleRef -> roleIds.add(userRoleRef.getRoleId()));
+            List<Role> roles = roleDAO.querySelect(QueryWrapper.newBuilder().in("id", roleIds).build());
+            for (Role role : roles) {
                 RoleDTO dto = new RoleDTO();
                 BeanUtils.copyProperties(role, dto);
                 dto.setMenus(menuService.findKeysByRoleId(role.getId()));
                 roleDTOS.add(dto);
-            });
+            }
         }
         return roleDTOS;
     }
@@ -196,10 +195,8 @@ public class RoleServiceImpl implements RoleService {
         List<String> names = new ArrayList<>();
         if (!CollectionUtils.isEmpty(userRoleRefs)) {
             List<String> roleIds = new ArrayList<>();
-            userRoleRefs.forEach(userRoleRef -> {
-                roleIds.add(userRoleRef.getRoleId());
-            });
-            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", roleIds).build());
+            userRoleRefs.forEach(userRoleRef -> roleIds.add(userRoleRef.getRoleId()));
+            List<Role> roles = roleDAO.querySelect(QueryWrapper.newBuilder().in("id", roleIds).build());
             roles.forEach(role -> names.add(role.getName()));
         }
         return names;

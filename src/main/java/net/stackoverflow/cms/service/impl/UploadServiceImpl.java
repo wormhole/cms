@@ -82,8 +82,8 @@ public class UploadServiceImpl implements UploadService {
         builder.page((page - 1) * limit, limit);
         QueryWrapper wrapper = builder.build();
 
-        List<Upload> uploads = uploadDAO.selectByCondition(wrapper);
-        Integer total = uploadDAO.countByCondition(wrapper);
+        List<Upload> uploads = uploadDAO.querySelect(wrapper);
+        Integer total = uploadDAO.queryCount(wrapper);
 
         List<UploadDTO> uploadDTOS = new ArrayList<>();
         for (Upload upload : uploads) {
@@ -110,7 +110,7 @@ public class UploadServiceImpl implements UploadService {
         if (!CollectionUtils.isEmpty(ids)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("id", ids);
-            List<Upload> uploads = uploadDAO.selectByCondition(builder.build());
+            List<Upload> uploads = uploadDAO.querySelect(builder.build());
             for (Upload upload : uploads) {
                 String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + upload.getPath();
                 File file = new File(path);

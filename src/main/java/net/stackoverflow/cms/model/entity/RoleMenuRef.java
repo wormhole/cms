@@ -9,7 +9,7 @@ import java.util.Date;
  * (RoleMenuRef)实体类
  *
  * @author 凉衫薄
- * @since 2020-09-06 10:09:42
+ * @since 2020-09-06 13:47:12
  */
 @Setter
 @Getter
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class RoleMenuRef implements Serializable {
-    private static final long serialVersionUID = -83846302908562948L;
+    private static final long serialVersionUID = 676437746383170987L;
 
     private String id;
     private String roleId;

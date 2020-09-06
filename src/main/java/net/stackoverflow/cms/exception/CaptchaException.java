@@ -7,13 +7,13 @@ import org.springframework.security.core.AuthenticationException;
  *
  * @author 凉衫薄
  */
-public class VerifyCodeException extends AuthenticationException {
+public class CaptchaException extends AuthenticationException {
 
-    public VerifyCodeException() {
+    public CaptchaException() {
         super(null);
     }
 
-    public VerifyCodeException(String msg) {
+    public CaptchaException(String msg) {
         super(msg);
     }
 }

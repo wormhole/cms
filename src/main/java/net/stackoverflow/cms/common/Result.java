@@ -18,12 +18,28 @@ public class Result<T> {
     private String message;
     private T data;
 
+    public static <T> Result<T> success() {
+        return success("success");
+    }
+
+    public static <T> Result<T> success(T data) {
+        return success("success", data);
+    }
+
     public static <T> Result<T> success(String message) {
         return success(message, null);
     }
 
     public static <T> Result<T> success(String message, T data) {
         return new Result<T>(true, message, data);
+    }
+
+    public static <T> Result<T> failure() {
+        return failure("failure");
+    }
+
+    public static <T> Result<T> failure(T data) {
+        return failure("failure", data);
     }
 
     public static <T> Result<T> failure(String message) {

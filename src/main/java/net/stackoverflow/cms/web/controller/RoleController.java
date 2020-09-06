@@ -1,12 +1,12 @@
-package net.stackoverflow.cms.web.controller.auth;
+package net.stackoverflow.cms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.IdsDTO;
-import net.stackoverflow.cms.model.dto.MenuDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
+import net.stackoverflow.cms.model.dto.TransferRoleDTO;
 import net.stackoverflow.cms.service.MenuService;
 import net.stackoverflow.cms.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/auth/role_manage")
+@RequestMapping(value = "/role")
 @Slf4j
 @Validated
 public class RoleController extends BaseController {
@@ -45,15 +46,15 @@ public class RoleController extends BaseController {
      * @param key
      * @return
      */
-    @GetMapping(value = "/roles")
-    public ResponseEntity<Result<PageResponse<RoleDTO>>> list(
+    @GetMapping(value = "/list")
+    public ResponseEntity<Result<PageResponse<RoleDTO>>> queryPage(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "key", required = false) String key) {
         PageResponse<RoleDTO> response = roleService.findByPage(page, limit, sort, order, key);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", response));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(response));
 
     }
 
@@ -63,10 +64,10 @@ public class RoleController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @DeleteMapping(value = "/roles")
-    public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
+    @DeleteMapping
+    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO idsDTO) {
         roleService.deleteByIds(idsDTO.getIds());
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
 
@@ -76,11 +77,10 @@ public class RoleController extends BaseController {
      * @param roleDTO
      * @return
      */
-    @PutMapping(value = "/role")
+    @PutMapping
     public ResponseEntity<Result<Object>> update(@RequestBody @Validated(RoleDTO.Update.class) RoleDTO roleDTO) {
-
         roleService.update(roleDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
 
@@ -90,10 +90,10 @@ public class RoleController extends BaseController {
      * @param roleDTO
      * @return
      */
-    @PostMapping(value = "/role")
-    public ResponseEntity<Result<Object>> add(@RequestBody @Validated(RoleDTO.Insert.class) RoleDTO roleDTO) {
+    @PostMapping
+    public ResponseEntity<Result<Object>> save(@RequestBody @Validated(RoleDTO.Insert.class) RoleDTO roleDTO) {
         roleService.save(roleDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
@@ -102,19 +102,37 @@ public class RoleController extends BaseController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/role/{id}")
-    public ResponseEntity<Result<RoleDTO>> get(@PathVariable("id") String id) {
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Result<RoleDTO>> queryRoleById(@PathVariable("id") String id) {
         RoleDTO dto = roleService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", dto));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 
     /**
-     * 获取菜单树
+     * 查询所有角色
      *
      * @return
      */
-    @GetMapping(value = "/menu")
-    public ResponseEntity<Result<List<MenuDTO>>> menu() {
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", menuService.getAll()));
+    @GetMapping
+    public ResponseEntity<Result<List<RoleDTO>>> queryAll() {
+        List<RoleDTO> dtos = roleService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dtos));
+    }
+
+    /**
+     * 用户的角色参照
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/transfer")
+    public ResponseEntity<Result<TransferRoleDTO>> transfer(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
+        List<RoleDTO> targetRoles = roleService.findByUserId(id);
+        List<RoleDTO> allRoles = roleService.findAll();
+
+        TransferRoleDTO dto = new TransferRoleDTO();
+        dto.setAll(allRoles);
+        dto.setTarget(targetRoles);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 }

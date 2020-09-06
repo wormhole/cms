@@ -10,7 +10,7 @@ import java.util.List;
  * (RoleMenuRef)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-09-06 10:09:43
+ * @since 2020-09-06 13:47:12
  */
 @Repository
 public interface RoleMenuRefDAO {

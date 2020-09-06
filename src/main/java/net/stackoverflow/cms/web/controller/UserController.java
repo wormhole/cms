@@ -1,25 +1,27 @@
-package net.stackoverflow.cms.web.controller.auth;
+package net.stackoverflow.cms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.model.dto.*;
+import net.stackoverflow.cms.exception.BusinessException;
+import net.stackoverflow.cms.model.dto.GrantRoleDTO;
+import net.stackoverflow.cms.model.dto.IdsDTO;
+import net.stackoverflow.cms.model.dto.PasswordDTO;
+import net.stackoverflow.cms.model.dto.UserDTO;
 import net.stackoverflow.cms.model.entity.User;
-import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户管理模块
@@ -27,15 +29,13 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/auth/user_manage")
+@RequestMapping(value = "/user")
 @Slf4j
 @Validated
 public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private RoleService roleService;
 
     /**
      * 分页查询用户信息
@@ -48,8 +48,8 @@ public class UserController extends BaseController {
      * @param key
      * @return
      */
-    @GetMapping(value = "/users")
-    public ResponseEntity<Result<PageResponse<UserDTO>>> list(
+    @GetMapping(value = "/list")
+    public ResponseEntity<Result<PageResponse<UserDTO>>> queryPage(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
@@ -57,7 +57,7 @@ public class UserController extends BaseController {
             @RequestParam(value = "roleIds[]", required = false) List<String> roleIds,
             @RequestParam(value = "key", required = false) String key) {
         PageResponse<UserDTO> response = userService.findByPage(page, limit, sort, order, key, roleIds);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", response));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(response));
     }
 
     /**
@@ -66,10 +66,10 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @DeleteMapping(value = "/users")
-    public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
+    @DeleteMapping
+    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO idsDTO) {
         userService.deleteByIds(idsDTO.getIds());
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
@@ -78,10 +78,10 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @PutMapping(value = "/users/enabled")
+    @PutMapping(value = "/enabled")
     public ResponseEntity<Result<Object>> enabled(@RequestBody @Validated IdsDTO idsDTO) {
         userService.updateEnable(idsDTO.getIds(), 1);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
 
@@ -91,41 +91,10 @@ public class UserController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @PutMapping(value = "/users/disabled")
+    @PutMapping(value = "/disabled")
     public ResponseEntity<Result<Object>> disabled(@RequestBody @Validated IdsDTO idsDTO) {
         userService.updateEnable(idsDTO.getIds(), 0);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
-
-    }
-
-    /**
-     * 表格过滤参照
-     *
-     * @returnfilters
-     */
-    @GetMapping(value = "/ref_role")
-    public ResponseEntity<Result<List<RoleDTO>>> refRole() {
-        List<RoleDTO> roleDTOS = roleService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", roleDTOS));
-
-    }
-
-    /**
-     * 用户的角色参照
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping(value = "/ref_user_role")
-    public ResponseEntity<Result<Map<String, List<RoleDTO>>>> refUserRole(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
-        List<RoleDTO> targetRoles = roleService.findByUserId(id);
-        List<RoleDTO> allRoles = roleService.findAll();
-
-        Map<String, List<RoleDTO>> retMap = new HashMap<>(16);
-        retMap.put("target", targetRoles);
-        retMap.put("all", allRoles);
-
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", retMap));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
 
@@ -138,7 +107,7 @@ public class UserController extends BaseController {
     @PutMapping(value = "/grant_role")
     public ResponseEntity<Result<Object>> grantRole(@RequestBody @Validated GrantRoleDTO grantRoleDTO) {
         userService.reGrandRole(grantRoleDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
 
@@ -148,23 +117,26 @@ public class UserController extends BaseController {
      * @param userDTO
      * @return
      */
-    @PutMapping(value = "/user")
-    public ResponseEntity<Result<Object>> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO) {
-
+    @PutMapping
+    public ResponseEntity<Result<Object>> updateBase(@RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO) {
+        User user = super.getUser();
+        if (!user.getBuiltin().equals(1) && !user.getId().equals(userDTO.getId())) {
+            throw new BusinessException("非超级管理员不允许更新别人信息");
+        }
         userService.updateBase(userDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
      * 修改密码
      *
-     * @param passwordDTO
+     * @param dto
      * @return
      */
-    @PutMapping(value = "/user/password")
-    public ResponseEntity<Result<Object>> password(@RequestBody @Validated(PasswordDTO.Admin.class) PasswordDTO passwordDTO) {
-        userService.updatePassword(passwordDTO.getId(), passwordDTO.getNewPassword());
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+    @PutMapping(value = "/password")
+    public ResponseEntity<Result<Object>> updatePassword(@RequestBody @Validated PasswordDTO dto) {
+        userService.updatePassword(super.getUserId(), dto.getOld(), dto.getPassword());
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
@@ -173,10 +145,10 @@ public class UserController extends BaseController {
      * @param userDTO
      * @return
      */
-    @PostMapping(value = "/user")
-    public ResponseEntity<Result<Object>> add(@RequestBody @Validated(UserDTO.Insert.class) UserDTO userDTO) {
+    @PostMapping
+    public ResponseEntity<Result<Object>> save(@RequestBody @Validated(UserDTO.Insert.class) UserDTO userDTO) {
         userService.save(userDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
@@ -185,12 +157,35 @@ public class UserController extends BaseController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/user/{id}")
-    public ResponseEntity<Result<UserDTO>> user(@PathVariable("id") String id) {
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Result<UserDTO>> queryUserById(@PathVariable(value = "id", required = false) String id) {
+        if (StringUtils.isEmpty(id)) {
+            id = super.getUserId();
+        }
         User user = userService.findById(id);
         UserDTO dto = new UserDTO();
         BeanUtils.copyProperties(user, dto);
         dto.setPassword(null);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", dto));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
+    }
+
+    /**
+     * 用户注册接口
+     *
+     * @param dto
+     * @param session
+     * @return
+     */
+    @PostMapping(value = "/register")
+    public ResponseEntity<Result<Object>> register(@RequestBody @Validated(UserDTO.Insert.class) UserDTO dto, HttpSession session) {
+        //校验验证码
+        String captcha = (String) session.getAttribute("captcha");
+        if (!captcha.equalsIgnoreCase(dto.getCaptcha())) {
+            throw new BusinessException("验证码错误");
+        }
+
+        //保存至数据库
+        userService.save(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("注册成功"));
     }
 }

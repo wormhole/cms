@@ -10,7 +10,7 @@ import java.util.List;
  * (Property)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-08-22 16:49:14
+ * @since 2020-09-06 13:46:48
  */
 @Repository
 public interface PropertyDAO {
@@ -21,7 +21,7 @@ public interface PropertyDAO {
      * @param wrapper
      * @return
      */
-    int countByCondition(QueryWrapper wrapper);
+    int queryCount(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -37,7 +37,7 @@ public interface PropertyDAO {
      * @param wrapper
      * @return
      */
-    List<Property> selectByCondition(QueryWrapper wrapper);
+    List<Property> querySelect(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +77,7 @@ public interface PropertyDAO {
      * @param wrapper
      * @return
      */
-    int deleteByCondition(QueryWrapper wrapper);
+    int queryDelete(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +101,5 @@ public interface PropertyDAO {
      * @param wrapper
      * @return
      */
-    int updateByCondition(QueryWrapper wrapper);
+    int queryUpdate(QueryWrapper wrapper);
 }

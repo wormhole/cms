@@ -1,7 +1,7 @@
 package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.exception.VerifyCodeException;
+import net.stackoverflow.cms.exception.CaptchaException;
 import net.stackoverflow.cms.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ import java.io.IOException;
  */
 @Component
 @Slf4j
-public class CmsVerifyCodeFilter extends OncePerRequestFilter {
+public class CmsCaptchaFilter extends OncePerRequestFilter {
 
     private PathMatcher pathMatcher = new AntPathMatcher();
     private static final String METHOD = "POST";
@@ -35,16 +35,16 @@ public class CmsVerifyCodeFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         if (METHOD.equalsIgnoreCase(request.getMethod()) && pathMatcher.match(URL, request.getServletPath())) {
-            String code = request.getParameter("code");
-            String realCode = (String) request.getSession().getAttribute("code");
-            if (StringUtils.isBlank(code)) {
-                authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码不能为空"));
+            String captcha = request.getParameter("captcha");
+            String real = (String) request.getSession().getAttribute("captcha");
+            if (StringUtils.isBlank(captcha)) {
+                authenticationFailureHandler.onAuthenticationFailure(request, response, new CaptchaException("验证码不能为空"));
                 return;
-            } else if (StringUtils.isBlank(realCode)) {
-                authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码失效"));
+            } else if (StringUtils.isBlank(real)) {
+                authenticationFailureHandler.onAuthenticationFailure(request, response, new CaptchaException("验证码失效"));
                 return;
-            } else if (!realCode.equalsIgnoreCase(code)) {
-                authenticationFailureHandler.onAuthenticationFailure(request, response, new VerifyCodeException("验证码错误"));
+            } else if (!real.equalsIgnoreCase(captcha)) {
+                authenticationFailureHandler.onAuthenticationFailure(request, response, new CaptchaException("验证码错误"));
                 return;
             }
         }

@@ -1,7 +1,7 @@
 package net.stackoverflow.cms.config;
 
+import net.stackoverflow.cms.security.CmsCaptchaFilter;
 import net.stackoverflow.cms.security.CmsTokenFilter;
-import net.stackoverflow.cms.security.CmsVerifyCodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +45,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private CmsTokenFilter tokenFilter;
     @Autowired
-    private CmsVerifyCodeFilter verifyCodeFilter;
+    private CmsCaptchaFilter verifyCodeFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

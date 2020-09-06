@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class CmsUserDetails implements UserDetails {
 
-    private User user;
+    private final User user;
     private final List<GrantedAuthority> authorities;
 
     public CmsUserDetails(User user, List<GrantedAuthority> authorities) {

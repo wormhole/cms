@@ -66,7 +66,7 @@
         </where>
     </sql>
 
-    <select id="countByCondition" resultType="int">
+    <select id="queryCount" resultType="int">
         select COUNT(*) from `user`
         <include refid="where"/>
     </select>
@@ -75,13 +75,13 @@
         select * from `user` where `id` = #{id}
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap">
+    <select id="querySelect" resultMap="baseMap">
         select * from `user`
         <include refid="where"/>
         <if test="sortWrapper != null and sortWrapper.size() > 0">
             order by
-            <foreach collection="sortWrapper.entrySet()" index="k" item="v" separator=",">
-                `${k}` ${v}
+            <foreach collection="sortWrapper.entrySet()" index="s" item="o" separator=",">
+                `${s}` ${o}
             </foreach>
         </if>
         <if test="offset != null and limit != null">
@@ -118,7 +118,7 @@
         </foreach>
     </delete>
 
-    <delete id="deleteByCondition">
+    <delete id="queryDelete">
         delete from `user`
         <include refid="where"/>
     </delete>
@@ -205,7 +205,7 @@
         </foreach>
     </update>
 
-    <update id="updateByCondition">
+    <update id="queryUpdate">
         update `user`
         <set>
             <if test="upWrapper != null">

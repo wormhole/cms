@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.web.controller.manage;
+package net.stackoverflow.cms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
@@ -21,7 +21,7 @@ import javax.validation.constraints.Min;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/manage/image")
+@RequestMapping(value = "/image")
 @Slf4j
 @Validated
 public class ImageController extends BaseController {
@@ -39,8 +39,8 @@ public class ImageController extends BaseController {
      * @param key
      * @return
      */
-    @GetMapping(value = "/uploads")
-    public ResponseEntity<Result<PageResponse<UploadDTO>>> list(
+    @GetMapping(value = "/list")
+    public ResponseEntity<Result<PageResponse<UploadDTO>>> queryPage(
             @RequestParam(value = "page") @Min(value = 1, message = "page不能小于1") Integer page,
             @RequestParam(value = "limit") @Min(value = 1, message = "limit不能小于1") Integer limit,
             @RequestParam(value = "sort", required = false) String sort,
@@ -58,8 +58,8 @@ public class ImageController extends BaseController {
      * @param idsDTO
      * @return
      */
-    @DeleteMapping(value = "/uploads")
-    public ResponseEntity<Result<Object>> delete(@RequestBody @Validated IdsDTO idsDTO) {
+    @DeleteMapping
+    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO idsDTO) {
         uploadService.deleteByIds(idsDTO.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
     }
