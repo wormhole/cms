@@ -102,4 +102,18 @@ public interface UserService {
      * @return
      */
     Integer count();
+
+    /**
+     * 统计启用数量
+     *
+     * @return
+     */
+    Integer countEnable();
+
+    /**
+     * 统计禁用数量
+     *
+     * @return
+     */
+    Integer countDisable();
 }

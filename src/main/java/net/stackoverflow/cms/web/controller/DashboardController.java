@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.CountDTO;
+import net.stackoverflow.cms.model.dto.UserStatusDTO;
 import net.stackoverflow.cms.service.DashboardService;
 import net.stackoverflow.cms.util.FormatUtils;
 import org.hyperic.sigar.*;
@@ -38,6 +39,17 @@ public class DashboardController extends BaseController {
     @GetMapping("/count")
     public ResponseEntity<Result<CountDTO>> count() {
         CountDTO dto = dashboardService.count();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
+    }
+
+    /**
+     * 统计用户状态
+     *
+     * @return
+     */
+    @GetMapping("/user_status")
+    public ResponseEntity<Result<UserStatusDTO>> userStatus() {
+        UserStatusDTO dto = dashboardService.userStatus();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 

@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.model.dto.CountDTO;
+import net.stackoverflow.cms.model.dto.UserStatusDTO;
 
 /**
  * 首页服务接口
@@ -15,4 +16,11 @@ public interface DashboardService {
      * @return
      */
     CountDTO count();
+
+    /**
+     * 用户在线状态统计
+     *
+     * @return
+     */
+    UserStatusDTO userStatus();
 }

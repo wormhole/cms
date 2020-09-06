@@ -241,4 +241,16 @@ public class UserServiceImpl implements UserService {
         return userDAO.queryCount(new QueryWrapper());
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer countEnable() {
+        return userDAO.queryCount(QueryWrapper.newBuilder().eq("enable", 1).build());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer countDisable() {
+        return userDAO.queryCount(QueryWrapper.newBuilder().eq("enable", 0).build());
+    }
+
 }
