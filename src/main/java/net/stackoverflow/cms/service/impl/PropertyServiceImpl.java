@@ -49,25 +49,25 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<PropertyDTO> findByKeys(List<String> keys) {
-        List<PropertyDTO> propertyDTOS = new ArrayList<>();
+        List<PropertyDTO> dtos = new ArrayList<>();
         if (!CollectionUtils.isEmpty(keys)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("key", keys);
             List<Property> properties = propertyDAO.querySelect(builder.build());
             properties.forEach(property -> {
-                PropertyDTO propertyDTO = new PropertyDTO();
-                BeanUtils.copyProperties(property, propertyDTO);
-                propertyDTOS.add(propertyDTO);
+                PropertyDTO dto = new PropertyDTO();
+                BeanUtils.copyProperties(property, dto);
+                dtos.add(dto);
             });
         }
-        return propertyDTOS;
+        return dtos;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchUpdateByKey(List<PropertyDTO> propertyDTOS) {
-        for (PropertyDTO propertyDTO : propertyDTOS) {
-            updateByKey(propertyDTO.getKey(), propertyDTO.getValue());
+    public void batchUpdateByKey(List<PropertyDTO> dtos) {
+        for (PropertyDTO dto : dtos) {
+            updateByKey(dto.getKey(), dto.getValue());
         }
     }
 

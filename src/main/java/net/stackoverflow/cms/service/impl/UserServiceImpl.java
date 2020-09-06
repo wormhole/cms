@@ -170,16 +170,16 @@ public class UserServiceImpl implements UserService {
         List<User> users = userDAO.querySelect(wrapper);
         Integer total = userDAO.queryCount(wrapper);
 
-        List<UserDTO> userDTOS = new ArrayList<>();
+        List<UserDTO> dtos = new ArrayList<>();
         for (User user : users) {
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(user, userDTO);
             userDTO.setPassword(null);
-            List<RoleDTO> roleDTOS = roleService.findByUserId(user.getId());
-            userDTO.setRoles(roleDTOS);
-            userDTOS.add(userDTO);
+            List<RoleDTO> roles = roleService.findByUserId(user.getId());
+            userDTO.setRoles(roles);
+            dtos.add(userDTO);
         }
-        return new PageResponse<>(total, userDTOS);
+        return new PageResponse<>(total, dtos);
     }
 
     @Override

@@ -45,13 +45,13 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public List<RoleDTO> findAll() {
         List<Role> roles = roleDAO.querySelect(new QueryWrapper());
-        List<RoleDTO> roleDTOS = new ArrayList<>();
+        List<RoleDTO> dtos = new ArrayList<>();
         for (Role role : roles) {
-            RoleDTO roleDTO = new RoleDTO();
-            BeanUtils.copyProperties(role, roleDTO);
-            roleDTOS.add(roleDTO);
+            RoleDTO dto = new RoleDTO();
+            BeanUtils.copyProperties(role, dto);
+            dtos.add(dto);
         }
-        return roleDTOS;
+        return dtos;
     }
 
     @Override
@@ -74,13 +74,13 @@ public class RoleServiceImpl implements RoleService {
         List<Role> roles = roleDAO.querySelect(wrapper);
         Integer total = roleDAO.queryCount(wrapper);
 
-        List<RoleDTO> roleDTOS = new ArrayList<>();
+        List<RoleDTO> dtos = new ArrayList<>();
         for (Role role : roles) {
-            RoleDTO roleDTO = new RoleDTO();
-            BeanUtils.copyProperties(role, roleDTO);
-            roleDTOS.add(roleDTO);
+            RoleDTO dto = new RoleDTO();
+            BeanUtils.copyProperties(role, dto);
+            dtos.add(dto);
         }
-        return new PageResponse<>(total, roleDTOS);
+        return new PageResponse<>(total, dtos);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public List<RoleDTO> findByUserId(String userId) {
         List<UserRoleRef> userRoleRefs = userRoleRefService.findByUserId(userId);
-        List<RoleDTO> roleDTOS = new ArrayList<>();
+        List<RoleDTO> dtos = new ArrayList<>();
         if (!CollectionUtils.isEmpty(userRoleRefs)) {
             List<String> roleIds = new ArrayList<>();
             userRoleRefs.forEach(userRoleRef -> roleIds.add(userRoleRef.getRoleId()));
@@ -184,10 +184,10 @@ public class RoleServiceImpl implements RoleService {
                 RoleDTO dto = new RoleDTO();
                 BeanUtils.copyProperties(role, dto);
                 dto.setMenus(menuService.findKeysByRoleId(role.getId()));
-                roleDTOS.add(dto);
+                dtos.add(dto);
             }
         }
-        return roleDTOS;
+        return dtos;
     }
 
     @Override

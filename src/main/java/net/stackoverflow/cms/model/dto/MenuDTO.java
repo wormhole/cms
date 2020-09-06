@@ -4,6 +4,11 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * 菜单dto
+ *
+ * @author 凉衫薄
+ */
 @Getter
 @Setter
 @NoArgsConstructor

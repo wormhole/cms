@@ -32,7 +32,7 @@ public class ExceptionController {
      * @return
      */
     @ExceptionHandler(value = ConstraintViolationException.class)
-    public ResponseEntity<Result<Object>> ConstraintViolationException(ConstraintViolationException e) {
+    public ResponseEntity<Result<Object>> constraintViolationException(ConstraintViolationException e) {
         log.error(e.getMessage(), e);
         StringBuilder sb = new StringBuilder();
         e.getConstraintViolations().forEach(violation -> {
@@ -49,7 +49,7 @@ public class ExceptionController {
      * @return
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<Result<Map<String, String>>> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<Result<Map<String, String>>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
         Map<String, String> map = new HashMap<>(16);
         BindingResult br = e.getBindingResult();

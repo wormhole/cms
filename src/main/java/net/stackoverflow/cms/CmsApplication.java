@@ -26,6 +26,8 @@ import java.util.Properties;
 @EnableAsync
 public class CmsApplication {
 
+    private static final String COUNT_COLUMN = "COUNT";
+
     public static void main(String[] args) {
         initDataBase();
         SpringApplication.run(CmsApplication.class, args);
@@ -42,13 +44,13 @@ public class CmsApplication {
             String username = props.getProperty("spring.datasource.username");
             String password = props.getProperty("spring.datasource.password");
             String driver = props.getProperty("spring.datasource.driver-class-name");
-            String isExistSQL = "SELECT count(SCHEMA_NAME) as COUNT FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='" + name + "'";
+            String isExistSql = "SELECT count(SCHEMA_NAME) as COUNT FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='" + name + "'";
 
             Class.forName(driver);
             Connection conn = DriverManager.getConnection(url, username, password);
-            PreparedStatement ps = conn.prepareStatement(isExistSQL);
+            PreparedStatement ps = conn.prepareStatement(isExistSql);
             ResultSet rs = ps.executeQuery();
-            if (rs.next() && rs.getInt("COUNT") == 0) {
+            if (rs.next() && rs.getInt(COUNT_COLUMN) == 0) {
                 ScriptRunner runner = new ScriptRunner(conn);
                 runner.setErrorLogWriter(null);
                 runner.setLogWriter(null);

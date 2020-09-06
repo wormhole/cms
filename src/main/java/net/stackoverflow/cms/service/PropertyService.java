@@ -30,9 +30,9 @@ public interface PropertyService {
     /**
      * 批量更新
      *
-     * @param propertyDTOS
+     * @param dtos
      */
-    void batchUpdateByKey(List<PropertyDTO> propertyDTOS);
+    void batchUpdateByKey(List<PropertyDTO> dtos);
 
     /**
      * 更新
