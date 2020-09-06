@@ -18,7 +18,6 @@ public interface UploadService {
     /**
      * 查询用户文件数量
      *
-     * @param userId
      * @return
      */
     Integer count();
