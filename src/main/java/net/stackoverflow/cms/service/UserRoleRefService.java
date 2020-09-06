@@ -42,6 +42,13 @@ public interface UserRoleRefService {
     void deleteByUserId(String userId);
 
     /**
+     * 根据角色主键删除关联关系
+     *
+     * @param roleIds
+     */
+    void deleteByRoleIds(List<String> roleIds);
+
+    /**
      * 批量新增
      *
      * @param userRoleRefs

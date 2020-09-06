@@ -72,6 +72,16 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void deleteByRoleIds(List<String> roleIds) {
+        if (!CollectionUtils.isEmpty(roleIds)) {
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.in("role_id", roleIds);
+            userRoleRefDAO.queryDelete(builder.build());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void batchSave(List<UserRoleRef> userRoleRefs) {
         if (!CollectionUtils.isEmpty(userRoleRefs)) {
             userRoleRefDAO.batchInsert(userRoleRefs);

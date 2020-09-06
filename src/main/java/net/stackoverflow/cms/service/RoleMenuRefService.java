@@ -12,6 +12,13 @@ import java.util.List;
 public interface RoleMenuRefService {
 
     /**
+     * 根据角色主键列表删除
+     *
+     * @param roleIds
+     */
+    void deleteByRoleIds(List<String> roleIds);
+
+    /**
      * 根据角色Id删除
      *
      * @param roleId

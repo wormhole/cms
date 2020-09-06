@@ -2,6 +2,7 @@ package net.stackoverflow.cms.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.QueryWrapper;
+import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.dao.RoleMenuRefDAO;
 import net.stackoverflow.cms.model.entity.RoleMenuRef;
 import net.stackoverflow.cms.service.RoleMenuRefService;
@@ -23,6 +24,16 @@ public class RoleMenuRefServiceImpl implements RoleMenuRefService {
 
     @Autowired
     private RoleMenuRefDAO roleMenuRefDAO;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByRoleIds(List<String> roleIds) {
+        if (!CollectionUtils.isEmpty(roleIds)) {
+            QueryWrapperBuilder builder = new QueryWrapperBuilder();
+            builder.in("role_id", roleIds);
+            roleMenuRefDAO.queryDelete(builder.build());
+        }
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

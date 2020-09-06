@@ -94,6 +94,8 @@ public class RoleServiceImpl implements RoleService {
                 }
             }
             roleDAO.batchDelete(ids);
+            roleMenuRefService.deleteByRoleIds(ids);
+            userRoleRefService.deleteByRoleIds(ids);
         }
     }
 
