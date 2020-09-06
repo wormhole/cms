@@ -12,6 +12,13 @@ import java.util.List;
 public interface MenuService {
 
     /**
+     * 菜单总数
+     *
+     * @return
+     */
+    Integer count();
+
+    /**
      * 根据key查询
      *
      * @param keys

@@ -38,6 +38,12 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Integer count() {
+        return menuDAO.queryCount(QueryWrapper.newBuilder().build());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<String> findIdsByKeys(List<String> keys) {
         List<String> ids = new ArrayList<>();
         if (!CollectionUtils.isEmpty(keys)) {

@@ -16,6 +16,14 @@ import java.util.List;
 public interface UploadService {
 
     /**
+     * 查询用户文件数量
+     *
+     * @param userId
+     * @return
+     */
+    Integer count();
+
+    /**
      * 保存文件
      *
      * @param file

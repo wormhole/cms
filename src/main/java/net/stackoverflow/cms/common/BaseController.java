@@ -25,12 +25,12 @@ public class BaseController {
     }
 
     /**
-     * 获取WebAuthenticationDetails
+     * 获取远程地址
      *
      * @return
      */
-    protected WebAuthenticationDetails getDetails() {
-        return (WebAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    protected String getRemoteAddress() {
+        return ((WebAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getRemoteAddress();
     }
 
     /**

@@ -44,6 +44,12 @@ public class UploadServiceImpl implements UploadService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Integer count() {
+        return uploadDAO.queryCount(QueryWrapper.newBuilder().build());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Upload saveFile(MultipartFile file, String userId) throws IOException {
         String filename = file.getOriginalFilename();
         String ext = filename.substring(filename.lastIndexOf("."));
