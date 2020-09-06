@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class GrantRoleDTO {
+public class BindRoleDTO {
 
     @NotBlank(message = "userId不能为空")
     private String userId;

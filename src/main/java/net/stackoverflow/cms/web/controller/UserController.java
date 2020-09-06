@@ -5,7 +5,7 @@ import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.exception.BusinessException;
-import net.stackoverflow.cms.model.dto.GrantRoleDTO;
+import net.stackoverflow.cms.model.dto.BindRoleDTO;
 import net.stackoverflow.cms.model.dto.IdsDTO;
 import net.stackoverflow.cms.model.dto.PasswordDTO;
 import net.stackoverflow.cms.model.dto.UserDTO;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
@@ -100,12 +102,12 @@ public class UserController extends BaseController {
     /**
      * 授权
      *
-     * @param grantRoleDTO
+     * @param bindRoleDTO
      * @return
      */
-    @PutMapping(value = "/grant_role")
-    public ResponseEntity<Result<Object>> grantRole(@RequestBody @Validated GrantRoleDTO grantRoleDTO) {
-        userService.reGrandRole(grantRoleDTO);
+    @PutMapping(value = "/bind_role")
+    public ResponseEntity<Result<Object>> bindRole(@RequestBody @Validated BindRoleDTO bindRoleDTO) {
+        userService.reGrandRole(bindRoleDTO);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
@@ -169,18 +171,23 @@ public class UserController extends BaseController {
      * 用户注册接口
      *
      * @param dto
+     * @param captcha
      * @param session
      * @return
      */
     @PostMapping(value = "/register")
-    public ResponseEntity<Result<Object>> register(@RequestBody @Validated(UserDTO.Insert.class) UserDTO dto, HttpSession session) {
+    public ResponseEntity<Result<Object>> register(@RequestBody @Validated(UserDTO.Insert.class) UserDTO dto, @NotBlank(message = "验证码不能为空") @PathParam("captcha") String captcha, HttpSession session) {
         //校验验证码
-        String captcha = (String) session.getAttribute("captcha");
-        if (!captcha.equalsIgnoreCase(dto.getCaptcha())) {
+        String code = (String) session.getAttribute("captcha");
+        if (!captcha.equalsIgnoreCase(code)) {
             throw new BusinessException("验证码错误");
         }
 
         //保存至数据库
+        dto.setTtl(30);
+        dto.setLimit(1);
+        dto.setLock(30);
+        dto.setFailure(5);
         userService.save(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("注册成功"));
     }

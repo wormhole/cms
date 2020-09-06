@@ -218,4 +218,17 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Role findByName(String name) {
+        QueryWrapperBuilder builder = new QueryWrapperBuilder();
+        builder.eq("name", name);
+        List<Role> roles = roleDAO.querySelect(builder.build());
+        if (!CollectionUtils.isEmpty(roles)) {
+            return roles.get(0);
+        } else {
+            return null;
+        }
+    }
+
 }

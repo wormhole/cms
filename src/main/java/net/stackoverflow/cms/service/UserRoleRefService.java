@@ -54,4 +54,11 @@ public interface UserRoleRefService {
      * @param userRoleRefs
      */
     void batchSave(List<UserRoleRef> userRoleRefs);
+
+    /**
+     * 新增绑定
+     *
+     * @param ref
+     */
+    void save(UserRoleRef ref);
 }

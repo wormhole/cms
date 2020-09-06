@@ -1,7 +1,7 @@
 package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.PageResponse;
-import net.stackoverflow.cms.model.dto.GrantRoleDTO;
+import net.stackoverflow.cms.model.dto.BindRoleDTO;
 import net.stackoverflow.cms.model.dto.UserDTO;
 import net.stackoverflow.cms.model.entity.User;
 
@@ -94,7 +94,7 @@ public interface UserService {
      *
      * @param dto
      */
-    void reGrandRole(GrantRoleDTO dto);
+    void reGrandRole(BindRoleDTO dto);
 
     /**
      * 统计用户数量

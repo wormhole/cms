@@ -87,4 +87,10 @@ public class UserRoleRefServiceImpl implements UserRoleRefService {
             userRoleRefDAO.batchInsert(userRoleRefs);
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void save(UserRoleRef ref) {
+        userRoleRefDAO.insert(ref);
+    }
 }

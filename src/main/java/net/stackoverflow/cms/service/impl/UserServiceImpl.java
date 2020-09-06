@@ -6,9 +6,10 @@ import net.stackoverflow.cms.common.QueryWrapper;
 import net.stackoverflow.cms.common.QueryWrapper.QueryWrapperBuilder;
 import net.stackoverflow.cms.dao.UserDAO;
 import net.stackoverflow.cms.exception.BusinessException;
-import net.stackoverflow.cms.model.dto.GrantRoleDTO;
+import net.stackoverflow.cms.model.dto.BindRoleDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.dto.UserDTO;
+import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.entity.UserRoleRef;
 import net.stackoverflow.cms.service.RoleService;
@@ -83,6 +84,11 @@ public class UserServiceImpl implements UserService {
         user.setTs(new Date());
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userDAO.insert(user);
+
+        Role role = roleService.findByName("guest");
+        if (role != null) {
+            userRoleRefService.save(new UserRoleRef(UUID.randomUUID().toString(), user.getId(), role.getId(), new Date()));
+        }
     }
 
     @Override
@@ -215,7 +221,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reGrandRole(GrantRoleDTO dto) {
+    public void reGrandRole(BindRoleDTO dto) {
         String userId = dto.getUserId();
         List<String> roleIds = dto.getRoleIds();
 

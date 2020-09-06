@@ -2,6 +2,7 @@ package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.model.dto.RoleDTO;
+import net.stackoverflow.cms.model.entity.Role;
 
 import java.util.List;
 
@@ -82,4 +83,12 @@ public interface RoleService {
      * @return
      */
     RoleDTO findById(String id);
+
+    /**
+     * 根据角色名查找
+     *
+     * @param name
+     * @return
+     */
+    Role findByName(String name);
 }
