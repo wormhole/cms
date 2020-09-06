@@ -191,6 +191,22 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public List<String> findNamesByUserId(String userId) {
+        List<UserRoleRef> userRoleRefs = userRoleRefService.findByUserId(userId);
+        List<String> names = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(userRoleRefs)) {
+            List<String> roleIds = new ArrayList<>();
+            userRoleRefs.forEach(userRoleRef -> {
+                roleIds.add(userRoleRef.getRoleId());
+            });
+            List<Role> roles = roleDAO.selectByCondition(QueryWrapper.newBuilder().in("id", roleIds).build());
+            roles.forEach(role -> names.add(role.getName()));
+        }
+        return names;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public RoleDTO findById(String id) {
         Role role = roleDAO.select(id);
         if (role != null) {

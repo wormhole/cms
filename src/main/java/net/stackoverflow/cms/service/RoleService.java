@@ -68,6 +68,14 @@ public interface RoleService {
     List<RoleDTO> findByUserId(String userId);
 
     /**
+     * 根据用户主键查询角色key
+     *
+     * @param userId
+     * @return
+     */
+    List<String> findNamesByUserId(String userId);
+
+    /**
      * 根据角色主键查询角色信息
      *
      * @param id

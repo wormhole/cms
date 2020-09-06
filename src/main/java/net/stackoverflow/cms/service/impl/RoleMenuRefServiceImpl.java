@@ -27,7 +27,7 @@ public class RoleMenuRefServiceImpl implements RoleMenuRefService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByRoleId(String roleId) {
-        roleMenuRefDAO.deleteByCondition(QueryWrapper.newBuilder().eq("role_id", roleId).build());
+        roleMenuRefDAO.queryDelete(QueryWrapper.newBuilder().eq("role_id", roleId).build());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class RoleMenuRefServiceImpl implements RoleMenuRefService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<RoleMenuRef> findByRoleId(String id) {
-        List<RoleMenuRef> refs = roleMenuRefDAO.selectByCondition(QueryWrapper.newBuilder().eq("role_id", id).build());
+        List<RoleMenuRef> refs = roleMenuRefDAO.querySelect(QueryWrapper.newBuilder().eq("role_id", id).build());
         return refs;
     }
 }

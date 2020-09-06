@@ -1,7 +1,6 @@
 package net.stackoverflow.cms.security;
 
 import lombok.extern.slf4j.Slf4j;
-import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.MenuService;
 import net.stackoverflow.cms.service.RoleService;
@@ -37,11 +36,11 @@ public class CmsUserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findByUsername(username);
         if (user != null) {
-            List<RoleDTO> roleDTOS = roleService.findByUserId(user.getId());
+            List<String> roles = roleService.findNamesByUserId(user.getId());
             List<String> menus = menuService.findKeysByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
-            for (RoleDTO roleDTO : roleDTOS) {
-                SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + roleDTO.getName());
+            for (String role : roles) {
+                SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + role);
                 authorities.add(sga);
             }
             for (String menu : menus) {

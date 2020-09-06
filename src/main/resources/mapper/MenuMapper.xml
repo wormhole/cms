@@ -10,124 +10,48 @@
         <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <sql id="columns">
-        `id`, `title`, `key`, `parent`, `ts`        
-    </sql>
-
-    <sql id="columns_value">
-        #{id}, #{title}, #{key}, #{parent}, #{ts}        
-    </sql>
-
-    <sql id="columns_item_value">
-        #{item.id}, #{item.title}, #{item.key}, #{item.parent}, #{item.ts}        
-    </sql>
-
     <sql id="where">
         <where>
             <if test="eqWrapper != null">
-                <if test="eqWrapper.id != null">
-                    and `id` = #{eqWrapper.id}
-                </if>
-                <if test="eqWrapper.title != null">
-                    and `title` = #{eqWrapper.title}
-                </if>
-                <if test="eqWrapper.key != null">
-                    and `key` = #{eqWrapper.key}
-                </if>
-                <if test="eqWrapper.parent != null">
-                    and `parent` = #{eqWrapper.parent}
-                </if>
-                <if test="eqWrapper.ts != null">
-                    and `ts` = #{eqWrapper.ts}
-                </if>
+                <foreach collection="eqWrapper.entrySet()" index="column" item="value">
+                    <if test="column != null and value != null">
+                        and `${column}` = #{value}
+                    </if>
+                </foreach>
             </if>
             <if test="neqWrapper != null">
-                <if test="neqWrapper.id != null">
-                    and `id` != #{neqWrapper.id}
-                </if>
-                <if test="neqWrapper.title != null">
-                    and `title` != #{neqWrapper.title}
-                </if>
-                <if test="neqWrapper.key != null">
-                    and `key` != #{neqWrapper.key}
-                </if>
-                <if test="neqWrapper.parent != null">
-                    and `parent` != #{neqWrapper.parent}
-                </if>
-                <if test="neqWrapper.ts != null">
-                    and `ts` != #{neqWrapper.ts}
-                </if>
+                <foreach collection="neqWrapper.entrySet()" index="column" item="value">
+                    <if test="column != null and value != null">
+                        and `${column}` != #{value}
+                    </if>
+                </foreach>
             </if>
             <if test="inWrapper != null">
-                <if test="inWrapper.id != null and inWrapper.id.size() > 0">
-                    and `id` in
-                    <foreach collection="inWrapper.id" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
-                </if>
-                <if test="inWrapper.title != null and inWrapper.title.size() > 0">
-                    and `title` in
-                    <foreach collection="inWrapper.title" item="title" open="(" separator="," close=")">
-                        #{title}
-                    </foreach>
-                </if>
-                <if test="inWrapper.key != null and inWrapper.key.size() > 0">
-                    and `key` in
-                    <foreach collection="inWrapper.key" item="key" open="(" separator="," close=")">
-                        #{key}
-                    </foreach>
-                </if>
-                <if test="inWrapper.parent != null and inWrapper.parent.size() > 0">
-                    and `parent` in
-                    <foreach collection="inWrapper.parent" item="parent" open="(" separator="," close=")">
-                        #{parent}
-                    </foreach>
-                </if>
-                <if test="inWrapper.ts != null and inWrapper.ts.size() > 0">
-                    and `ts` in
-                    <foreach collection="inWrapper.ts" item="ts" open="(" separator="," close=")">
-                        #{ts}
-                    </foreach>
-                </if>
+                <foreach collection="inWrapper.entrySet()" index="column" item="values">
+                    <if test="values != null and values.size() > 0">
+                        and `${column}` in
+                        <foreach collection="values" item="value" open="(" separator="," close=")">
+                            #{value}
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
             <if test="ninWrapper != null">
-                <if test="ninWrapper.id != null and ninWrapper.id.size() > 0">
-                    and `id` not in
-                    <foreach collection="ninWrapper.id" item="id" open="(" separator="," close=")">
-                        #{id}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.title != null and ninWrapper.title.size() > 0">
-                    and `title` not in
-                    <foreach collection="ninWrapper.title" item="title" open="(" separator="," close=")">
-                        #{title}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.key != null and ninWrapper.key.size() > 0">
-                    and `key` not in
-                    <foreach collection="ninWrapper.key" item="key" open="(" separator="," close=")">
-                        #{key}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.parent != null and ninWrapper.parent.size() > 0">
-                    and `parent` not in
-                    <foreach collection="ninWrapper.parent" item="parent" open="(" separator="," close=")">
-                        #{parent}
-                    </foreach>
-                </if>
-                <if test="ninWrapper.ts != null and ninWrapper.ts.size() > 0">
-                    and `ts` not in
-                    <foreach collection="ninWrapper.ts" item="ts" open="(" separator="," close=")">
-                        #{ts}
-                    </foreach>
-                </if>
+                <foreach collection="ninWrapper.entrySet()" index="column" item="values">
+                    <if test="values != null and values.size() > 0">
+                        and `${column}` not in
+                        <foreach collection="values" item="value" open="(" separator="," close=")">
+                            #{value}
+                        </foreach>
+                    </if>
+                </foreach>
             </if>
             <if test="keyWrapper != null and keyWrapper.size() > 0">
-                <foreach collection="keyWrapper.entrySet()" index="k" item="columns">
-                    <if test="columns != null and columns.size()> 0">
+                <foreach collection="keyWrapper.entrySet()" index="key" item="columns">
+                    <if test="columns != null and columns.size() > 0">
                         and
                         <foreach collection="columns" item="column" open="(" separator=" or " close=")">
-                            `${column}` like CONCAT('%',#{k},'%')
+                            `${column}` like CONCAT('%',#{key},'%')
                         </foreach>
                     </if>
                 </foreach>
@@ -135,7 +59,7 @@
         </where>
     </sql>
 
-    <select id="countByCondition" resultType="int">
+    <select id="queryCount" resultType="int">
         select COUNT(*) from `menu`
         <include refid="where"/>
     </select>
@@ -144,13 +68,13 @@
         select * from `menu` where `id` = #{id}
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap">
+    <select id="querySelect" resultMap="baseMap">
         select * from `menu`
         <include refid="where"/>
         <if test="sortWrapper != null and sortWrapper.size() > 0">
             order by
-            <foreach collection="sortWrapper.entrySet()" index="k" item="v" separator=",">
-                `${k}` ${v}
+            <foreach collection="sortWrapper.entrySet()" index="s" item="o" separator=",">
+                `${s}` ${o}
             </foreach>
         </if>
         <if test="offset != null and limit != null">
@@ -160,17 +84,17 @@
 
     <insert id="insert">
         insert into `menu`
-        (<include refid="columns"/>)
+        (`id`, `title`, `key`, `parent`, `ts`)
         values
-        (<include refid="columns_value"/>)
+        (#{id}, #{title}, #{key}, #{parent}, #{ts})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
         insert into `menu`
-        (<include refid="columns"/>)
+        (`id`, `title`, `key`, `parent`, `ts`)
         values
         <foreach collection="list" item="item" separator=",">
-            (<include refid="columns_item_value"/>)
+            (#{item.id}, #{item.title}, #{item.key}, #{item.parent}, #{item.ts})
         </foreach>
     </insert>
 
@@ -185,7 +109,7 @@
         </foreach>
     </delete>
 
-    <delete id="deleteByCondition">
+    <delete id="queryDelete">
         delete from `menu`
         <include refid="where"/>
     </delete>
@@ -230,7 +154,7 @@
         </foreach>
     </update>
 
-    <update id="updateByCondition">
+    <update id="queryUpdate">
         update `menu`
         <set>
             <if test="upWrapper != null">
