@@ -5,8 +5,10 @@ import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.*;
+import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -175,5 +177,20 @@ public class UserController extends BaseController {
     public ResponseEntity<Result<Object>> add(@RequestBody @Validated(UserDTO.Insert.class) UserDTO userDTO) {
         userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+    }
+
+    /**
+     * 获取用户
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/user/{id}")
+    public ResponseEntity<Result<UserDTO>> user(@PathVariable("id") String id) {
+        User user = userService.findById(id);
+        UserDTO dto = new UserDTO();
+        BeanUtils.copyProperties(user, dto);
+        dto.setPassword(null);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", dto));
     }
 }
