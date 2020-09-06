@@ -3,11 +3,13 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
+import net.stackoverflow.cms.constant.RedisPrefixConst;
 import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.FormatUtils;
 import org.hyperic.sigar.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +33,8 @@ public class DashboardController extends BaseController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 获取仪表盘信息
@@ -45,8 +49,10 @@ public class DashboardController extends BaseController {
         Map<String, Integer> countMap = new HashMap<>(16);
         Integer userCount = userService.count();
         Integer roleCount = roleService.count();
+        Integer onlineCount = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + "*").size();
         countMap.put("user", userCount);
         countMap.put("role", roleCount);
+        countMap.put("online", onlineCount);
 
         //cpu使用率
         Sigar sigar = new Sigar();
