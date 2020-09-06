@@ -35,7 +35,7 @@ public interface PropertyService {
     void batchUpdateByKey(List<PropertyDTO> propertyDTOS);
 
     /**
-     * 更细
+     * 更新
      *
      * @param key
      * @param value

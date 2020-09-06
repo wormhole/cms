@@ -86,7 +86,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<MenuDTO> getAll() {
+    public List<MenuDTO> findTree() {
         List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().asc("ts").build());
         return toTree(menus);
     }

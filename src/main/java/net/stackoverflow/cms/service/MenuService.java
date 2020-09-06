@@ -40,7 +40,7 @@ public interface MenuService {
      *
      * @return
      */
-    List<MenuDTO> getAll();
+    List<MenuDTO> findTree();
 
     /**
      * 根据用户id查询菜单键

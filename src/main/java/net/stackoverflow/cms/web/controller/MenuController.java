@@ -36,7 +36,7 @@ public class MenuController extends BaseController {
      */
     @GetMapping("/tree")
     public ResponseEntity<Result<List<MenuDTO>>> queryTree() {
-        List<MenuDTO> dtos = menuService.getAll();
+        List<MenuDTO> dtos = menuService.findTree();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dtos));
     }
 
