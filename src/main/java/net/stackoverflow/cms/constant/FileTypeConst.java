@@ -10,11 +10,11 @@ import java.util.List;
  */
 public class FileTypeConst {
 
-    public static List<String> IMAGE = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "tif");
+    public static final List<String> IMAGE = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "tif");
 
-    public static List<String> VIDEO = Arrays.asList("mp4", "avi", "3gp", "wmv", "mpeg", "mpg", "mov");
+    public static final List<String> VIDEO = Arrays.asList("mp4", "avi", "3gp", "wmv", "mpeg", "mpg", "mov");
 
-    public static List<String> AUDIO = Arrays.asList("mp3", "wav", "flac", "wma");
+    public static final List<String> AUDIO = Arrays.asList("mp3", "wav", "flac", "wma");
 
     public static final Integer T_IMAGE = 1;
     public static final Integer T_VIDEO = 2;
