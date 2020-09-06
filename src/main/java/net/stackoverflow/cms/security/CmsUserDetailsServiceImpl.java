@@ -37,7 +37,7 @@ public class CmsUserDetailsServiceImpl implements UserDetailsService {
         User user = userService.findByUsername(username);
         if (user != null) {
             List<String> roles = roleService.findNamesByUserId(user.getId());
-            List<String> menus = menuService.findKeysByUserId(user.getId());
+            List<String> menus = menuService.findFullKeysByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (String role : roles) {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + role);

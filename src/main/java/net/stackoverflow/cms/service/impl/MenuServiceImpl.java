@@ -10,7 +10,6 @@ import net.stackoverflow.cms.model.entity.RoleMenuRef;
 import net.stackoverflow.cms.service.MenuService;
 import net.stackoverflow.cms.service.RoleMenuRefService;
 import net.stackoverflow.cms.service.RoleService;
-import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,9 +32,6 @@ public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private RoleMenuRefService roleMenuRefService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private RoleService roleService;
@@ -67,9 +63,43 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public List<String> findFullKeysByRoleId(String id) {
+        List<String> keys = new ArrayList<>();
+        List<RoleMenuRef> refs = roleMenuRefService.findByRoleId(id);
+        if (!CollectionUtils.isEmpty(refs)) {
+            List<String> ids = new ArrayList<>();
+            refs.forEach(ref -> ids.add(ref.getMenuId()));
+            List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().in("id", ids).build());
+            Map<String, Menu> map = new HashMap<>(16);
+            menus.forEach(menu -> map.put(menu.getId(), menu));
+            for (Menu menu : menus) {
+                if (menu.getParent() != null && map.get(menu.getParent()) == null) {
+                    map.put(menu.getParent(), menuDAO.select(menu.getParent()));
+                }
+            }
+            for (Map.Entry<String, Menu> entry : map.entrySet()) {
+                keys.add(entry.getValue().getKey());
+            }
+        }
+        return keys;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<MenuDTO> getAll() {
         List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().asc("ts").build());
         return toTree(menus);
+    }
+
+    @Override
+    public List<String> findFullKeysByUserId(String userId) {
+        List<RoleDTO> dtos = roleService.findByUserId(userId);
+        Set<String> keys = new HashSet<>();
+        dtos.forEach(dto -> {
+            List<String> ks = findFullKeysByRoleId(dto.getId());
+            keys.addAll(ks);
+        });
+        return new ArrayList<>(keys);
     }
 
     @Override
