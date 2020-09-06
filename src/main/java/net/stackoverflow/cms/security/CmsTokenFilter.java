@@ -58,13 +58,18 @@ public class CmsTokenFilter extends OncePerRequestFilter {
                     CmsUserDetails userDetails = (CmsUserDetails) authentication.getPrincipal();
                     User user = userService.findById(userDetails.getUser().getId());
                     if (user != null) {
-                        CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
-                        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                                details, null, details.getAuthorities());
-                        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        log.info("token认证成功:{}", details.getUsername());
-                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                        redisTemplate.opsForValue().set(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"), authentication, 30, TimeUnit.MINUTES);
+                        if (user.getPassword().equals(userDetails.getPassword())) {
+                            CmsUserDetails details = (CmsUserDetails) userDetailsService.loadUserByUsername(user.getUsername());
+                            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                                    details, null, details.getAuthorities());
+                            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            log.info("token认证成功:{}", details.getUsername());
+                            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                            redisTemplate.opsForValue().set(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"), authentication, user.getTtl(), TimeUnit.MINUTES);
+                        } else {
+                            log.info("token认证失败:{}", token);
+                            redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"));
+                        }
                     } else {
                         log.error("token认证失败:{}", token);
                         redisTemplate.delete(RedisPrefixConst.TOKEN_PREFIX + jwt.get("uid") + ":" + jwt.get("ts"));
