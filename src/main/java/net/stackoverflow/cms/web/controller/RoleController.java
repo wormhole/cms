@@ -7,7 +7,6 @@ import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.IdsDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.dto.TransferRoleDTO;
-import net.stackoverflow.cms.service.MenuService;
 import net.stackoverflow.cms.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,9 +31,6 @@ public class RoleController extends BaseController {
 
     @Autowired
     private RoleService roleService;
-
-    @Autowired
-    private MenuService menuService;
 
     /**
      * 分页查询角色信息

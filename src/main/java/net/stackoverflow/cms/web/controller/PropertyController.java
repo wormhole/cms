@@ -3,7 +3,6 @@ package net.stackoverflow.cms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.constant.UploadPathConst;
 import net.stackoverflow.cms.model.dto.PropertyDTO;
 import net.stackoverflow.cms.model.dto.SysDTO;
 import net.stackoverflow.cms.service.PropertyService;
@@ -39,24 +38,20 @@ public class PropertyController extends BaseController {
 
     private final String TITLE = "内容管理系统";
     private final String COPYRIGHT = "copyright © 2020 by 凉衫薄";
-    private final String HEAD = "default";
+    private final String HEAD = "/head.jpg";
 
     /**
      * 获取配置信息
      *
      * @return
      */
-    @GetMapping(value = "/configuration")
+    @GetMapping
     public ResponseEntity<Result<SysDTO>> queryConfiguration() {
         List<PropertyDTO> dtos = propertyService.findByKeys(Arrays.asList("title", "head", "copyright"));
         SysDTO sys = new SysDTO();
         for (PropertyDTO dto : dtos) {
             if ("head".equals(dto.getKey())) {
-                if ("default".equals(dto.getValue())) {
-                    sys.setHead("/head.jpg");
-                } else {
-                    sys.setHead(UploadPathConst.PREFIX + dto.getValue());
-                }
+                sys.setHead(dto.getValue());
             } else if ("title".equals(dto.getKey())) {
                 sys.setTitle(dto.getValue());
             } else if ("copyright".equals(dto.getKey())) {
@@ -73,7 +68,7 @@ public class PropertyController extends BaseController {
      * @param dtos
      * @return
      */
-    @PutMapping(value = "/configuration")
+    @PutMapping
     public ResponseEntity<Result<Object>> updateConfiguration(@RequestBody @NotEmpty(message = "参数不能为空") List<PropertyDTO> dtos) {
         propertyService.batchUpdateByKey(dtos);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
@@ -120,11 +115,7 @@ public class PropertyController extends BaseController {
         SysDTO sys = new SysDTO();
         for (PropertyDTO dto : dtos) {
             if ("head".equals(dto.getKey())) {
-                if ("default".equals(dto.getValue())) {
-                    sys.setHead("/head.jpg");
-                } else {
-                    sys.setHead(UploadPathConst.PREFIX + dto.getValue());
-                }
+                sys.setHead(dto.getValue());
             } else if ("title".equals(dto.getKey())) {
                 sys.setTitle(dto.getValue());
             } else if ("copyright".equals(dto.getKey())) {

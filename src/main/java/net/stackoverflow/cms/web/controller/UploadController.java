@@ -21,10 +21,10 @@ import javax.validation.constraints.Min;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/image")
+@RequestMapping(value = "/upload")
 @Slf4j
 @Validated
-public class ImageController extends BaseController {
+public class UploadController extends BaseController {
 
     @Autowired
     private UploadService uploadService;

@@ -8,6 +8,4 @@ package net.stackoverflow.cms.constant;
 public class UploadPathConst {
 
     public static String UPLOAD_PATH = "/data/upload/";
-
-    public static String PREFIX = "/upload";
 }

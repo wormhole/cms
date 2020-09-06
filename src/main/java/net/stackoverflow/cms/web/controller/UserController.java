@@ -15,7 +15,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -158,10 +157,7 @@ public class UserController extends BaseController {
      * @return
      */
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Result<UserDTO>> queryUserById(@PathVariable(value = "id", required = false) String id) {
-        if (StringUtils.isEmpty(id)) {
-            id = super.getUserId();
-        }
+    public ResponseEntity<Result<UserDTO>> queryUserById(@PathVariable("id") String id) {
         User user = userService.findById(id);
         UserDTO dto = new UserDTO();
         BeanUtils.copyProperties(user, dto);
@@ -187,5 +183,19 @@ public class UserController extends BaseController {
         //保存至数据库
         userService.save(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("注册成功"));
+    }
+
+    /**
+     * 获取当前用户
+     *
+     * @return
+     */
+    @GetMapping("/self")
+    public ResponseEntity<Result<UserDTO>> self() {
+        User user = userService.findById(super.getUserId());
+        UserDTO dto = new UserDTO();
+        BeanUtils.copyProperties(user, dto);
+        dto.setPassword(null);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 }

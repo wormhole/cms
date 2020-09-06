@@ -55,7 +55,7 @@ public class UploadServiceImpl implements UploadService {
             uploadFile.mkdirs();
         }
         file.transferTo(uploadFile);
-        Upload upload = new Upload(UUID.randomUUID().toString(), filename, filePath, new Date(), userId, FileUtils.getType(ext.substring(1)));
+        Upload upload = new Upload(UUID.randomUUID().toString(), filename, UploadPathConst.UPLOAD_PATH + filePath, new Date(), userId, FileUtils.getType(ext.substring(1)));
         uploadDAO.insert(upload);
         return upload;
     }
@@ -89,9 +89,8 @@ public class UploadServiceImpl implements UploadService {
         for (Upload upload : uploads) {
             UploadDTO dto = new UploadDTO();
             BeanUtils.copyProperties(upload, dto);
-            dto.setUrl(UploadPathConst.PREFIX + dto.getPath());
             dto.setUsername(userService.findById(dto.getUserId()).getUsername());
-            String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + dto.getPath();
+            String path = SysUtils.pwd() + dto.getPath();
             if (SysUtils.isWin()) {
                 path = path.replace("/", "\\");
             } else {
@@ -112,7 +111,7 @@ public class UploadServiceImpl implements UploadService {
             builder.in("id", ids);
             List<Upload> uploads = uploadDAO.querySelect(builder.build());
             for (Upload upload : uploads) {
-                String path = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH + upload.getPath();
+                String path = SysUtils.pwd() + upload.getPath();
                 File file = new File(path);
                 if (file.exists()) {
                     file.delete();

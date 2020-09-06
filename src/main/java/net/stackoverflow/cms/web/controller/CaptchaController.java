@@ -1,9 +1,9 @@
 package net.stackoverflow.cms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -22,8 +22,9 @@ import java.util.Random;
  *
  * @author 凉衫薄
  */
-@Controller
+@RestController
 @Slf4j
+@RequestMapping("/captcha")
 public class CaptchaController {
 
     private static final Integer LENGTH = 4;
@@ -34,7 +35,7 @@ public class CaptchaController {
      * @param response http响应对象
      * @param session  会话对象
      */
-    @RequestMapping(value = "/captcha", method = RequestMethod.GET)
+    @GetMapping
     public void code(HttpServletResponse response, HttpSession session) throws IOException {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
