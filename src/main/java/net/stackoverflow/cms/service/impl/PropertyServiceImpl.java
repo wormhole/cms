@@ -78,8 +78,7 @@ public class PropertyServiceImpl implements PropertyService {
         builder.update("value", value);
         builder.update("ts", new Date());
         builder.eq("key", key);
-        propertyDAO.querySelect(builder.build());
+        propertyDAO.queryUpdate(builder.build());
     }
-
 
 }

@@ -85,7 +85,7 @@ public class UploadServiceImpl implements UploadService {
         List<Upload> uploads = uploadDAO.querySelect(wrapper);
         Integer total = uploadDAO.queryCount(wrapper);
 
-        List<UploadDTO> uploadDTOS = new ArrayList<>();
+        List<UploadDTO> dtos = new ArrayList<>();
         for (Upload upload : uploads) {
             UploadDTO dto = new UploadDTO();
             BeanUtils.copyProperties(upload, dto);
@@ -96,11 +96,11 @@ public class UploadServiceImpl implements UploadService {
             } else {
                 path = path.replace("\\", "/");
             }
-            dto.setPath(path);
-            uploadDTOS.add(dto);
+            dto.setAbsolutePath(path);
+            dtos.add(dto);
         }
 
-        return new PageResponse<>(total, uploadDTOS);
+        return new PageResponse<>(total, dtos);
     }
 
     @Override
