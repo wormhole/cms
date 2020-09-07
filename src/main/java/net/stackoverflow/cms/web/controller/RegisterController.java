@@ -35,7 +35,7 @@ public class RegisterController {
      * @param session 会话对象
      * @return
      */
-    @PostMapping(value = "/register")
+    @PostMapping
     public ResponseEntity<Result<Object>> register(@RequestBody @Validated(UserDTO.Insert.class) UserDTO dto, @NotBlank(message = "验证码不能为空") @PathParam("captcha") String captcha, HttpSession session) {
         //校验验证码
         String code = (String) session.getAttribute("captcha");

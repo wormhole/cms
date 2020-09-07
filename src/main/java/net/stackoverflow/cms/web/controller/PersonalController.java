@@ -33,7 +33,7 @@ public class PersonalController extends BaseController {
      *
      * @return
      */
-    @GetMapping("/user")
+    @GetMapping
     public ResponseEntity<Result<UserDTO>> getSelf() {
         User user = userService.findById(super.getUserId());
         UserDTO dto = new UserDTO();
@@ -48,7 +48,7 @@ public class PersonalController extends BaseController {
      * @param dto 用户信息dto对象
      * @return
      */
-    @PutMapping("/user")
+    @PutMapping
     public ResponseEntity<Result<Object>> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO dto) {
         if (!super.getUserId().equals(dto.getId())) {
             throw new BusinessException("不允许更新其他用户信息");

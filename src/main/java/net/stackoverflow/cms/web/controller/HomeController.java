@@ -40,7 +40,7 @@ public class HomeController extends BaseController {
      *
      * @return
      */
-    @GetMapping(value = "/base_info")
+    @GetMapping(value = "/base")
     public ResponseEntity<Result<BaseInfoDTO>> baseInfo() {
         BaseInfoDTO dto = baseInfoService.queryBaseInfo();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
