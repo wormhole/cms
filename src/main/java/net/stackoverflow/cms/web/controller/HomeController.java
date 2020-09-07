@@ -25,6 +25,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/home")
+@Validated
 public class HomeController extends BaseController {
 
     @Autowired

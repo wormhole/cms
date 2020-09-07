@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import java.util.Random;
 @RestController
 @Slf4j
 @RequestMapping("/captcha")
+@Validated
 public class CaptchaController {
 
     private static final Integer LENGTH = 4;
