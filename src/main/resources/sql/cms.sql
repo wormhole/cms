@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 16/08/2020 19:38:06
+ Date: 08/09/2020 00:38:25
 */
 
 SET NAMES utf8mb4;
@@ -21,24 +21,28 @@ CREATE DATABASE cms CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE cms;
 
 -- ----------------------------
--- Table structure for permission
+-- Table structure for menu
 -- ----------------------------
-DROP TABLE IF EXISTS `permission`;
-CREATE TABLE `permission`  (
+DROP TABLE IF EXISTS `menu`;
+CREATE TABLE `menu`  (
   `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '权限名',
-  `note` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `builtin` int(11) NULL DEFAULT NULL COMMENT '是否内置权限：1-是，2-否',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单标题',
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单键',
+  `parent` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父级菜单',
   `ts` datetime(0) NULL DEFAULT NULL COMMENT '时间戳',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of permission
+-- Records of menu
 -- ----------------------------
-INSERT INTO `permission` VALUES ('2c57feb7-3319-4e19-8621-97d4be0e2237', 'file', '文件管理模块', 1, '2020-08-16 12:42:52');
-INSERT INTO `permission` VALUES ('7c7f5593-4c92-4a65-bc59-0e11bdf9f22d', 'auth', '认证与授权模块', 1, '2020-08-16 12:42:47');
-INSERT INTO `permission` VALUES ('f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c', 'config', '系统设置模块', 1, '2020-08-16 12:42:56');
+INSERT INTO `menu` VALUES ('47e0126e-e03c-4e8c-9a1e-b821636aec8b', '图片管理', 'image', '7b6abff6-5b55-447e-99b7-f26845aad3d9', '2020-09-04 22:57:41');
+INSERT INTO `menu` VALUES ('7b6abff6-5b55-447e-99b7-f26845aad3d9', '系统管理', 'manage', NULL, '2020-09-04 22:57:17');
+INSERT INTO `menu` VALUES ('869d38f6-1336-472f-b6d6-b97163d1bce9', '用户管理', 'user', 'f853785f-5e8d-4622-b680-eb9310eaf9da', '2020-09-04 22:55:28');
+INSERT INTO `menu` VALUES ('9162c1ce-2e26-495c-b431-ea025c0e6e7d', '角色管理', 'role', 'f853785f-5e8d-4622-b680-eb9310eaf9da', '2020-09-04 22:56:13');
+INSERT INTO `menu` VALUES ('9aea0082-f45c-4f3b-9f97-6e17c9bcc490', '基本信息', 'base', '7b6abff6-5b55-447e-99b7-f26845aad3d9', '2020-09-04 22:59:16');
+INSERT INTO `menu` VALUES ('aad0f9d5-6400-4cf6-891b-86d0bc3b383c', '仪表盘', 'dashboard', NULL, '2020-09-04 22:54:34');
+INSERT INTO `menu` VALUES ('f853785f-5e8d-4622-b680-eb9310eaf9da', '认证与授权', 'auth', NULL, '2020-09-04 22:55:00');
 
 -- ----------------------------
 -- Table structure for property
@@ -55,9 +59,9 @@ CREATE TABLE `property`  (
 -- ----------------------------
 -- Records of property
 -- ----------------------------
-INSERT INTO `property` VALUES ('5e9cbc50-bb1a-4374-b497-65cdc70b92a1', 'copyright', 'copyright © 2020 by 凉衫薄', '2020-08-16 19:26:52');
-INSERT INTO `property` VALUES ('9d5fd101-ecb7-484a-a931-a29a5a3bda91', 'head', 'default', '2020-08-16 18:50:21');
-INSERT INTO `property` VALUES ('ce389eb0-ce61-4df7-8d38-67995ba8368f', 'title', '内容管理系统', '2020-08-16 19:26:52');
+INSERT INTO `property` VALUES ('5e9cbc50-bb1a-4374-b497-65cdc70b92a1', 'copyright', 'copyright © 2020 by 凉衫薄', '2020-09-06 19:04:22');
+INSERT INTO `property` VALUES ('9d5fd101-ecb7-484a-a931-a29a5a3bda91', 'head', '/head.jpg', '2020-09-06 19:04:22');
+INSERT INTO `property` VALUES ('ce389eb0-ce61-4df7-8d38-67995ba8368f', 'title', '内容管理系统', '2020-09-06 19:04:22');
 
 -- ----------------------------
 -- Table structure for role
@@ -75,26 +79,32 @@ CREATE TABLE `role`  (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES ('ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'admin', '超级管理员角色', 1, '2020-08-16 12:42:17');
+INSERT INTO `role` VALUES ('2ba05bf7-ed57-47f6-9e49-cf3c4f1ce02a', 'guest', '宾客', 1, '2020-09-06 20:34:02');
+INSERT INTO `role` VALUES ('ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'admin', '超级管理员', 1, '2020-09-06 21:05:26');
 
 -- ----------------------------
--- Table structure for role_permission_ref
+-- Table structure for role_menu_ref
 -- ----------------------------
-DROP TABLE IF EXISTS `role_permission_ref`;
-CREATE TABLE `role_permission_ref`  (
+DROP TABLE IF EXISTS `role_menu_ref`;
+CREATE TABLE `role_menu_ref`  (
   `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
   `role_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '角色主键',
-  `permission_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '权限主键',
+  `menu_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单主键',
   `ts` datetime(0) NULL DEFAULT NULL COMMENT '时间戳',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of role_permission_ref
+-- Records of role_menu_ref
 -- ----------------------------
-INSERT INTO `role_permission_ref` VALUES ('616af381-cccd-4ef5-af65-82907adc81ab', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '2c57feb7-3319-4e19-8621-97d4be0e2237', '2020-08-16 12:47:08');
-INSERT INTO `role_permission_ref` VALUES ('b2d84440-f131-4d87-b587-e2aaf9917b7e', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '7c7f5593-4c92-4a65-bc59-0e11bdf9f22d', '2020-08-16 12:47:12');
-INSERT INTO `role_permission_ref` VALUES ('be82eb3b-0cc8-42f5-80a3-d23ba3dbba6a', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'f6f16b02-ccc6-4c07-96e7-c4f512ff6d2c', '2020-08-16 12:47:15');
+INSERT INTO `role_menu_ref` VALUES ('0f029f41-dad0-4476-97f4-9b4b1f718a98', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '869d38f6-1336-472f-b6d6-b97163d1bce9', '2020-09-06 21:05:26');
+INSERT INTO `role_menu_ref` VALUES ('18d6a5bc-b6d2-4b4a-9f78-5905d4d6cf36', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '7b6abff6-5b55-447e-99b7-f26845aad3d9', '2020-09-06 21:05:26');
+INSERT INTO `role_menu_ref` VALUES ('4812a60d-8fd6-454c-9c20-2e12052f67fd', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '47e0126e-e03c-4e8c-9a1e-b821636aec8b', '2020-09-06 21:05:26');
+INSERT INTO `role_menu_ref` VALUES ('802fdd3f-5095-467d-8594-cb54ba673d9a', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '9162c1ce-2e26-495c-b431-ea025c0e6e7d', '2020-09-06 21:05:26');
+INSERT INTO `role_menu_ref` VALUES ('aa743741-e13b-433e-835c-30126433ab54', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'f853785f-5e8d-4622-b680-eb9310eaf9da', '2020-09-06 21:05:26');
+INSERT INTO `role_menu_ref` VALUES ('c056b984-04b8-4ef1-ba9e-f1f441d221e8', '2ba05bf7-ed57-47f6-9e49-cf3c4f1ce02a', 'aad0f9d5-6400-4cf6-891b-86d0bc3b383c', '2020-09-06 20:34:02');
+INSERT INTO `role_menu_ref` VALUES ('db0e7fd9-0731-4ab2-8560-d93a44acf387', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '9aea0082-f45c-4f3b-9f97-6e17c9bcc490', '2020-09-06 21:05:26');
+INSERT INTO `role_menu_ref` VALUES ('f89b5efb-a1ea-4af0-87a5-432892ee26a2', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'aad0f9d5-6400-4cf6-891b-86d0bc3b383c', '2020-09-06 21:05:26');
 
 -- ----------------------------
 -- Table structure for upload
@@ -133,7 +143,7 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('3a138baa-2afa-40ec-8ee3-7612586ce3fb', 'admin', '$2a$10$IkSMDeq4CDkcFVNqzwIFEOJxUzQBuWv4zXCcP2z.G0cxzLs6uEzli', '363408268@qq.com', '18584848465', 1, 1, 30, 1, 30, 5, '2020-08-16 17:02:10');
+INSERT INTO `user` VALUES ('3a138baa-2afa-40ec-8ee3-7612586ce3fb', 'admin', '$2a$10$SZBZZLPe0pXULZ9IeEBfTeOKle/peyFIkEMZFhKypokbH9JCMawl6', '363408268@qq.com', '18584848465', 1, 1, 30, 1, 30, 5, '2020-09-06 21:17:49');
 
 -- ----------------------------
 -- Table structure for user_role_ref
@@ -150,6 +160,6 @@ CREATE TABLE `user_role_ref`  (
 -- ----------------------------
 -- Records of user_role_ref
 -- ----------------------------
-INSERT INTO `user_role_ref` VALUES ('38fe9d4e-b2d9-4ee3-92d5-88efed626c1a', '3a138baa-2afa-40ec-8ee3-7612586ce3fb', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '2020-08-16 12:46:33');
+INSERT INTO `user_role_ref` VALUES ('e4992676-784d-4e63-b232-15190ecba681', '3a138baa-2afa-40ec-8ee3-7612586ce3fb', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '2020-09-06 20:02:49');
 
 SET FOREIGN_KEY_CHECKS = 1;
