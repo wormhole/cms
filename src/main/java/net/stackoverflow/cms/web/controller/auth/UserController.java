@@ -172,6 +172,4 @@ public class UserController extends BaseController {
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dtos));
     }
 
-
-
 }
