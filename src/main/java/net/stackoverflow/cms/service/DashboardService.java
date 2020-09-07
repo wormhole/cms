@@ -3,6 +3,8 @@ package net.stackoverflow.cms.service;
 import net.stackoverflow.cms.model.dto.CountDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 
+import java.util.Map;
+
 /**
  * 首页服务接口
  *
@@ -23,4 +25,6 @@ public interface DashboardService {
      * @return
      */
     UserStatusDTO userStatus();
+
+    Map<String, Integer> topIp();
 }

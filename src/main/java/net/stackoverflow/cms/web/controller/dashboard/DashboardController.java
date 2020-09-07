@@ -56,6 +56,17 @@ public class DashboardController extends BaseController {
     }
 
     /**
+     * 登录ip排行
+     *
+     * @return
+     */
+    @GetMapping("/top_ip")
+    public ResponseEntity<Result<Map<String, Integer>>> topIp() {
+        Map<String, Integer> ret = dashboardService.topIp();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(ret));
+    }
+
+    /**
      * 获取仪表盘信息
      *
      * @return
