@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.web.controller;
+package net.stackoverflow.cms.web.controller.dashboard;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
