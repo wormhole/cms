@@ -67,13 +67,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(60 * 60 * 24 * 30)
                 .rememberMeParameter("rememberMe");*/
         http.authorizeRequests()
-                .antMatchers("/dashboard/**").authenticated()
-                .antMatchers("/user/register").permitAll()
-                .antMatchers("/user/**").authenticated()
-                .antMatchers("/role/**").authenticated()
-                .antMatchers("/upload/**").authenticated()
-                .antMatchers("/menu/**").authenticated()
-                .antMatchers("/property/**").authenticated();
+                .antMatchers("/dashboard/**").hasAuthority("dashboard")
+                .antMatchers("/auth/user/**").hasAuthority("user")
+                .antMatchers("/auth/role/**").hasAuthority("role")
+                .antMatchers("/manage/base/**").hasAuthority("base")
+                .antMatchers("/manage/image/**").hasAuthority("image")
+                .antMatchers("/personal/**").authenticated()
+                .antMatchers("/home/**").authenticated();
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint);
         http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
