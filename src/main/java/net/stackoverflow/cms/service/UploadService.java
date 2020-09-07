@@ -33,15 +33,6 @@ public interface UploadService {
     Upload saveFile(MultipartFile file, String userId) throws IOException;
 
     /**
-     * 更新头像
-     *
-     * @param file
-     * @param userId
-     * @throws IOException
-     */
-    void updateHead(MultipartFile file, String userId) throws IOException;
-
-    /**
      * 分页查询上传图片
      *
      * @param page   当前页

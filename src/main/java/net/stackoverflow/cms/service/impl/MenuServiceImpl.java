@@ -69,43 +69,9 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<String> findFullKeysByRoleId(String id) {
-        List<String> keys = new ArrayList<>();
-        List<RoleMenuRef> refs = roleMenuRefService.findByRoleId(id);
-        if (!CollectionUtils.isEmpty(refs)) {
-            List<String> ids = new ArrayList<>();
-            refs.forEach(ref -> ids.add(ref.getMenuId()));
-            List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().in("id", ids).build());
-            Map<String, Menu> map = new HashMap<>(16);
-            menus.forEach(menu -> map.put(menu.getId(), menu));
-            for (Menu menu : menus) {
-                if (menu.getParent() != null && map.get(menu.getParent()) == null) {
-                    map.put(menu.getParent(), menuDAO.select(menu.getParent()));
-                }
-            }
-            for (Map.Entry<String, Menu> entry : map.entrySet()) {
-                keys.add(entry.getValue().getKey());
-            }
-        }
-        return keys;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<MenuDTO> findTree() {
         List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().asc("ts").build());
         return toTree(menus);
-    }
-
-    @Override
-    public List<String> findFullKeysByUserId(String userId) {
-        List<RoleDTO> dtos = roleService.findByUserId(userId);
-        Set<String> keys = new HashSet<>();
-        for (RoleDTO dto : dtos) {
-            List<String> ks = findFullKeysByRoleId(dto.getId());
-            keys.addAll(ks);
-        }
-        return new ArrayList<>(keys);
     }
 
     @Override

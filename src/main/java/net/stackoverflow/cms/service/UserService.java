@@ -33,14 +33,14 @@ public interface UserService {
     /**
      * 保存用户信息
      *
-     * @param dto
+     * @param dto 用户信息dto对象
      */
     void save(UserDTO dto);
 
     /**
      * 更新用户基本信息
      *
-     * @param dto
+     * @param dto 用户信息dto对象
      */
     void updateBase(UserDTO dto);
 
@@ -92,9 +92,9 @@ public interface UserService {
     /**
      * 重新分配用户角色
      *
-     * @param dto
+     * @param dto 用户角色绑定信息dto对象
      */
-    void reGrandRole(BindRoleDTO dto);
+    void reBindRole(BindRoleDTO dto);
 
     /**
      * 统计用户数量

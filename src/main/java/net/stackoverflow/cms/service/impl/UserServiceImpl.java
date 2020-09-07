@@ -9,7 +9,6 @@ import net.stackoverflow.cms.exception.BusinessException;
 import net.stackoverflow.cms.model.dto.BindRoleDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
 import net.stackoverflow.cms.model.dto.UserDTO;
-import net.stackoverflow.cms.model.entity.Role;
 import net.stackoverflow.cms.model.entity.User;
 import net.stackoverflow.cms.model.entity.UserRoleRef;
 import net.stackoverflow.cms.service.RoleService;
@@ -85,9 +84,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userDAO.insert(user);
 
-        Role role = roleService.findByName("guest");
-        if (role != null) {
-            userRoleRefService.save(new UserRoleRef(UUID.randomUUID().toString(), user.getId(), role.getId(), new Date()));
+        String roleId = roleService.findIdByName("guest");
+        if (roleId != null) {
+            userRoleRefService.save(new UserRoleRef(UUID.randomUUID().toString(), user.getId(), roleId, new Date()));
         }
     }
 
@@ -221,7 +220,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void reGrandRole(BindRoleDTO dto) {
+    public void reBindRole(BindRoleDTO dto) {
         String userId = dto.getUserId();
         List<String> roleIds = dto.getRoleIds();
 

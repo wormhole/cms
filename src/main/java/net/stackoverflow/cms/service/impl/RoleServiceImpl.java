@@ -101,30 +101,30 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(RoleDTO roleDTO) {
+    public void update(RoleDTO dto) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.neq("id", roleDTO.getId());
-        builder.eq("name", roleDTO.getName());
+        builder.neq("id", dto.getId());
+        builder.eq("name", dto.getName());
         List<Role> roles = roleDAO.querySelect(builder.build());
         if (!CollectionUtils.isEmpty(roles)) {
             throw new BusinessException("角色名不能重复");
         }
 
         QueryWrapperBuilder deleteBuilder = new QueryWrapperBuilder();
-        deleteBuilder.update("name", roleDTO.getName());
-        deleteBuilder.update("note", roleDTO.getNote());
+        deleteBuilder.update("name", dto.getName());
+        deleteBuilder.update("note", dto.getNote());
         deleteBuilder.update("ts", new Date());
-        deleteBuilder.eq("id", roleDTO.getId());
+        deleteBuilder.eq("id", dto.getId());
         roleDAO.queryUpdate(deleteBuilder.build());
 
-        roleMenuRefService.deleteByRoleId(roleDTO.getId());
-        List<String> ids = menuService.findIdsByKeys(roleDTO.getMenus());
+        roleMenuRefService.deleteByRoleId(dto.getId());
+        List<String> ids = menuService.findIdsByKeys(dto.getMenus());
         List<RoleMenuRef> refs = new ArrayList<>();
         for (String id : ids) {
             RoleMenuRef ref = new RoleMenuRef();
             ref.setId(UUID.randomUUID().toString());
             ref.setMenuId(id);
-            ref.setRoleId(roleDTO.getId());
+            ref.setRoleId(dto.getId());
             ref.setTs(new Date());
             refs.add(ref);
         }
@@ -135,22 +135,22 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void save(RoleDTO roleDTO) {
+    public void save(RoleDTO dto) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.eq("name", roleDTO.getName());
+        builder.eq("name", dto.getName());
         List<Role> roles = roleDAO.querySelect(builder.build());
         if (!CollectionUtils.isEmpty(roles)) {
             throw new BusinessException("角色名不能重复");
         }
 
         Role role = new Role();
-        BeanUtils.copyProperties(roleDTO, role);
+        BeanUtils.copyProperties(dto, role);
         role.setId(UUID.randomUUID().toString());
         role.setBuiltin(0);
         role.setTs(new Date());
         roleDAO.insert(role);
 
-        List<String> ids = menuService.findIdsByKeys(roleDTO.getMenus());
+        List<String> ids = menuService.findIdsByKeys(dto.getMenus());
         List<RoleMenuRef> refs = new ArrayList<>();
         for (String id : ids) {
             RoleMenuRef ref = new RoleMenuRef();
@@ -220,12 +220,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role findByName(String name) {
+    public String findIdByName(String name) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.eq("name", name);
         List<Role> roles = roleDAO.querySelect(builder.build());
         if (!CollectionUtils.isEmpty(roles)) {
-            return roles.get(0);
+            return roles.get(0).getId();
         } else {
             return null;
         }

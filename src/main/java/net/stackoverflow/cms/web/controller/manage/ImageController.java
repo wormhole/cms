@@ -1,4 +1,4 @@
-package net.stackoverflow.cms.web.controller;
+package net.stackoverflow.cms.web.controller.manage;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
@@ -21,10 +21,10 @@ import javax.validation.constraints.Min;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/upload")
+@RequestMapping(value = "/manage/image")
 @Slf4j
 @Validated
-public class UploadController extends BaseController {
+public class ImageController extends BaseController {
 
     @Autowired
     private UploadService uploadService;
@@ -32,11 +32,11 @@ public class UploadController extends BaseController {
     /**
      * 分页查询图片信息
      *
-     * @param page
-     * @param limit
-     * @param sort
-     * @param order
-     * @param key
+     * @param page  当前页
+     * @param limit 每页大小
+     * @param sort  排序字段
+     * @param order 排序方式
+     * @param key   关键字
      * @return
      */
     @GetMapping(value = "/list")
@@ -48,19 +48,18 @@ public class UploadController extends BaseController {
             @RequestParam(value = "key", required = false) String key) {
 
         PageResponse<UploadDTO> response = uploadService.findImageByPage(page, limit, sort, order, key, super.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success", response));
-
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(response));
     }
 
     /**
      * 删除图片
      *
-     * @param idsDTO
+     * @param dto 图片主键dto对象
      * @return
      */
     @DeleteMapping
-    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO idsDTO) {
-        uploadService.deleteByIds(idsDTO.getIds());
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success("success"));
+    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO dto) {
+        uploadService.deleteByIds(dto.getIds());
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 }

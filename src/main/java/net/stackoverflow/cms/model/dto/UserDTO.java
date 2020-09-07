@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 用户VO类
+ * 用户信息dto类
  *
  * @author 凉衫薄
  */

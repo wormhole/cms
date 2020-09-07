@@ -1,12 +1,13 @@
-package net.stackoverflow.cms.web.controller;
+package net.stackoverflow.cms.web.controller.auth;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.IdsDTO;
+import net.stackoverflow.cms.model.dto.MenuDTO;
 import net.stackoverflow.cms.model.dto.RoleDTO;
-import net.stackoverflow.cms.model.dto.TransferRoleDTO;
+import net.stackoverflow.cms.service.MenuService;
 import net.stackoverflow.cms.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -24,22 +24,24 @@ import java.util.List;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/role")
+@RequestMapping(value = "/auth/role")
 @Slf4j
 @Validated
 public class RoleController extends BaseController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private MenuService menuService;
 
     /**
      * 分页查询角色信息
      *
-     * @param page
-     * @param limit
-     * @param sort
-     * @param order
-     * @param key
+     * @param page  当前页
+     * @param limit 每页大小
+     * @param sort  排序字段
+     * @param order 排序顺序
+     * @param key   关键字
      * @return
      */
     @GetMapping(value = "/list")
@@ -51,18 +53,17 @@ public class RoleController extends BaseController {
             @RequestParam(value = "key", required = false) String key) {
         PageResponse<RoleDTO> response = roleService.findByPage(page, limit, sort, order, key);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(response));
-
     }
 
     /**
      * 删除角色
      *
-     * @param idsDTO
+     * @param dto 角色主键列表
      * @return
      */
     @DeleteMapping
-    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO idsDTO) {
-        roleService.deleteByIds(idsDTO.getIds());
+    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO dto) {
+        roleService.deleteByIds(dto.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
@@ -70,12 +71,12 @@ public class RoleController extends BaseController {
     /**
      * 更新角色信息
      *
-     * @param roleDTO
+     * @param dto 角色信息dto对象
      * @return
      */
     @PutMapping
-    public ResponseEntity<Result<Object>> update(@RequestBody @Validated(RoleDTO.Update.class) RoleDTO roleDTO) {
-        roleService.update(roleDTO);
+    public ResponseEntity<Result<Object>> update(@RequestBody @Validated(RoleDTO.Update.class) RoleDTO dto) {
+        roleService.update(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
 
     }
@@ -83,19 +84,19 @@ public class RoleController extends BaseController {
     /**
      * 新增角色
      *
-     * @param roleDTO
+     * @param dto 角色信息dto对象
      * @return
      */
     @PostMapping
-    public ResponseEntity<Result<Object>> save(@RequestBody @Validated(RoleDTO.Insert.class) RoleDTO roleDTO) {
-        roleService.save(roleDTO);
+    public ResponseEntity<Result<Object>> save(@RequestBody @Validated(RoleDTO.Insert.class) RoleDTO dto) {
+        roleService.save(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
      * 根据id查询角色
      *
-     * @param id
+     * @param id 角色主键
      * @return
      */
     @GetMapping(value = "/{id}")
@@ -105,30 +106,13 @@ public class RoleController extends BaseController {
     }
 
     /**
-     * 查询所有角色
+     * 获取菜单树
      *
      * @return
      */
-    @GetMapping
-    public ResponseEntity<Result<List<RoleDTO>>> queryAll() {
-        List<RoleDTO> dtos = roleService.findAll();
+    @GetMapping("/menu_tree")
+    public ResponseEntity<Result<List<MenuDTO>>> queryMenuTree() {
+        List<MenuDTO> dtos = menuService.findTree();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dtos));
-    }
-
-    /**
-     * 用户的角色参照
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping(value = "/transfer")
-    public ResponseEntity<Result<TransferRoleDTO>> transfer(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
-        List<RoleDTO> targetRoles = roleService.findByUserId(id);
-        List<RoleDTO> allRoles = roleService.findAll();
-
-        TransferRoleDTO dto = new TransferRoleDTO();
-        dto.setAll(allRoles);
-        dto.setTarget(targetRoles);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 }

@@ -37,14 +37,14 @@ public class CmsUserDetailsServiceImpl implements UserDetailsService {
         User user = userService.findByUsername(username);
         if (user != null) {
             List<String> roles = roleService.findNamesByUserId(user.getId());
-            List<String> menus = menuService.findFullKeysByUserId(user.getId());
+            List<String> menus = menuService.findKeysByUserId(user.getId());
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (String role : roles) {
                 SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + role);
                 authorities.add(sga);
             }
             for (String menu : menus) {
-                SimpleGrantedAuthority sga = new SimpleGrantedAuthority("MENU_" + menu);
+                SimpleGrantedAuthority sga = new SimpleGrantedAuthority(menu);
                 authorities.add(sga);
             }
             return new CmsUserDetails(user, authorities);

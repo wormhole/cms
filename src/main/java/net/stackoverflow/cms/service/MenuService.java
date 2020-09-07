@@ -35,14 +35,6 @@ public interface MenuService {
     List<String> findKeysByRoleId(String id);
 
     /**
-     * 获取菜单键（包含一级菜单）
-     *
-     * @param id
-     * @return
-     */
-    List<String> findFullKeysByRoleId(String id);
-
-    /**
      * 查询菜单树
      *
      * @return
@@ -56,12 +48,4 @@ public interface MenuService {
      * @return
      */
     List<String> findKeysByUserId(String userId);
-
-    /**
-     * 根据用户id查询菜单键（包含一级菜单）
-     *
-     * @param userId
-     * @return
-     */
-    List<String> findFullKeysByUserId(String userId);
 }

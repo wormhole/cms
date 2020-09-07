@@ -2,7 +2,6 @@ package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.model.dto.RoleDTO;
-import net.stackoverflow.cms.model.entity.Role;
 
 import java.util.List;
 
@@ -35,23 +34,23 @@ public interface RoleService {
     /**
      * 根据主键列表删除角色
      *
-     * @param ids
+     * @param ids 用户主键列表
      */
     void deleteByIds(List<String> ids);
 
     /**
      * 更新角色信息
      *
-     * @param roleDTO
+     * @param dto 角色信息dto对象
      */
-    void update(RoleDTO roleDTO);
+    void update(RoleDTO dto);
 
     /**
      * 保存角色信息
      *
-     * @param roleDTO
+     * @param dto 角色信息dto对象
      */
-    void save(RoleDTO roleDTO);
+    void save(RoleDTO dto);
 
     /**
      * 统计角色数量
@@ -71,7 +70,7 @@ public interface RoleService {
     /**
      * 根据用户主键查询角色key
      *
-     * @param userId
+     * @param userId 用户主键
      * @return
      */
     List<String> findNamesByUserId(String userId);
@@ -79,16 +78,16 @@ public interface RoleService {
     /**
      * 根据角色主键查询角色信息
      *
-     * @param id
+     * @param id 角色主键
      * @return
      */
     RoleDTO findById(String id);
 
     /**
-     * 根据角色名查找
+     * 根据角色名查找id
      *
-     * @param name
+     * @param name 角色名
      * @return
      */
-    Role findByName(String name);
+    String findIdByName(String name);
 }

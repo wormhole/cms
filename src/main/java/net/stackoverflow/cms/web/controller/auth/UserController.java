@@ -1,15 +1,13 @@
-package net.stackoverflow.cms.web.controller;
+package net.stackoverflow.cms.web.controller.auth;
 
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.PageResponse;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.exception.BusinessException;
-import net.stackoverflow.cms.model.dto.BindRoleDTO;
-import net.stackoverflow.cms.model.dto.IdsDTO;
-import net.stackoverflow.cms.model.dto.PasswordDTO;
-import net.stackoverflow.cms.model.dto.UserDTO;
+import net.stackoverflow.cms.model.dto.*;
 import net.stackoverflow.cms.model.entity.User;
+import net.stackoverflow.cms.service.RoleService;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +28,25 @@ import java.util.List;
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/auth/user")
 @Slf4j
 @Validated
 public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     /**
      * 分页查询用户信息
      *
-     * @param page
-     * @param limit
-     * @param sort
-     * @param order
-     * @param roleIds
-     * @param key
+     * @param page    当前页
+     * @param limit   每页大小
+     * @param sort    排序字段
+     * @param order   排序方式
+     * @param roleIds 角色过滤
+     * @param key     关键字
      * @return
      */
     @GetMapping(value = "/list")
@@ -64,98 +64,43 @@ public class UserController extends BaseController {
     /**
      * 删除用户
      *
-     * @param idsDTO
+     * @param dto 用户主键dto
      * @return
      */
     @DeleteMapping
-    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO idsDTO) {
-        userService.deleteByIds(idsDTO.getIds());
+    public ResponseEntity<Result<Object>> deleteByIds(@RequestBody @Validated IdsDTO dto) {
+        userService.deleteByIds(dto.getIds());
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
-    }
-
-    /**
-     * 启用
-     *
-     * @param idsDTO
-     * @return
-     */
-    @PutMapping(value = "/enabled")
-    public ResponseEntity<Result<Object>> enabled(@RequestBody @Validated IdsDTO idsDTO) {
-        userService.updateEnable(idsDTO.getIds(), 1);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
-
-    }
-
-    /**
-     * 禁用
-     *
-     * @param idsDTO
-     * @return
-     */
-    @PutMapping(value = "/disabled")
-    public ResponseEntity<Result<Object>> disabled(@RequestBody @Validated IdsDTO idsDTO) {
-        userService.updateEnable(idsDTO.getIds(), 0);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
-
-    }
-
-    /**
-     * 授权
-     *
-     * @param bindRoleDTO
-     * @return
-     */
-    @PutMapping(value = "/bind_role")
-    public ResponseEntity<Result<Object>> bindRole(@RequestBody @Validated BindRoleDTO bindRoleDTO) {
-        userService.reGrandRole(bindRoleDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
-
     }
 
     /**
      * 更新用户信息
      *
-     * @param userDTO
+     * @param dto 用户信息dto对象
      * @return
      */
     @PutMapping
-    public ResponseEntity<Result<Object>> updateBase(@RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO) {
-        User user = super.getUser();
-        if (!user.getBuiltin().equals(1) && !user.getId().equals(userDTO.getId())) {
-            throw new BusinessException("非超级管理员不允许更新别人信息");
-        }
-        userService.updateBase(userDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
-    }
-
-    /**
-     * 修改密码
-     *
-     * @param dto
-     * @return
-     */
-    @PutMapping(value = "/password")
-    public ResponseEntity<Result<Object>> updatePassword(@RequestBody @Validated PasswordDTO dto) {
-        userService.updatePassword(super.getUserId(), dto.getOld(), dto.getPassword());
+    public ResponseEntity<Result<Object>> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO dto) {
+        userService.updateBase(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
      * 添加用户
      *
-     * @param userDTO
+     * @param dto 用户信息dto对象
      * @return
      */
     @PostMapping
-    public ResponseEntity<Result<Object>> save(@RequestBody @Validated(UserDTO.Insert.class) UserDTO userDTO) {
-        userService.save(userDTO);
+    public ResponseEntity<Result<Object>> save(@RequestBody @Validated(UserDTO.Insert.class) UserDTO dto) {
+        userService.save(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
     /**
      * 获取用户
      *
-     * @param id
+     * @param id 用户主键
      * @return
      */
     @GetMapping(value = "/{id}")
@@ -166,6 +111,70 @@ public class UserController extends BaseController {
         dto.setPassword(null);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
+
+    /**
+     * 启用
+     *
+     * @param dto 用户主键dto对象
+     * @return
+     */
+    @PutMapping(value = "/enabled")
+    public ResponseEntity<Result<Object>> enabled(@RequestBody @Validated IdsDTO dto) {
+        userService.updateEnable(dto.getIds(), 1);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
+    }
+
+    /**
+     * 禁用
+     *
+     * @param dto 用户主键dto对象
+     * @return
+     */
+    @PutMapping(value = "/disabled")
+    public ResponseEntity<Result<Object>> disabled(@RequestBody @Validated IdsDTO dto) {
+        userService.updateEnable(dto.getIds(), 0);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
+    }
+
+    /**
+     * 绑定角色
+     *
+     * @param dto 用户角色绑定信息dto对象
+     * @return
+     */
+    @PutMapping(value = "/bind_role")
+    public ResponseEntity<Result<Object>> bindRole(@RequestBody @Validated BindRoleDTO dto) {
+        userService.reBindRole(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success());
+    }
+
+    /**
+     * 用户分配角色穿梭框数据
+     *
+     * @param id 用户主键
+     * @return
+     */
+    @GetMapping(value = "/transfer")
+    public ResponseEntity<Result<TransferRoleDTO>> transfer(@RequestParam(value = "id") @NotBlank(message = "id不能为空") String id) {
+        List<RoleDTO> target = roleService.findByUserId(id);
+        List<RoleDTO> all = roleService.findAll();
+        TransferRoleDTO dto = new TransferRoleDTO();
+        dto.setAll(all);
+        dto.setTarget(target);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
+    }
+
+    /**
+     * 查询所有角色
+     *
+     * @return
+     */
+    @GetMapping(value = "/roles")
+    public ResponseEntity<Result<List<RoleDTO>>> queryRoles() {
+        List<RoleDTO> dtos = roleService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dtos));
+    }
+
 
     /**
      * 用户注册接口
@@ -190,19 +199,5 @@ public class UserController extends BaseController {
         dto.setFailure(5);
         userService.save(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success("注册成功"));
-    }
-
-    /**
-     * 获取当前用户
-     *
-     * @return
-     */
-    @GetMapping("/self")
-    public ResponseEntity<Result<UserDTO>> self() {
-        User user = userService.findById(super.getUserId());
-        UserDTO dto = new UserDTO();
-        BeanUtils.copyProperties(user, dto);
-        dto.setPassword(null);
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 }

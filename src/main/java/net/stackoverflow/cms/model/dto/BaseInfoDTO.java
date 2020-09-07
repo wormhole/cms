@@ -3,7 +3,7 @@ package net.stackoverflow.cms.model.dto;
 import lombok.*;
 
 /**
- * 系统信息
+ * 基础信息dto类
  *
  * @author 凉衫薄
  */
@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SysDTO {
+public class BaseInfoDTO {
 
     private String title;
     private String head;

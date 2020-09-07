@@ -9,7 +9,6 @@ import net.stackoverflow.cms.constant.UploadPathConst;
 import net.stackoverflow.cms.dao.UploadDAO;
 import net.stackoverflow.cms.model.dto.UploadDTO;
 import net.stackoverflow.cms.model.entity.Upload;
-import net.stackoverflow.cms.service.PropertyService;
 import net.stackoverflow.cms.service.UploadService;
 import net.stackoverflow.cms.service.UserService;
 import net.stackoverflow.cms.util.FileUtils;
@@ -38,8 +37,6 @@ public class UploadServiceImpl implements UploadService {
     @Autowired
     private UploadDAO uploadDAO;
     @Autowired
-    private PropertyService propertyService;
-    @Autowired
     private UserService userService;
 
     @Override
@@ -64,13 +61,6 @@ public class UploadServiceImpl implements UploadService {
         Upload upload = new Upload(UUID.randomUUID().toString(), filename, UploadPathConst.UPLOAD_PATH + filePath, new Date(), userId, FileUtils.getType(ext.substring(1)));
         uploadDAO.insert(upload);
         return upload;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateHead(MultipartFile file, String userId) throws IOException {
-        Upload upload = saveFile(file, userId);
-        propertyService.updateByKey("head", upload.getPath());
     }
 
     @Override

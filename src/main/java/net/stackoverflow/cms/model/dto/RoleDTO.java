@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 角色VO类
+ * 角色信息dto类
  *
  * @author 凉衫薄
  */
