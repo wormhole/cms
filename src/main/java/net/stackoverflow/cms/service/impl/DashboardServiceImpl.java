@@ -1,11 +1,14 @@
 package net.stackoverflow.cms.service.impl;
 
+import com.sun.management.OperatingSystemMXBean;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.constant.RedisPrefixConst;
 import net.stackoverflow.cms.model.dto.CountDTO;
 import net.stackoverflow.cms.model.dto.DiskInfoDTO;
+import net.stackoverflow.cms.model.dto.MemInfoDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 import net.stackoverflow.cms.service.*;
+import net.stackoverflow.cms.util.FormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.rmi.server.ExportException;
 import java.util.*;
 
@@ -94,10 +98,20 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public DiskInfoDTO diskInfo() {
         File file = new File(".");
-        Long total = file.getTotalSpace() / (1024 * 1024 * 1024);
-        Long free = file.getFreeSpace() / (1024 * 1024 * 1024);
-        Long used = (total - free) / (1024 * 1024 * 1024);
+        Double total = FormatUtils.doubleFormat(file.getTotalSpace() / (1024.0 * 1024.0 * 1024.0), 2);
+        Double free = FormatUtils.doubleFormat(file.getFreeSpace() / (1024.0 * 1024.0 * 1024.0), 2);
+        Double used = FormatUtils.doubleFormat((file.getTotalSpace() - file.getFreeSpace()) / (1024.0 * 1024.0 * 1024.0), 2);
         DiskInfoDTO dto = new DiskInfoDTO(total, free, used);
+        return dto;
+    }
+
+    @Override
+    public MemInfoDTO memInfo() {
+        OperatingSystemMXBean os = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        Double total = FormatUtils.doubleFormat(os.getTotalPhysicalMemorySize() / (1024.0 * 1024.0 * 1024.0), 2);
+        Double free = FormatUtils.doubleFormat(os.getFreePhysicalMemorySize() / (1024.0 * 1024.0 * 1024.0), 2);
+        Double used = FormatUtils.doubleFormat((os.getTotalPhysicalMemorySize() - os.getFreePhysicalMemorySize()) / (1024.0 * 1024.0 * 1024.0), 2);
+        MemInfoDTO dto = new MemInfoDTO(total, free, used);
         return dto;
     }
 }

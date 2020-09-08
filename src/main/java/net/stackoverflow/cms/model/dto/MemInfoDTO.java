@@ -3,7 +3,7 @@ package net.stackoverflow.cms.model.dto;
 import lombok.*;
 
 /**
- * 磁盘容量信息dto类
+ * 内存信息dto类
  *
  * @author 凉衫薄
  */
@@ -12,7 +12,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class DiskInfoDTO {
+public class MemInfoDTO {
+
     private Double total;
     private Double free;
     private Double used;

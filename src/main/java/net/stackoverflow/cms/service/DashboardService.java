@@ -2,6 +2,7 @@ package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.model.dto.CountDTO;
 import net.stackoverflow.cms.model.dto.DiskInfoDTO;
+import net.stackoverflow.cms.model.dto.MemInfoDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 
 import java.util.Map;
@@ -40,4 +41,11 @@ public interface DashboardService {
      * @return
      */
     DiskInfoDTO diskInfo();
+
+    /**
+     * 获取内存信息
+     *
+     * @return
+     */
+    MemInfoDTO memInfo();
 }

@@ -5,6 +5,7 @@ import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.CountDTO;
 import net.stackoverflow.cms.model.dto.DiskInfoDTO;
+import net.stackoverflow.cms.model.dto.MemInfoDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 import net.stackoverflow.cms.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,17 @@ public class DashboardController extends BaseController {
     @GetMapping("/disk")
     public ResponseEntity<Result<DiskInfoDTO>> diskInfo() {
         DiskInfoDTO dto = dashboardService.diskInfo();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
+    }
+
+    /**
+     * 获取内存信息
+     *
+     * @return
+     */
+    @GetMapping("/memory")
+    public ResponseEntity<Result<MemInfoDTO>> memInfo() {
+        MemInfoDTO dto = dashboardService.memInfo();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 }
