@@ -73,7 +73,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/manage/base/**").hasAuthority("base")
                 .antMatchers("/manage/image/**").hasAuthority("image")
                 .antMatchers("/personal/**").authenticated()
-                .antMatchers("/home/**").authenticated();
+                .antMatchers("/home/**").authenticated()
+                .antMatchers("/actuator/**").hasRole("admin");
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint);
         http.addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
