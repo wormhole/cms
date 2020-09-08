@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.CountDTO;
+import net.stackoverflow.cms.model.dto.DiskInfoDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 import net.stackoverflow.cms.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class DashboardController extends BaseController {
     }
 
     /**
-     * 登录ip排行
+     * 登录地址排行
      *
      * @return
      */
@@ -63,5 +64,14 @@ public class DashboardController extends BaseController {
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(ret));
     }
 
-
+    /**
+     * 获取磁盘信息
+     *
+     * @return
+     */
+    @GetMapping("/disk")
+    public ResponseEntity<Result<DiskInfoDTO>> diskInfo() {
+        DiskInfoDTO dto = dashboardService.diskInfo();
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
+    }
 }

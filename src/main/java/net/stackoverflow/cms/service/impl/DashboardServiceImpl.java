@@ -3,6 +3,7 @@ package net.stackoverflow.cms.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.constant.RedisPrefixConst;
 import net.stackoverflow.cms.model.dto.CountDTO;
+import net.stackoverflow.cms.model.dto.DiskInfoDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 import net.stackoverflow.cms.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.rmi.server.ExportException;
 import java.util.*;
 
@@ -68,7 +70,6 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Map<String, Integer> topIp() {
         Set<String> keys = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + "*");
         Map<String, Integer> map = new HashMap<>();
@@ -88,5 +89,15 @@ public class DashboardServiceImpl implements DashboardService {
         Map<String, Integer> sortMap = new LinkedHashMap<>();
         ips.forEach(entry -> sortMap.put(entry.getKey(), entry.getValue()));
         return sortMap;
+    }
+
+    @Override
+    public DiskInfoDTO diskInfo() {
+        File file = new File(".");
+        Long total = file.getTotalSpace() / (1024 * 1024 * 1024);
+        Long free = file.getFreeSpace() / (1024 * 1024 * 1024);
+        Long used = (total - free) / (1024 * 1024 * 1024);
+        DiskInfoDTO dto = new DiskInfoDTO(total, free, used);
+        return dto;
     }
 }

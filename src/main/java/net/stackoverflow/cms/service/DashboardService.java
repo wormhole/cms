@@ -1,6 +1,7 @@
 package net.stackoverflow.cms.service;
 
 import net.stackoverflow.cms.model.dto.CountDTO;
+import net.stackoverflow.cms.model.dto.DiskInfoDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 
 import java.util.Map;
@@ -26,5 +27,17 @@ public interface DashboardService {
      */
     UserStatusDTO userStatus();
 
+    /**
+     * 登录地址排行
+     *
+     * @return
+     */
     Map<String, Integer> topIp();
+
+    /**
+     * 获取磁盘信息
+     *
+     * @return
+     */
+    DiskInfoDTO diskInfo();
 }
