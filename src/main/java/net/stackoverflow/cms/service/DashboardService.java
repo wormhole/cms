@@ -5,8 +5,6 @@ import net.stackoverflow.cms.model.dto.DiskInfoDTO;
 import net.stackoverflow.cms.model.dto.MemInfoDTO;
 import net.stackoverflow.cms.model.dto.UserStatusDTO;
 
-import java.util.Map;
-
 /**
  * 首页服务接口
  *
@@ -27,13 +25,6 @@ public interface DashboardService {
      * @return
      */
     UserStatusDTO userStatus();
-
-    /**
-     * 登录地址排行
-     *
-     * @return
-     */
-    Map<String, Integer> topIp();
 
     /**
      * 获取磁盘信息

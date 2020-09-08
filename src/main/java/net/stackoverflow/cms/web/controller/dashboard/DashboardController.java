@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 /**
  * 仪表盘接口
  *
@@ -52,17 +50,6 @@ public class DashboardController extends BaseController {
     public ResponseEntity<Result<UserStatusDTO>> userStatus() {
         UserStatusDTO dto = dashboardService.userStatus();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
-    }
-
-    /**
-     * 登录地址排行
-     *
-     * @return
-     */
-    @GetMapping("/top_ip")
-    public ResponseEntity<Result<Map<String, Integer>>> topIp() {
-        Map<String, Integer> ret = dashboardService.topIp();
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success(ret));
     }
 
     /**

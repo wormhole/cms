@@ -11,15 +11,12 @@ import net.stackoverflow.cms.service.*;
 import net.stackoverflow.cms.util.FormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.rmi.server.ExportException;
-import java.util.*;
 
 /**
  * 首页服务实现类
@@ -71,28 +68,6 @@ public class DashboardServiceImpl implements DashboardService {
         dto.setLock(lock);
         dto.setOnline(online);
         return dto;
-    }
-
-    @Override
-    public Map<String, Integer> topIp() {
-        Set<String> keys = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + "*");
-        Map<String, Integer> map = new HashMap<>();
-        for (String key : keys) {
-            Authentication authentication = (Authentication) redisTemplate.opsForValue().get(key);
-            WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
-            String address = details.getRemoteAddress();
-            if (map.get(address) == null) {
-                map.put(address, 1);
-            } else {
-                int total = map.get(address) + 1;
-                map.put(address, total);
-            }
-        }
-        List<Map.Entry<String, Integer>> ips = new ArrayList<>(map.entrySet());
-        Collections.sort(ips, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-        Map<String, Integer> sortMap = new LinkedHashMap<>();
-        ips.forEach(entry -> sortMap.put(entry.getKey(), entry.getValue()));
-        return sortMap;
     }
 
     @Override
