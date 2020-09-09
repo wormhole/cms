@@ -53,7 +53,7 @@ public class QueryWrapper {
     /**
      * 更新字段
      */
-    private Map<String, Object> upWrapper;
+    private Map<String, Object> setWrapper;
 
     public static QueryWrapperBuilder newBuilder() {
         return new QueryWrapperBuilder();
@@ -72,7 +72,7 @@ public class QueryWrapper {
         private final Map<String, List<?>> inWrapper;
         private final Map<String, List<?>> ninWrapper;
         private final Map<String, List<String>> keyWrapper;
-        private final Map<String, Object> upWrapper;
+        private final Map<String, Object> setWrapper;
 
         public QueryWrapperBuilder() {
             sortWrapper = new LinkedHashMap<>();
@@ -81,7 +81,7 @@ public class QueryWrapper {
             inWrapper = new HashMap<>();
             ninWrapper = new HashMap<>();
             keyWrapper = new HashMap<>();
-            upWrapper = new HashMap<>();
+            setWrapper = new HashMap<>();
         }
 
         /**
@@ -323,9 +323,9 @@ public class QueryWrapper {
          * @param value     需要更新的值
          * @return 返回建造者对象
          */
-        public synchronized QueryWrapperBuilder update(Boolean condition, String column, Object value) {
+        public synchronized QueryWrapperBuilder set(Boolean condition, String column, Object value) {
             if (condition) {
-                upWrapper.put(column, value);
+                setWrapper.put(column, value);
             }
             return this;
         }
@@ -337,17 +337,17 @@ public class QueryWrapper {
          * @param value  需要更新的值
          * @return 返回建造者对象
          */
-        public synchronized QueryWrapperBuilder update(String column, Object value) {
-            return update(true, column, value);
+        public synchronized QueryWrapperBuilder set(String column, Object value) {
+            return set(true, column, value);
         }
 
         /**
-         * 构建ConditionRequest对象
+         * 构建QueryWrapper对象
          *
-         * @return 返回ConditionRequest对象
+         * @return 返回QueryWrapper对象
          */
         public QueryWrapper build() {
-            return new QueryWrapper(limit, offset, sortWrapper, eqWrapper, neqWrapper, inWrapper, ninWrapper, keyWrapper, upWrapper);
+            return new QueryWrapper(limit, offset, sortWrapper, eqWrapper, neqWrapper, inWrapper, ninWrapper, keyWrapper, setWrapper);
         }
     }
 }

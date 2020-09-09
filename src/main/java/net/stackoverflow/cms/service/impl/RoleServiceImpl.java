@@ -111,9 +111,9 @@ public class RoleServiceImpl implements RoleService {
         }
 
         QueryWrapperBuilder deleteBuilder = new QueryWrapperBuilder();
-        deleteBuilder.update("name", dto.getName());
-        deleteBuilder.update("note", dto.getNote());
-        deleteBuilder.update("ts", new Date());
+        deleteBuilder.set("name", dto.getName());
+        deleteBuilder.set("note", dto.getNote());
+        deleteBuilder.set("ts", new Date());
         deleteBuilder.eq("id", dto.getId());
         roleDAO.queryUpdate(deleteBuilder.build());
 

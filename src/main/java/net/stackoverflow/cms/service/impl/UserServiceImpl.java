@@ -121,8 +121,8 @@ public class UserServiceImpl implements UserService {
         String password = encoder.encode(newPassword);
 
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.update("password", password);
-        builder.update("ts", new Date());
+        builder.set("password", password);
+        builder.set("ts", new Date());
         builder.eq("id", user.getId());
         userDAO.queryUpdate(builder.build());
     }
@@ -135,8 +135,8 @@ public class UserServiceImpl implements UserService {
         password = encoder.encode(password);
 
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.update("password", password);
-        builder.update("ts", new Date());
+        builder.set("password", password);
+        builder.set("ts", new Date());
         builder.eq("id", user.getId());
         userDAO.queryUpdate(builder.build());
     }
@@ -211,8 +211,8 @@ public class UserServiceImpl implements UserService {
             }
 
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
-            builder.update("enable", enable);
-            builder.update("ts", new Date());
+            builder.set("enable", enable);
+            builder.set("ts", new Date());
             builder.in("id", ids);
             userDAO.queryUpdate(builder.build());
         }

@@ -75,8 +75,8 @@ public class PropertyServiceImpl implements PropertyService {
     @Transactional(rollbackFor = Exception.class)
     public void updateByKey(String key, String value) {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
-        builder.update("value", value);
-        builder.update("ts", new Date());
+        builder.set("value", value);
+        builder.set("ts", new Date());
         builder.eq("key", key);
         propertyDAO.queryUpdate(builder.build());
     }
