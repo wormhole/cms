@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -47,10 +46,10 @@ public class CmsAuthenticationSuccessHandler implements AuthenticationSuccessHan
         } else {
             Integer count = redisTemplate.keys(RedisPrefixConst.TOKEN_PREFIX + user.getId() + ":*").size();
             if (count < user.getLimit()) {
-                Map<String, String> jwt = TokenUtils.generateToken(user.getId());
+                Map<String, String> jwt = TokenUtils.generateJwt(user.getId());
                 redisTemplate.delete(RedisPrefixConst.FAILURE_PREFIX + user.getId() + ":" + request.getRemoteAddr());
                 redisTemplate.opsForValue().set(RedisPrefixConst.TOKEN_PREFIX + user.getId() + ":" + jwt.get("ts"), authentication, user.getTtl(), TimeUnit.MINUTES);
-                result = Result.success("登录成功", Base64.getEncoder().encodeToString(JsonUtils.bean2json(jwt).getBytes()));
+                result = Result.success("登录成功", TokenUtils.generateToken(jwt));
             } else {
                 result = Result.failure("超过登录限制");
             }
