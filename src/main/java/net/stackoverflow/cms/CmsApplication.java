@@ -1,5 +1,6 @@
 package net.stackoverflow.cms;
 
+import net.stackoverflow.cms.constant.DatabaseConst;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.mybatis.spring.annotation.MapperScan;
@@ -26,8 +27,6 @@ import java.util.Properties;
 @EnableAsync
 public class CmsApplication {
 
-    private static final String COUNT_COLUMN = "COUNT";
-
     public static void main(String[] args) {
         initDataBase();
         SpringApplication.run(CmsApplication.class, args);
@@ -40,22 +39,20 @@ public class CmsApplication {
         try {
             Properties props = Resources.getResourceAsProperties("application-prod.properties");
             String url = props.getProperty("cms.database.url");
-            String name = props.getProperty("cms.database.name");
             String username = props.getProperty("spring.datasource.username");
             String password = props.getProperty("spring.datasource.password");
             String driver = props.getProperty("spring.datasource.driver-class-name");
-            String isExistSql = "SELECT count(SCHEMA_NAME) as COUNT FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='" + name + "'";
 
             Class.forName(driver);
             Connection conn = DriverManager.getConnection(url, username, password);
-            PreparedStatement ps = conn.prepareStatement(isExistSql);
+            PreparedStatement ps = conn.prepareStatement(DatabaseConst.CHECK_DB_EXIST_SQL);
             ResultSet rs = ps.executeQuery();
-            if (rs.next() && rs.getInt(COUNT_COLUMN) == 0) {
+            if (rs.next() && rs.getInt(DatabaseConst.COUNT_COLUMN) == 0) {
                 ScriptRunner runner = new ScriptRunner(conn);
                 runner.setErrorLogWriter(null);
                 runner.setLogWriter(null);
                 Resources.setCharset(StandardCharsets.UTF_8);
-                runner.runScript(Resources.getResourceAsReader("sql/cms.sql"));
+                runner.runScript(Resources.getResourceAsReader(DatabaseConst.SQL_PATH));
             }
             ps.close();
             conn.close();
