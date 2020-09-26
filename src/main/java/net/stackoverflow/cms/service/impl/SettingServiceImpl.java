@@ -34,7 +34,7 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     public SettingDTO getSetting() {
-        Setting setting = settingDAO.selectWithQuery(QueryWrapper.newBuilder().build()).get(0);
+        Setting setting = settingDAO.selectAll().get(0);
         SettingDTO dto = new SettingDTO();
         BeanUtils.copyProperties(setting, dto);
         return dto;
@@ -43,35 +43,37 @@ public class SettingServiceImpl implements SettingService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(SettingDTO dto) {
-        Setting setting = settingDAO.selectWithQuery(QueryWrapper.newBuilder().build()).get(0);
-        setting.setTitle(dto.getTitle());
-        setting.setCopyright(dto.getCopyright());
-        setting.setTs(new Date());
-        settingDAO.update(setting);
+        QueryWrapper.QueryWrapperBuilder builder = new QueryWrapper.QueryWrapperBuilder();
+        builder.set("title", dto.getTitle());
+        builder.set("copyright", dto.getCopyright());
+        builder.set("ts", new Date());
+        settingDAO.updateWithQuery(builder.build());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateHead(String userId, MultipartFile file) throws IOException {
         Upload upload = uploadService.saveFile(file, userId);
-        Setting setting = settingDAO.selectWithQuery(QueryWrapper.newBuilder().build()).get(0);
-        setting.setHead(upload.getPath());
-        setting.setTs(new Date());
-        settingDAO.update(setting);
+        QueryWrapper.QueryWrapperBuilder builder = new QueryWrapper.QueryWrapperBuilder();
+        builder.set("head", upload.getPath());
+        builder.set("ts", new Date());
+        settingDAO.updateWithQuery(builder.build());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public SettingDTO restore() {
-        Setting setting = settingDAO.selectWithQuery(QueryWrapper.newBuilder().build()).get(0);
-        setting.setTitle(SettingConst.TITLE);
-        setting.setCopyright(SettingConst.COPYRIGHT);
-        setting.setHead(SettingConst.HEAD);
-        setting.setTs(new Date());
-        settingDAO.update(setting);
+        QueryWrapper.QueryWrapperBuilder builder = new QueryWrapper.QueryWrapperBuilder();
+        builder.set("title", SettingConst.TITLE);
+        builder.set("head", SettingConst.HEAD);
+        builder.set("copyright", SettingConst.COPYRIGHT);
+        builder.set("ts", new Date());
+        settingDAO.updateWithQuery(builder.build());
 
         SettingDTO dto = new SettingDTO();
-        BeanUtils.copyProperties(setting, dto);
+        dto.setHead(SettingConst.HEAD);
+        dto.setCopyright(SettingConst.COPYRIGHT);
+        dto.setTitle(SettingConst.TITLE);
         return dto;
     }
 }
