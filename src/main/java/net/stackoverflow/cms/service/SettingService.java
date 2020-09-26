@@ -17,7 +17,7 @@ public interface SettingService {
      *
      * @return
      */
-    SettingDTO getSetting();
+    SettingDTO querySetting();
 
     /**
      * 更新系统设置

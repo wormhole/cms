@@ -41,8 +41,8 @@ public class HomeController extends BaseController {
      * @return
      */
     @GetMapping(value = "/setting")
-    public ResponseEntity<Result<SettingDTO>> getSetting() {
-        SettingDTO dto = settingService.getSetting();
+    public ResponseEntity<Result<SettingDTO>> querySetting() {
+        SettingDTO dto = settingService.querySetting();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 

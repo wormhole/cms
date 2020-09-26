@@ -33,7 +33,7 @@ public class SettingServiceImpl implements SettingService {
     private UploadService uploadService;
 
     @Override
-    public SettingDTO getSetting() {
+    public SettingDTO querySetting() {
         Setting setting = settingDAO.selectAll().get(0);
         SettingDTO dto = new SettingDTO();
         BeanUtils.copyProperties(setting, dto);
