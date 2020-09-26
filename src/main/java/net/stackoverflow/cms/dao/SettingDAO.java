@@ -1,19 +1,19 @@
 package net.stackoverflow.cms.dao;
 
 import net.stackoverflow.cms.common.QueryWrapper;
-import net.stackoverflow.cms.model.entity.Property;
+import net.stackoverflow.cms.model.entity.Setting;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
- * (Property)表数据库访问层
+ * (Setting)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-09-06 13:46:48
+ * @since 2020-09-26 19:03:51
  */
 @Repository
-public interface PropertyDAO {
+public interface SettingDAO {
 
     /**
      * 根据条件统计
@@ -29,7 +29,7 @@ public interface PropertyDAO {
      * @param id
      * @return
      */
-    Property select(String id);
+    Setting select(String id);
 
     /**
      * 条件查询
@@ -37,23 +37,23 @@ public interface PropertyDAO {
      * @param wrapper
      * @return
      */
-    List<Property> querySelect(QueryWrapper wrapper);
+    List<Setting> querySelect(QueryWrapper wrapper);
 
     /**
      * 新增
      *
-     * @param property
+     * @param setting
      * @return
      */
-    int insert(Property property);
+    int insert(Setting setting);
 
     /**
      * 批量新增
      *
-     * @param propertys
+     * @param settings
      * @return
      */
-    int batchInsert(List<Property> propertys);
+    int batchInsert(List<Setting> settings);
 
     /**
      * 删除
@@ -82,18 +82,18 @@ public interface PropertyDAO {
     /**
      * 更新
      *
-     * @param property
+     * @param setting
      * @return
      */
-    int update(Property property);
+    int update(Setting setting);
 
     /**
      * 批量更新
      *
-     * @param propertys
+     * @param settings
      * @return
      */
-    int batchUpdate(List<Property> propertys);
+    int batchUpdate(List<Setting> settings);
 
     /**
      * 根据条件更新

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.stackoverflow.cms.dao.PropertyDAO">
+<mapper namespace="net.stackoverflow.cms.dao.SettingDAO">
 
-    <resultMap type="net.stackoverflow.cms.model.entity.Property" id="baseMap">
+    <resultMap type="net.stackoverflow.cms.model.entity.Setting" id="baseMap">
         <result property="id" column="id" jdbcType="VARCHAR"/>
-        <result property="key" column="key" jdbcType="VARCHAR"/>
-        <result property="value" column="value" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="head" column="head" jdbcType="VARCHAR"/>
+        <result property="copyright" column="copyright" jdbcType="VARCHAR"/>
         <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
     </resultMap>
 
@@ -59,16 +60,16 @@
     </sql>
 
     <select id="queryCount" resultType="int">
-        select COUNT(*) from `property`
+        select COUNT(*) from `setting`
         <include refid="where"/>
     </select>
 
     <select id="select" resultMap="baseMap">
-        select * from `property` where `id` = #{id}
+        select * from `setting` where `id` = #{id}
     </select>
 
     <select id="querySelect" resultMap="baseMap">
-        select * from `property`
+        select * from `setting`
         <include refid="where"/>
         <if test="sortWrapper != null and sortWrapper.size() > 0">
             order by
@@ -82,45 +83,48 @@
     </select>
 
     <insert id="insert">
-        insert into `property`
-        (`id`, `key`, `value`, `ts`)
+        insert into `setting`
+        (`id`, `title`, `head`, `copyright`, `ts`)
         values
-        (#{id}, #{key}, #{value}, #{ts})
+        (#{id}, #{title}, #{head}, #{copyright}, #{ts})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into `property`
-        (`id`, `key`, `value`, `ts`)
+        insert into `setting`
+        (`id`, `title`, `head`, `copyright`, `ts`)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id}, #{item.key}, #{item.value}, #{item.ts})
+            (#{item.id}, #{item.title}, #{item.head}, #{item.copyright}, #{item.ts})
         </foreach>
     </insert>
 
     <delete id="delete" parameterType="string">
-        delete from `property` where `id` = #{id}
+        delete from `setting` where `id` = #{id}
     </delete>
 
     <delete id="batchDelete" parameterType="list">
-        delete from `property` where `id` in
+        delete from `setting` where `id` in
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <delete id="queryDelete">
-        delete from `property`
+        delete from `setting`
         <include refid="where"/>
     </delete>
 
-    <update id="update" parameterType="net.stackoverflow.cms.model.entity.Property">
-        update `property`
+    <update id="update" parameterType="net.stackoverflow.cms.model.entity.Setting">
+        update `setting`
         <set>
-            <if test="key != null">
-                `key` = #{key},
+            <if test="title != null">
+                `title` = #{title},
             </if>
-            <if test="value != null">
-                `value` = #{value},
+            <if test="head != null">
+                `head` = #{head},
+            </if>
+            <if test="copyright != null">
+                `copyright` = #{copyright},
             </if>
             <if test="ts != null">
                 `ts` = #{ts},
@@ -131,13 +135,16 @@
 
     <update id="batchUpdate" parameterType="list">
         <foreach collection="list" item="item" open="" close="" separator=";">
-            update `property`
+            update `setting`
             <set>
-                <if test="item.key != null">
-                    `key` = #{item.key},
+                <if test="item.title != null">
+                    `title` = #{item.title},
                 </if>
-                <if test="item.value != null">
-                    `value` = #{item.value},
+                <if test="item.head != null">
+                    `head` = #{item.head},
+                </if>
+                <if test="item.copyright != null">
+                    `copyright` = #{item.copyright},
                 </if>
                 <if test="item.ts != null">
                     `ts` = #{item.ts},
@@ -148,17 +155,20 @@
     </update>
 
     <update id="queryUpdate">
-        update `property`
+        update `setting`
         <set>
             <if test="upWrapper != null">
                 <if test="upWrapper.id != null">
                     `id` = #{upWrapper.id},
                 </if>
-                <if test="upWrapper.key != null">
-                    `key` = #{upWrapper.key},
+                <if test="upWrapper.title != null">
+                    `title` = #{upWrapper.title},
                 </if>
-                <if test="upWrapper.value != null">
-                    `value` = #{upWrapper.value},
+                <if test="upWrapper.head != null">
+                    `head` = #{upWrapper.head},
+                </if>
+                <if test="upWrapper.copyright != null">
+                    `copyright` = #{upWrapper.copyright},
                 </if>
                 <if test="upWrapper.ts != null">
                     `ts` = #{upWrapper.ts},

@@ -3,8 +3,8 @@ package net.stackoverflow.cms.web.controller.manage;
 import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
-import net.stackoverflow.cms.model.dto.BaseInfoDTO;
-import net.stackoverflow.cms.service.BaseInfoService;
+import net.stackoverflow.cms.model.dto.SettingDTO;
+import net.stackoverflow.cms.service.SettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +15,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 /**
- * 基础信息接口
+ * 系统设置接口
  *
  * @author 凉衫薄
  */
 @RestController
-@RequestMapping(value = "/manage/base")
+@RequestMapping(value = "/manage/setting")
 @Slf4j
 @Validated
-public class BaseInfoController extends BaseController {
+public class SettingController extends BaseController {
 
     @Autowired
-    private BaseInfoService baseInfoService;
+    private SettingService settingService;
 
     /**
      * 获取配置信息
@@ -34,8 +34,8 @@ public class BaseInfoController extends BaseController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<Result<BaseInfoDTO>> queryBaseInfo() {
-        BaseInfoDTO dto = baseInfoService.queryBaseInfo();
+    public ResponseEntity<Result<SettingDTO>> getSetting() {
+        SettingDTO dto = settingService.getSetting();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 
@@ -46,8 +46,8 @@ public class BaseInfoController extends BaseController {
      * @return
      */
     @PutMapping
-    public ResponseEntity<Result<Object>> update(@RequestBody BaseInfoDTO dto) {
-        baseInfoService.updateBaseInfo(dto);
+    public ResponseEntity<Result<Object>> updateSetting(@RequestBody SettingDTO dto) {
+        settingService.update(dto);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
@@ -60,7 +60,7 @@ public class BaseInfoController extends BaseController {
     @PostMapping(value = "/head")
     public ResponseEntity<Result<Object>> head(@RequestParam("file") MultipartFile file) throws IOException {
         String userId = super.getUserId();
-        baseInfoService.updateHead(userId, file);
+        settingService.updateHead(userId, file);
         return ResponseEntity.status(HttpStatus.OK).body(Result.success());
     }
 
@@ -70,8 +70,8 @@ public class BaseInfoController extends BaseController {
      * @return
      */
     @PutMapping(value = "/restore")
-    public ResponseEntity<Result<BaseInfoDTO>> restore() {
-        BaseInfoDTO dto = baseInfoService.restore();
+    public ResponseEntity<Result<SettingDTO>> restore() {
+        SettingDTO dto = settingService.restore();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 }

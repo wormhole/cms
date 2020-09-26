@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.stackoverflow.cms.common.BaseController;
 import net.stackoverflow.cms.common.Result;
 import net.stackoverflow.cms.model.dto.AuthDTO;
-import net.stackoverflow.cms.model.dto.BaseInfoDTO;
 import net.stackoverflow.cms.model.dto.PasswordDTO;
-import net.stackoverflow.cms.service.BaseInfoService;
+import net.stackoverflow.cms.model.dto.SettingDTO;
 import net.stackoverflow.cms.service.MenuService;
+import net.stackoverflow.cms.service.SettingService;
 import net.stackoverflow.cms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,16 +33,16 @@ public class HomeController extends BaseController {
     @Autowired
     private MenuService menuService;
     @Autowired
-    private BaseInfoService baseInfoService;
+    private SettingService settingService;
 
     /**
      * 获取系统基础信息
      *
      * @return
      */
-    @GetMapping(value = "/base")
-    public ResponseEntity<Result<BaseInfoDTO>> baseInfo() {
-        BaseInfoDTO dto = baseInfoService.queryBaseInfo();
+    @GetMapping(value = "/setting")
+    public ResponseEntity<Result<SettingDTO>> getSetting() {
+        SettingDTO dto = settingService.getSetting();
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(dto));
     }
 

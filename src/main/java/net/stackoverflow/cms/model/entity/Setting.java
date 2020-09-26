@@ -6,21 +6,22 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * (Property)实体类
+ * (Setting)实体类
  *
  * @author 凉衫薄
- * @since 2020-09-06 13:46:48
+ * @since 2020-09-26 19:03:51
  */
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Property implements Serializable {
-    private static final long serialVersionUID = 370624976672022396L;
+public class Setting implements Serializable {
+    private static final long serialVersionUID = -31264946256523452L;
 
     private String id;
-    private String key;
-    private String value;
+    private String title;
+    private String head;
+    private String copyright;
     private Date ts;
 }

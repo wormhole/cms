@@ -5,7 +5,7 @@ package net.stackoverflow.cms.constant;
  *
  * @author 凉衫薄
  */
-public class BaseInfoConst {
+public class SettingConst {
 
     public static final String TITLE = "内容管理系统";
     public static final String COPYRIGHT = "copyright © 2020 by 凉衫薄";

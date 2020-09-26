@@ -1,36 +1,37 @@
 package net.stackoverflow.cms.service;
 
-import net.stackoverflow.cms.model.dto.BaseInfoDTO;
+import net.stackoverflow.cms.model.dto.SettingDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 /**
- * 基础性信息服务类解耦
+ * 系统设置服务接口
  *
  * @author 凉衫薄
  */
-public interface BaseInfoService {
+public interface SettingService {
 
     /**
-     * 查询系统基础信息
+     * 获取系统配置信息
      *
      * @return
      */
-    BaseInfoDTO queryBaseInfo();
+    SettingDTO getSetting();
 
     /**
-     * 更新系统基础信息
+     * 更新系统设置
      *
-     * @param dto 系统基础信息dto对象
+     * @param dto 系统设置dto类
      */
-    void updateBaseInfo(BaseInfoDTO dto);
+    void update(SettingDTO dto);
 
     /**
      * 更新头像
      *
      * @param userId 用户主键
-     * @param file   文件对象
+     * @param file   头像文件
+     * @throws IOException io异常
      */
     void updateHead(String userId, MultipartFile file) throws IOException;
 
@@ -39,5 +40,5 @@ public interface BaseInfoService {
      *
      * @return
      */
-    BaseInfoDTO restore();
+    SettingDTO restore();
 }
