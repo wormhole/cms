@@ -10,7 +10,7 @@ import java.util.List;
  * (RoleMenuRef)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-09-06 13:47:12
+ * @since 2020-09-26 20:22:40
  */
 @Repository
 public interface RoleMenuRefDAO {
@@ -21,7 +21,7 @@ public interface RoleMenuRefDAO {
      * @param wrapper
      * @return
      */
-    int queryCount(QueryWrapper wrapper);
+    int countWithQuery(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -32,12 +32,19 @@ public interface RoleMenuRefDAO {
     RoleMenuRef select(String id);
 
     /**
+     * 查询所有
+     *
+     * @return
+     */
+    List<RoleMenuRef> selectAll();
+
+    /**
      * 条件查询
      *
      * @param wrapper
      * @return
      */
-    List<RoleMenuRef> querySelect(QueryWrapper wrapper);
+    List<RoleMenuRef> selectWithQuery(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +84,7 @@ public interface RoleMenuRefDAO {
      * @param wrapper
      * @return
      */
-    int queryDelete(QueryWrapper wrapper);
+    int deleteWithQuery(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +108,5 @@ public interface RoleMenuRefDAO {
      * @param wrapper
      * @return
      */
-    int queryUpdate(QueryWrapper wrapper);
+    int updateWithQuery(QueryWrapper wrapper);
 }

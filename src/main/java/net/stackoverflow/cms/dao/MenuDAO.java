@@ -10,7 +10,7 @@ import java.util.List;
  * (Menu)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-09-06 13:47:04
+ * @since 2020-09-26 20:22:30
  */
 @Repository
 public interface MenuDAO {
@@ -21,7 +21,7 @@ public interface MenuDAO {
      * @param wrapper
      * @return
      */
-    int queryCount(QueryWrapper wrapper);
+    int countWithQuery(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -32,12 +32,19 @@ public interface MenuDAO {
     Menu select(String id);
 
     /**
+     * 查询所有
+     *
+     * @return
+     */
+    List<Menu> selectAll();
+
+    /**
      * 条件查询
      *
      * @param wrapper
      * @return
      */
-    List<Menu> querySelect(QueryWrapper wrapper);
+    List<Menu> selectWithQuery(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +84,7 @@ public interface MenuDAO {
      * @param wrapper
      * @return
      */
-    int queryDelete(QueryWrapper wrapper);
+    int deleteWithQuery(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +108,5 @@ public interface MenuDAO {
      * @param wrapper
      * @return
      */
-    int queryUpdate(QueryWrapper wrapper);
+    int updateWithQuery(QueryWrapper wrapper);
 }

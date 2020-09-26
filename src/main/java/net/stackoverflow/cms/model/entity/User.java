@@ -9,7 +9,7 @@ import java.util.Date;
  * (User)实体类
  *
  * @author 凉衫薄
- * @since 2020-09-06 13:28:26
+ * @since 2020-09-26 20:22:57
  */
 @Setter
 @Getter
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class User implements Serializable {
-    private static final long serialVersionUID = 331273659165470662L;
+    private static final long serialVersionUID = 363998374717952797L;
 
     private String id;
     private String username;

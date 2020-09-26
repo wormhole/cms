@@ -42,7 +42,7 @@ public class UploadServiceImpl implements UploadService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer count() {
-        return uploadDAO.queryCount(QueryWrapper.newBuilder().build());
+        return uploadDAO.countWithQuery(QueryWrapper.newBuilder().build());
     }
 
     @Override
@@ -78,8 +78,8 @@ public class UploadServiceImpl implements UploadService {
         builder.page((page - 1) * limit, limit);
         QueryWrapper wrapper = builder.build();
 
-        List<Upload> uploads = uploadDAO.querySelect(wrapper);
-        Integer total = uploadDAO.queryCount(wrapper);
+        List<Upload> uploads = uploadDAO.selectWithQuery(wrapper);
+        Integer total = uploadDAO.countWithQuery(wrapper);
 
         List<UploadDTO> dtos = new ArrayList<>();
         for (Upload upload : uploads) {
@@ -105,7 +105,7 @@ public class UploadServiceImpl implements UploadService {
         if (!CollectionUtils.isEmpty(ids)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("id", ids);
-            List<Upload> uploads = uploadDAO.querySelect(builder.build());
+            List<Upload> uploads = uploadDAO.selectWithQuery(builder.build());
             for (Upload upload : uploads) {
                 String path = SysUtils.pwd() + upload.getPath();
                 File file = new File(path);

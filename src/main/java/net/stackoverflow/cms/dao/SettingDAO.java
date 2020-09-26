@@ -10,7 +10,7 @@ import java.util.List;
  * (Setting)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-09-26 19:03:51
+ * @since 2020-09-26 20:22:45
  */
 @Repository
 public interface SettingDAO {
@@ -21,7 +21,7 @@ public interface SettingDAO {
      * @param wrapper
      * @return
      */
-    int queryCount(QueryWrapper wrapper);
+    int countWithQuery(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -32,12 +32,19 @@ public interface SettingDAO {
     Setting select(String id);
 
     /**
+     * 查询所有
+     *
+     * @return
+     */
+    List<Setting> selectAll();
+
+    /**
      * 条件查询
      *
      * @param wrapper
      * @return
      */
-    List<Setting> querySelect(QueryWrapper wrapper);
+    List<Setting> selectWithQuery(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +84,7 @@ public interface SettingDAO {
      * @param wrapper
      * @return
      */
-    int queryDelete(QueryWrapper wrapper);
+    int deleteWithQuery(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +108,5 @@ public interface SettingDAO {
      * @param wrapper
      * @return
      */
-    int queryUpdate(QueryWrapper wrapper);
+    int updateWithQuery(QueryWrapper wrapper);
 }

@@ -31,14 +31,14 @@ public class RoleMenuRefServiceImpl implements RoleMenuRefService {
         if (!CollectionUtils.isEmpty(roleIds)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("role_id", roleIds);
-            roleMenuRefDAO.queryDelete(builder.build());
+            roleMenuRefDAO.deleteWithQuery(builder.build());
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByRoleId(String roleId) {
-        roleMenuRefDAO.queryDelete(QueryWrapper.newBuilder().eq("role_id", roleId).build());
+        roleMenuRefDAO.deleteWithQuery(QueryWrapper.newBuilder().eq("role_id", roleId).build());
     }
 
     @Override
@@ -52,7 +52,7 @@ public class RoleMenuRefServiceImpl implements RoleMenuRefService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<RoleMenuRef> findByRoleId(String id) {
-        List<RoleMenuRef> refs = roleMenuRefDAO.querySelect(QueryWrapper.newBuilder().eq("role_id", id).build());
+        List<RoleMenuRef> refs = roleMenuRefDAO.selectWithQuery(QueryWrapper.newBuilder().eq("role_id", id).build());
         return refs;
     }
 }

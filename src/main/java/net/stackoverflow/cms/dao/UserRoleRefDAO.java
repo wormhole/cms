@@ -10,7 +10,7 @@ import java.util.List;
  * (UserRoleRef)表数据库访问层
  *
  * @author 凉衫薄
- * @since 2020-09-06 13:28:36
+ * @since 2020-09-26 20:23:02
  */
 @Repository
 public interface UserRoleRefDAO {
@@ -21,7 +21,7 @@ public interface UserRoleRefDAO {
      * @param wrapper
      * @return
      */
-    int queryCount(QueryWrapper wrapper);
+    int countWithQuery(QueryWrapper wrapper);
 
     /**
      * 根据id查询
@@ -32,12 +32,19 @@ public interface UserRoleRefDAO {
     UserRoleRef select(String id);
 
     /**
+     * 查询所有
+     *
+     * @return
+     */
+    List<UserRoleRef> selectAll();
+
+    /**
      * 条件查询
      *
      * @param wrapper
      * @return
      */
-    List<UserRoleRef> querySelect(QueryWrapper wrapper);
+    List<UserRoleRef> selectWithQuery(QueryWrapper wrapper);
 
     /**
      * 新增
@@ -77,7 +84,7 @@ public interface UserRoleRefDAO {
      * @param wrapper
      * @return
      */
-    int queryDelete(QueryWrapper wrapper);
+    int deleteWithQuery(QueryWrapper wrapper);
 
     /**
      * 更新
@@ -101,5 +108,5 @@ public interface UserRoleRefDAO {
      * @param wrapper
      * @return
      */
-    int queryUpdate(QueryWrapper wrapper);
+    int updateWithQuery(QueryWrapper wrapper);
 }

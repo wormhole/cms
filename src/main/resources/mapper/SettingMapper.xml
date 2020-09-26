@@ -59,7 +59,7 @@
         </where>
     </sql>
 
-    <select id="queryCount" resultType="int">
+    <select id="countWithQuery" resultType="int">
         select COUNT(*) from `setting`
         <include refid="where"/>
     </select>
@@ -68,7 +68,11 @@
         select * from `setting` where `id` = #{id}
     </select>
 
-    <select id="querySelect" resultMap="baseMap">
+    <select id="selectAll" resultMap="baseMap">
+        select * from `setting`
+    </select>
+
+    <select id="selectWithQuery" resultMap="baseMap">
         select * from `setting`
         <include refid="where"/>
         <if test="sortWrapper != null and sortWrapper.size() > 0">
@@ -109,7 +113,7 @@
         </foreach>
     </delete>
 
-    <delete id="queryDelete">
+    <delete id="deleteWithQuery">
         delete from `setting`
         <include refid="where"/>
     </delete>
@@ -154,24 +158,24 @@
         </foreach>
     </update>
 
-    <update id="queryUpdate">
+    <update id="updateWithQuery">
         update `setting`
         <set>
-            <if test="upWrapper != null">
-                <if test="upWrapper.id != null">
-                    `id` = #{upWrapper.id},
+            <if test="setWrapper != null">
+                <if test="setWrapper.id != null">
+                    `id` = #{setWrapper.id},
                 </if>
-                <if test="upWrapper.title != null">
-                    `title` = #{upWrapper.title},
+                <if test="setWrapper.title != null">
+                    `title` = #{setWrapper.title},
                 </if>
-                <if test="upWrapper.head != null">
-                    `head` = #{upWrapper.head},
+                <if test="setWrapper.head != null">
+                    `head` = #{setWrapper.head},
                 </if>
-                <if test="upWrapper.copyright != null">
-                    `copyright` = #{upWrapper.copyright},
+                <if test="setWrapper.copyright != null">
+                    `copyright` = #{setWrapper.copyright},
                 </if>
-                <if test="upWrapper.ts != null">
-                    `ts` = #{upWrapper.ts},
+                <if test="setWrapper.ts != null">
+                    `ts` = #{setWrapper.ts},
                 </if>
             </if>
         </set>

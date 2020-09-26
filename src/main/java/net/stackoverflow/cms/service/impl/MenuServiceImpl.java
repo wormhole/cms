@@ -39,7 +39,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer count() {
-        return menuDAO.queryCount(QueryWrapper.newBuilder().build());
+        return menuDAO.countWithQuery(QueryWrapper.newBuilder().build());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MenuServiceImpl implements MenuService {
     public List<String> findIdsByKeys(List<String> keys) {
         List<String> ids = new ArrayList<>();
         if (!CollectionUtils.isEmpty(keys)) {
-            List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().in("key", keys).build());
+            List<Menu> menus = menuDAO.selectWithQuery(QueryWrapper.newBuilder().in("key", keys).build());
             menus.forEach(menu -> ids.add(menu.getId()));
         }
         return ids;
@@ -61,7 +61,7 @@ public class MenuServiceImpl implements MenuService {
         if (!CollectionUtils.isEmpty(refs)) {
             List<String> ids = new ArrayList<>();
             refs.forEach(ref -> ids.add(ref.getMenuId()));
-            List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().in("id", ids).build());
+            List<Menu> menus = menuDAO.selectWithQuery(QueryWrapper.newBuilder().in("id", ids).build());
             menus.forEach(menu -> keys.add(menu.getKey()));
         }
         return keys;
@@ -70,7 +70,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<MenuDTO> findTree() {
-        List<Menu> menus = menuDAO.querySelect(QueryWrapper.newBuilder().asc("ts").build());
+        List<Menu> menus = menuDAO.selectWithQuery(QueryWrapper.newBuilder().asc("ts").build());
         return toTree(menus);
     }
 

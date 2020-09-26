@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isEmpty(username)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.eq("username", username);
-            List<User> users = userDAO.querySelect(builder.build());
+            List<User> users = userDAO.selectWithQuery(builder.build());
             if (!CollectionUtils.isEmpty(users)) {
                 user = users.get(0);
             }
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
         QueryWrapperBuilder builder = new QueryWrapperBuilder();
         builder.neq("id", dto.getId());
         builder.eq("username", dto.getUsername());
-        List<User> users = userDAO.querySelect(builder.build());
+        List<User> users = userDAO.selectWithQuery(builder.build());
 
         if (!CollectionUtils.isEmpty(users)) {
             throw new BusinessException("用户名不能重复");
@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
         builder.set("password", password);
         builder.set("ts", new Date());
         builder.eq("id", user.getId());
-        userDAO.queryUpdate(builder.build());
+        userDAO.updateWithQuery(builder.build());
     }
 
     @Override
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
         builder.set("password", password);
         builder.set("ts", new Date());
         builder.eq("id", user.getId());
-        userDAO.queryUpdate(builder.build());
+        userDAO.updateWithQuery(builder.build());
     }
 
     @Override
@@ -166,8 +166,8 @@ public class UserServiceImpl implements UserService {
         builder.in("id", new ArrayList<>(userIds));
         QueryWrapper wrapper = builder.build();
 
-        List<User> users = userDAO.querySelect(wrapper);
-        Integer total = userDAO.queryCount(wrapper);
+        List<User> users = userDAO.selectWithQuery(wrapper);
+        Integer total = userDAO.countWithQuery(wrapper);
 
         List<UserDTO> dtos = new ArrayList<>();
         for (User user : users) {
@@ -187,7 +187,7 @@ public class UserServiceImpl implements UserService {
         if (!CollectionUtils.isEmpty(ids)) {
             QueryWrapperBuilder builder = new QueryWrapperBuilder();
             builder.in("id", ids);
-            List<User> users = userDAO.querySelect(builder.build());
+            List<User> users = userDAO.selectWithQuery(builder.build());
             for (User user : users) {
                 if (user.getBuiltin().equals(1)) {
                     throw new BusinessException("内建用户不允许被删除");
@@ -203,7 +203,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void updateEnable(List<String> ids, Integer enable) {
         if (!CollectionUtils.isEmpty(ids)) {
-            List<User> users = userDAO.querySelect(new QueryWrapperBuilder().in("id", ids).build());
+            List<User> users = userDAO.selectWithQuery(new QueryWrapperBuilder().in("id", ids).build());
             for (User user : users) {
                 if (user.getBuiltin().equals(1)) {
                     throw new BusinessException("超级管理员不允许被操作");
@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
             builder.set("enable", enable);
             builder.set("ts", new Date());
             builder.in("id", ids);
-            userDAO.queryUpdate(builder.build());
+            userDAO.updateWithQuery(builder.build());
         }
     }
 
@@ -237,19 +237,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer count() {
-        return userDAO.queryCount(new QueryWrapper());
+        return userDAO.countWithQuery(new QueryWrapper());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer countEnable() {
-        return userDAO.queryCount(QueryWrapper.newBuilder().eq("enable", 1).build());
+        return userDAO.countWithQuery(QueryWrapper.newBuilder().eq("enable", 1).build());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer countDisable() {
-        return userDAO.queryCount(QueryWrapper.newBuilder().eq("enable", 0).build());
+        return userDAO.countWithQuery(QueryWrapper.newBuilder().eq("enable", 0).build());
     }
 
 }
