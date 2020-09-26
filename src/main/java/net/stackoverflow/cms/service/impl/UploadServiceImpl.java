@@ -52,7 +52,7 @@ public class UploadServiceImpl implements UploadService {
         String ext = filename.substring(filename.lastIndexOf("."));
         String filePath = FileUtils.pathWithDate() + UUID.randomUUID().toString() + ext;
         String uploadPath = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH;
-        String absolutePath = uploadPath + filePath;
+        String absolutePath = uploadPath + filePath.substring(1);
         java.io.File uploadFile = new java.io.File(absolutePath);
         if (!uploadFile.getParentFile().exists()) {
             uploadFile.mkdirs();
