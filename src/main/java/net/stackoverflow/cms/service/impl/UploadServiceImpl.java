@@ -50,9 +50,9 @@ public class UploadServiceImpl implements UploadService {
     public Upload saveFile(MultipartFile file, String userId) throws IOException {
         String filename = file.getOriginalFilename();
         String ext = filename.substring(filename.lastIndexOf("."));
-        String filePath = FileUtils.pathWithDate() + UUID.randomUUID().toString() + ext;
+        String filePath = (FileUtils.pathWithDate() + UUID.randomUUID().toString() + ext).substring(1);
         String uploadPath = SysUtils.pwd() + UploadPathConst.UPLOAD_PATH;
-        String absolutePath = uploadPath + filePath.substring(1);
+        String absolutePath = uploadPath + filePath;
         java.io.File uploadFile = new java.io.File(absolutePath);
         if (!uploadFile.getParentFile().exists()) {
             uploadFile.mkdirs();
