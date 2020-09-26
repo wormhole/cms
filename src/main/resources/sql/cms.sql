@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 08/09/2020 00:38:25
+ Date: 26/09/2020 19:59:22
 */
 
 SET NAMES utf8mb4;
@@ -40,28 +40,9 @@ INSERT INTO `menu` VALUES ('47e0126e-e03c-4e8c-9a1e-b821636aec8b', '图片管理
 INSERT INTO `menu` VALUES ('7b6abff6-5b55-447e-99b7-f26845aad3d9', '系统管理', 'manage', NULL, '2020-09-04 22:57:17');
 INSERT INTO `menu` VALUES ('869d38f6-1336-472f-b6d6-b97163d1bce9', '用户管理', 'user', 'f853785f-5e8d-4622-b680-eb9310eaf9da', '2020-09-04 22:55:28');
 INSERT INTO `menu` VALUES ('9162c1ce-2e26-495c-b431-ea025c0e6e7d', '角色管理', 'role', 'f853785f-5e8d-4622-b680-eb9310eaf9da', '2020-09-04 22:56:13');
-INSERT INTO `menu` VALUES ('9aea0082-f45c-4f3b-9f97-6e17c9bcc490', '基本信息', 'base', '7b6abff6-5b55-447e-99b7-f26845aad3d9', '2020-09-04 22:59:16');
+INSERT INTO `menu` VALUES ('9aea0082-f45c-4f3b-9f97-6e17c9bcc490', '基本信息', 'setting', '7b6abff6-5b55-447e-99b7-f26845aad3d9', '2020-09-04 22:59:16');
 INSERT INTO `menu` VALUES ('aad0f9d5-6400-4cf6-891b-86d0bc3b383c', '仪表盘', 'dashboard', NULL, '2020-09-04 22:54:34');
 INSERT INTO `menu` VALUES ('f853785f-5e8d-4622-b680-eb9310eaf9da', '认证与授权', 'auth', NULL, '2020-09-04 22:55:00');
-
--- ----------------------------
--- Table structure for property
--- ----------------------------
-DROP TABLE IF EXISTS `property`;
-CREATE TABLE `property`  (
-  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
-  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'key',
-  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'value',
-  `ts` datetime(0) NULL DEFAULT NULL COMMENT '时间戳',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of property
--- ----------------------------
-INSERT INTO `property` VALUES ('5e9cbc50-bb1a-4374-b497-65cdc70b92a1', 'copyright', 'copyright © 2020 by 凉衫薄', '2020-09-06 19:04:22');
-INSERT INTO `property` VALUES ('9d5fd101-ecb7-484a-a931-a29a5a3bda91', 'head', '/head.jpg', '2020-09-06 19:04:22');
-INSERT INTO `property` VALUES ('ce389eb0-ce61-4df7-8d38-67995ba8368f', 'title', '内容管理系统', '2020-09-06 19:04:22');
 
 -- ----------------------------
 -- Table structure for role
@@ -105,6 +86,24 @@ INSERT INTO `role_menu_ref` VALUES ('aa743741-e13b-433e-835c-30126433ab54', 'ad6
 INSERT INTO `role_menu_ref` VALUES ('c056b984-04b8-4ef1-ba9e-f1f441d221e8', '2ba05bf7-ed57-47f6-9e49-cf3c4f1ce02a', 'aad0f9d5-6400-4cf6-891b-86d0bc3b383c', '2020-09-06 20:34:02');
 INSERT INTO `role_menu_ref` VALUES ('db0e7fd9-0731-4ab2-8560-d93a44acf387', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', '9aea0082-f45c-4f3b-9f97-6e17c9bcc490', '2020-09-06 21:05:26');
 INSERT INTO `role_menu_ref` VALUES ('f89b5efb-a1ea-4af0-87a5-432892ee26a2', 'ad66668e-bbc4-4209-91fe-0c581c9e4e93', 'aad0f9d5-6400-4cf6-891b-86d0bc3b383c', '2020-09-06 21:05:26');
+
+-- ----------------------------
+-- Table structure for setting
+-- ----------------------------
+DROP TABLE IF EXISTS `setting`;
+CREATE TABLE `setting`  (
+  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '标题',
+  `head` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像',
+  `copyright` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '版权',
+  `ts` datetime(0) NULL DEFAULT NULL COMMENT '时间戳',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of setting
+-- ----------------------------
+INSERT INTO `setting` VALUES ('5e9cbc50-bb1a-4374-b497-65cdc70b92a1', '内容管理系统', '/head.jpg', 'copyright © 2020 by 凉衫薄', '2020-09-26 19:56:13');
 
 -- ----------------------------
 -- Table structure for upload
